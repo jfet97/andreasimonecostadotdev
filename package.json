@@ -1,10 +1,13 @@
 {
   "name": "andreasimonecostadotdev",
+  "private": true,
   "version": "0.0.1",
   "description": "Personal blog about programming by Andrea Simone Costa",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gridsome build",
+    "develop": "gridsome develop",
+    "explore": "gridsome explore"
   },
   "repository": {
     "type": "git",
@@ -22,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/jfet97/andreasimonecostadotdev/issues"
   },
-  "homepage": "https://andreasimonecosta.dev"
+  "homepage": "https://andreasimonecosta.dev",
+  "dependencies": {
+    "gridsome": "^0.6.0"
+  }
 }
