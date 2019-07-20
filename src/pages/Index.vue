@@ -14,7 +14,7 @@
 
     <ul>
       <li v-for="(post, i) in $page.allPost.edges" :key="i">
-        <g-link :to="post.node.path">post.node.path</g-link>
+        <g-link :to="post.node.path">{{post.node.path}}</g-link>
       </li>
     </ul>
   </Layout>
