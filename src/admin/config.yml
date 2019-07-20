@@ -1,5 +1,5 @@
 backend:
-  name: github
+  name: name: git-gateway
   branch: master
   repo: jfet97/andreasimonecostadotdev
 
