@@ -5,7 +5,6 @@
     <div v-html="$page.post.content" />
     <span>Autore</span>
     <br />
-    <g-link :to="`${$page.post.author.path}`">{{ $page.post.author.nickname }}</g-link>
     <span>Tags</span>
     <br />
     <ul>
@@ -22,15 +21,6 @@ query Post ($path: String!) {
     title
     content
     path
-    author {
-      id
-      nickname
-      path
-    }
-		tags {
-      id
-      path
-    }
   }
 }
 </page-query>
