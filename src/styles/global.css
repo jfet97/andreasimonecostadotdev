@@ -1,0 +1,5 @@
+/* global.css */
+@tailwind base;
+@tailwind components;
+/* Add your btn/input/etc components here */
+@tailwind utilities;
