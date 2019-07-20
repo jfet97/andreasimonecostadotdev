@@ -7,3 +7,5 @@ cover_image: /uploads/io_512px.jpg
 ---
 
 io mi chiamo simone e sono bello :)
+
+![Image](/uploads/io_512px.jpg)
