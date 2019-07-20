@@ -1,14 +1,9 @@
 ---
-title: testata
+title: asyncgens
 description: chenneso
 date: 2019-07-19T19:45:42.965Z
 published: true
 cover_image: /uploads/io_512px.jpg
 ---
-ehehehhe
-
-# ciaone
-
-
 
 io mi chiamo simone e sono bello :)
