@@ -15,6 +15,7 @@
     <ul>
       <li v-for="(post, i) in $page.allPost.edges" :key="i">
         <g-link :to="post.node.path">{{post.node.path}}</g-link>
+        <g-image :src="post.node.cover_image" style="width:30px" />
       </li>
     </ul>
   </Layout>
@@ -30,6 +31,7 @@ query {
         title
         published
         path
+				cover_image
       }
     }
   }
