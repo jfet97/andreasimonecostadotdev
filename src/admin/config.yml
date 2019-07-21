@@ -22,7 +22,6 @@ collections:
       - {label: "Body", name: "body", widget: "markdown"}
 			- {label: "Tags", name: "tags", widget: "list"}
 			- {label: "Tags", name: "tags", widget: "relation", collection: "tags", displayFields: ["title"], searchFields: ["title"], valueField: "title", multiple: true}
-			- {label: "Tagse", name: "tagse", widget: "relation", default: "list", collection:"tags", valueField:"ahem", searchFields:"ahem"}
   - name: "tags" # Used in routes, e.g.,
     label: "tags" # Used in the UI
     folder: "/tags" # The path to the folder where the documents are stored
