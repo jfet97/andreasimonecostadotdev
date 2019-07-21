@@ -6,13 +6,14 @@
     <span>Autore</span>
     <br />
     <span>Tags</span>
-    <br />
-		<g-image :src="$page.post.cover_image" width="150" alt="A person" fit="cover"/> <!-- nn si riesce di settare l'atezza/larghezza...no buono -->
     <ul>
-      <li v-for="tag in $page.post.tags" :key="tag.id">
+      <li v-for="(tag, i) in $page.post.tags" :key="i">
         <g-link :to="`${tag.path}`">#{{ tag.id }}</g-link>
       </li>
     </ul>
+    <br />
+    <g-image :src="$page.post.cover_image" width="150" alt="A person" fit="cover" />
+    <!-- nn si riesce di settare l'atezza/larghezza...no buono -->
   </Layout>
   <!-- inserire cover image qua -->
 </template>
@@ -23,6 +24,10 @@ query Post ($path: String!) {
     title
     content
     path
+		tags {
+			id
+			path
+		}
 		cover_image
   }
 }
@@ -34,6 +39,9 @@ export default {
     return {
       title: this.$page.post.title
     };
+  },
+  created() {
+    console.log({ post: this.$page.post });
   }
 };
 </script>
