@@ -29,6 +29,7 @@ module.exports = {
 				typeName: 'Post',
 				route: '/blog/:slug',
 				refs: {
+					// Post(tags) -> Tag(id which we have overwritten)
 					tags: "Tag"
 				}
 			}
