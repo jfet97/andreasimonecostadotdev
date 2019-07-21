@@ -19,7 +19,7 @@ module.exports = {
 			options: {
 				path: 'content/tags/**/*.md',
 				typeName: 'Tag',
-				route: '/tag/:slug'
+				route: '/tag/:id'
 			}
 		},
 		{
