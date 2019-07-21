@@ -26,6 +26,7 @@ collections:
     folder: "/content/tags" # The path to the folder where the documents are stored
     create: true # Allow users to create new documents in this collection
     slug: "{{id}}" # Filename template, e.g., YYYY-MM-DD-title.
-    fields: # The fields for each document, usually in front matter
-      - {label: "Title", name: "id", widget: "string"}
+		fields: # The fields for each document, usually in front matter
+			- {label: "Title", name: "title", widget: "string"}
+      - {label: "Id", name: "id", widget: "string", default: "must be the same as the title"}
       - {label: "Description", name: "description", widget: "string"}
