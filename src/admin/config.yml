@@ -20,10 +20,9 @@ collections:
       - {label: "Published", name: "published", widget: "boolean", default: false}
       - {label: "Cover", name: 'cover_image', widget: 'image'}
       - {label: "Body", name: "body", widget: "markdown"}
-			- {label: "Tags", name: "tags", widget: "list"}
-			- {label: "Tags", name: "tags", widget: "relation", collection: "tags", displayFields: ["title"], searchFields: ["title"], valueField: "title", multiple: true}
+      - {label: "Tags", name: "tags", widget: "relation", collection: "tags", displayFields: ["title"], searchFields: ["title"], valueField: "title", multiple: true}
   - name: "tags" # Used in routes, e.g.,
-    label: "tags" # Used in the UI
+    label: "Tags" # Used in the UI
     folder: "/tags" # The path to the folder where the documents are stored
     create: true # Allow users to create new documents in this collection
     slug: "{{title}}" # Filename template, e.g., YYYY-MM-DD-title.
