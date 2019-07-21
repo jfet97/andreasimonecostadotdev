@@ -8,7 +8,7 @@
     <span>Tags</span>
     <ul>
       <li v-for="(tag, i) in $page.post.tags" :key="i">
-        <g-link :to="`${tag.path}`">#{{ tag.id }}</g-link>
+        <g-link :to="`${tag.path}`">#{{ tag.title }}</g-link>
       </li>
     </ul>
     <br />
@@ -25,7 +25,7 @@ query Post ($path: String!) {
     content
     path
 		tags {
-			id
+			title
 			path
 		}
 		cover_image
