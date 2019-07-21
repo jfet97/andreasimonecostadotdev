@@ -28,5 +28,5 @@ collections:
     slug: "{{id}}" # Filename template, e.g., YYYY-MM-DD-title.
     fields: # The fields for each document, usually in front matter
       - {label: "Title", name: "title", widget: "string"}
-      - {label: "Id", name: "id", widget: "string"}
+      - {label: "Id", name: "id", widget: "string", default: "MUST BE EQUAL TO THE TITLE"}
       - {label: "Description", name: "description", widget: "string"}
