@@ -7,12 +7,14 @@
     <br />
     <span>Tags</span>
     <br />
+		<g-image :src="$page.post.cover_image" width="150" alt="A person" fit="cover"/> <!-- nn si riesce di settare l'atezza/larghezza...no buono -->
     <ul>
       <li v-for="tag in $page.post.tags" :key="tag.id">
         <g-link :to="`${tag.path}`">#{{ tag.id }}</g-link>
       </li>
     </ul>
   </Layout>
+  <!-- inserire cover image qua -->
 </template>
 
 <page-query>
@@ -21,6 +23,7 @@ query Post ($path: String!) {
     title
     content
     path
+		cover_image
   }
 }
 </page-query>
