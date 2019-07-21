@@ -6,5 +6,6 @@ published: true
 cover_image: /uploads/io_512px.jpg
 tags:
   - javascript
+  - typescript
 ---
 Uhm fatemi capire, se io scrivo qua poi tutto magicamente funziona??? naaaaaaaaaah non ci credo manco morto
