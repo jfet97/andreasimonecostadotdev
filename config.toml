@@ -1,0 +1,75 @@
+baseURL = "http://www.example.com"
+title = "andrea simone costa"
+theme = "hugo-coder"
+languageCode = "en"
+defaultContentLanguage = "en"
+paginate = 20
+pygmentsStyle = "dracula"
+pygmentsCodeFences = true
+pygmentsCodeFencesGuessSyntax = true
+enableEmoji = true
+
+[params]
+author = "Andrea Simone Costa"
+description = "Andrea Simone Costa's personal website"
+keywords = "blog,developer,personal,fp,javascript,typescript"
+info = "Software Craftsman"
+avatarURL = "images/avatar.jpg"
+footerContent = "I assure you, brother, the sun will shine on us again."
+dateFormat = "January 2, 2006"
+hideFooter = false
+hideCredits = true
+hideCopyright = false
+since = 1997
+favicon_32 = "images/favicon.png"
+# Right To Left, shift content direction for languagues such as Arabic
+rtl = false
+# Specify light/dark colorscheme
+# Supported values:
+# "auto" (use preference set by browser)
+# "dark" (dark background, light foreground)
+# "light" (light background, dark foreground) (default)
+colorScheme = "auto"
+# Hide the toggle button, along with the associated vertical divider
+hideColorSchemeToggle = false
+# Series see also post count
+maxSeeAlsoItems = 5
+# Enable Twemoji
+enableTwemoji = true
+# Custom CSS
+customCSS = []
+# Custom SCSS
+customSCSS = []
+# Custom JS
+customJS = []
+# beh
+googleAnalytics = "G-YHRL7RMLZ7"
+
+[[menu.main]]
+name = "Blog"
+weight = 1
+url  = "posts/"
+
+[[params.social]]
+name = "Github"
+icon = "fa fa-github"
+weight = 1
+url = "https://github.com/jfet97"
+
+[[params.social]]
+name = "Twitter"
+icon = "fa fa-twitter"
+weight = 3
+url = "https://twitter.com/JFieldEffectT"
+
+[[params.social]]
+name = "LinkedIn"
+icon = "fa fa-linkedin"
+weight = 4
+url = "https://www.linkedin.com/in/andrea-simone-costa/"
+
+[[params.social]]
+name = "Telegram"
+icon = "fa fa-telegram"
+weight = 5
+url = "https://t.me/jfet97"
