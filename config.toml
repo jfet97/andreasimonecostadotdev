@@ -42,8 +42,6 @@ customCSS = []
 customSCSS = []
 # Custom JS
 customJS = []
-# beh
-googleAnalytics = "G-YHRL7RMLZ7"
 
 [[menu.main]]
 name = "Blog"
