@@ -1,7 +1,7 @@
 +++
 author = "Andrea Simone Costa"
 title = "JavaScript Iterators and Generators: Synchronous Generators"
-date = "2019-08-25"
+date = "2019-09-01"
 description = "All you should need to know about JavaScript Synchronous Generators."
 categories = ["javascript"]
 series = ["JavaScript Iterators and Generators"]
