@@ -100,3 +100,28 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   theme = "github-dark"
   enable = true
   label = "Comment"
+
+
+[params.csp]
+  childsrc = ["'self'"]
+  fontsrc = [
+    "'self'",
+    "https://cdn.jsdelivr.net/"
+  ]
+  formaction = ["'self'"]
+  framesrc = ["'self'"]
+  imgsrc = ["'self'", "'https://twemoji.maxcdn.com'"]
+  objectsrc = ["'none'"]
+  stylesrc = [
+    "'self'",
+    "'unsafe-inline'",
+    "'https://cdn.jsdelivr.net'/",
+  ]
+  scriptsrc = [
+    "'self'",
+    "'unsafe-inline'",
+    "'https://www.googletagmanager.com'",
+    "'https://twemoji.maxcdn.com'",
+  ]
+  prefetchsrc = ["'self'"]
+  connectsrc = ["'self'"]
