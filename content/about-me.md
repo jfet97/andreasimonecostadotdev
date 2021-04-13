@@ -11,7 +11,7 @@ const myself = {
   middle_name: "Simone",
   surname: "Costa",
   age: 23,
-  country: "Italy"
+  country: "Italy",
   nickname: "jfet97",
   interests: ["functional programming", "computer science", "category theory"],
   occupation: "Software Craftsman @ ExTelos",
