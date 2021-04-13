@@ -15,7 +15,7 @@ description = "Andrea Simone Costa's personal website"
 keywords = "blog,developer,personal,fp,javascript,typescript"
 info = "Software Craftsman"
 avatarURL = "images/avatar.jpg"
-footerContent = "I assure you, brother, the sun will shine on us again."
+footerContent = "💻 Computer Scientist wannabe at @UniPisa, contravariant JS | TS developer."
 dateFormat = "January 2, 2006"
 hideFooter = false
 hideCredits = true
@@ -48,6 +48,11 @@ name = "Blog"
 weight = 1
 url  = "posts/"
 
+[[menu.main]]
+name = "Courses"
+weight = 1
+url  = "/courses"
+
 [[params.social]]
 name = "Github"
 icon = "fa fa-github"
@@ -61,16 +66,23 @@ weight = 3
 url = "https://twitter.com/JFieldEffectT"
 
 [[params.social]]
+name = "Telegram"
+icon = "fa fa-telegram"
+weight = 5
+url = "https://t.me/jfet97"
+
+[[params.social]]
 name = "LinkedIn"
 icon = "fa fa-linkedin"
 weight = 4
 url = "https://www.linkedin.com/in/andrea-simone-costa/"
 
 [[params.social]]
-name = "Telegram"
-icon = "fa fa-telegram"
-weight = 5
-url = "https://t.me/jfet97"
+name = "YouTube"
+icon = "fa fa-youtube"
+weight = 4
+url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
+
 
 [taxonomies]
   category = "categories"
