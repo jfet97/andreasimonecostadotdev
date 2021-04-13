@@ -23,3 +23,9 @@ const myself = {
 &nbsp;
 
 I hope my code is better than my description.
+
+&nbsp;
+
+### My Communities
+
+* [Vue.js Italia](https://t.me/vuejs_ita_aggiornamenti)
