@@ -71,3 +71,8 @@ name = "Telegram"
 icon = "fa fa-telegram"
 weight = 5
 url = "https://t.me/jfet97"
+
+[taxonomies]
+  category = "categories"
+  series = "series"
+  tag = "tags"

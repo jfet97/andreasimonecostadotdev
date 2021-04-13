@@ -3,21 +3,22 @@ author = "Andrea Simone Costa"
 title = "The shortest way to conditionally insert properties into an object literal"
 date = "2019-03-27"
 description = "Conditionally adding properties into an object could be done in many ways. This article explain why and how the shortest known solution works!"
+categories = ["javascript"]
 tags = [
-    "javascript",
     "objects",
-    "beginners",
     "specification",
 ]
 +++
 
 What am I ranting about?
 I'm talking about this:
+
 ```js
 const obj = {
     ...condition && { prop: value },
 };
 ```
+
 Trust me, this is perfectly acceptable and executable JavaScript.
 
 Surprised? Shaken up? Aghast? Maybe just intrigued?
@@ -25,7 +26,8 @@ Bear with me for few lines, I'll try to explain what's going on thanks to the EC
 It won't be so boring, I `new Promise()`.
 
 ## Example
-I'll start with an example to clarify the situation. 
+
+I'll start with an example to clarify the situation.
 Here a weird and not to be imitated at home `query` object is being constructed taking values from the result of a form previously submitted.
 Only two fields are mandatory: the requested _collection_ and the _sort ordering_, which for simplicity are hardcoded.
 On the contrary, the _state_ and the _priority_ could be absent in the `formValues` object, so they should be conditionally inserted into the `query` object.
@@ -44,6 +46,7 @@ const query = {
 
 await doQuery(query);
 ```
+
 If the `formValues` object doesn't own one or more of the conditional properties, not even the resulting `query` object will have it/them.
 
 ## Explanation
@@ -62,8 +65,9 @@ The spec says the expression should be evaluated and the result must be fed to t
 Now we can define what is an abstract operation: a list of tasks performed internally by the JavaScript engine. Later we will focus more on those that compose the `CopyDataProperties` abstract operation.
 
 Let's recap what we learned so far:
+
 1. the conditional expression will be immediately evaluated
-2. the result of that evaluation will be taken by the `CopyDataProperties` abstract operation, which is responsible of the properties cloning and insertion 
+2. the result of that evaluation will be taken by the `CopyDataProperties` abstract operation, which is responsible of the properties cloning and insertion
 
 ### The logical && operator
 
@@ -88,25 +92,31 @@ expr2 && expr3;    // null
 ```
 
 Therefore, what if our _condition_ is a __truthy__ value? We could transform the initial code:
+
 ```js
 const obj = {
     ...condition && { prop: value },
 };
 ```
+
 into:
+
 ```js
 const obj = {
     ...{ prop: value },
 };
 ```
+
 We don't need to know what will the `CopyDataProperties` abstract operation do to understand the final result: the inner object will be spreaded and its property will be cloned into `obj`.
 
 On the contrary, what if our _condition_ is a __falsy__* value? We run in the following situation:
+
 ```js
 const obj = {
     ...condition,
 };
 ```
+
 And here's where things get interesting.
 
 ### The CopyDataProperties abstract operation
@@ -115,18 +125,23 @@ And here's where things get interesting.
 
 The point number __3__ says something newsworthy: if a __null__ value or an __undefined__ value will be encountered, no operation will be performed.
 So we can end up in the situation where the _condition_ results into __null__ or __undefined__ with no problems:
+
 ```js
 const obj = {
     ...null,
 };
 ```
+
 and:
+
 ```js
 const obj = {
     ...undefined,
 };
 ```
+
 are equivalent to:
+
 ```js
 const obj = {
 };
@@ -144,26 +159,31 @@ It is worth noting that, in our case, the resulting wrapper objects have no own 
 No own properties means the end of the `CopyDataProperties` abstract operation, which will have no properties to clone.
 
 So we can transform the last partial result:
+
 ```js
 const obj = {
     ...condition,
 };
 ```
+
 into:
+
 ```js
 const obj = {
     ...{},
 };
 ```
+
 Without any side effect!
 
 ## Conclusion
+
 I hope I was able to explain everything in the best possible way 😃
 
 English is not my mother tongue, so errors are just around the corner.
 Feel free to comment with corrections!
 I hope to see you there again 🙂 and on [twitter](https://twitter.com/JFieldEffectT)!
 
+&nbsp;
 
-\* <sub><sup>One of false, 0, empty string, null, undefined and NaN</sub></sup>.
-
+\* One of false, 0, empty string, null, undefined and NaN.

@@ -1,9 +1,8 @@
-non funziona google analytics non importa il file js
-taxonomies
+lingue
 
-server -D --gc
+hugo server -D --gc
 
 
 https://www.freecodecamp.org/news/how-to-build-a-blog-using-a-static-site-generator-and-a-cdn/
-https://gohugo.io/templates/internal/#configure-google-analytics
+
 https://analytics.google.com/analytics/web/?authuser=0#/p268739279/realtime/overview?params=_u..nav%3Ddefault
