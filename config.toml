@@ -76,3 +76,8 @@ url = "https://t.me/jfet97"
   category = "categories"
   series = "series"
   tag = "tags"
+
+[params.utterances]
+  repo = "jfet97/blog-comments"
+  issueTerm = "pathname"
+  theme = "github-dark"
