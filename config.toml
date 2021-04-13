@@ -110,7 +110,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   ]
   formaction = ["'self'"]
   framesrc = ["'self'"]
-  imgsrc = ["'self'", "'https://twemoji.maxcdn.com'"]
+  imgsrc = ["'self'", "'https://twemoji.maxcdn.com/'"]
   objectsrc = ["'none'"]
   stylesrc = [
     "'self'",
@@ -120,8 +120,8 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   scriptsrc = [
     "'self'",
     "'unsafe-inline'",
-    "'https://www.googletagmanager.com'",
-    "'https://twemoji.maxcdn.com'",
+    "'https://www.googletagmanager.com/'",
+    "'https://twemoji.maxcdn.com/'",
   ]
   prefetchsrc = ["'self'"]
   connectsrc = ["'self'"]
