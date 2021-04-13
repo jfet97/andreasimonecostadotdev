@@ -119,6 +119,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   ]
   scriptsrc = [
     "'self'",
+    "'unsafe-inline'",
     "https://twemoji.maxcdn.com/",
     "https://gc.zgo.at",
   ]
