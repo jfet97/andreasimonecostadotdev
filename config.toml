@@ -8,10 +8,8 @@ pygmentsStyle = "dracula"
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
 enableEmoji = true
-featuredImage = "images/avatar.jpg"
 
 [params]
-featuredImage = "images/avatar.jpg"
 author = "Andrea Simone Costa"
 description = "Andrea Simone Costa's personal website."
 keywords = "blog,developer,personal,fp,javascript,typescript"
