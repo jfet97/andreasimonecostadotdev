@@ -110,7 +110,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   ]
   formaction = ["'self'"]
   framesrc = ["'self'"]
-  imgsrc = ["'self'", "https://twemoji.maxcdn.com/"]
+  imgsrc = ["'self'", "https://twemoji.maxcdn.com/", "https://jfet97.goatcounter.com/count"]
   objectsrc = ["'none'"]
   stylesrc = [
     "'self'",
@@ -120,7 +120,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   scriptsrc = [
     "'self'",
     "https://twemoji.maxcdn.com/",
-    "https://gc.zgo.at/count.js",
+    "https://gc.zgo.at",
   ]
   prefetchsrc = ["'self'"]
   connectsrc = ["'self'"]
