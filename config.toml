@@ -120,6 +120,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   scriptsrc = [
     "'self'",
     "https://twemoji.maxcdn.com/",
+    "https://gc.zgo.at/count.js",
   ]
   prefetchsrc = ["'self'"]
   connectsrc = ["'self'"]
