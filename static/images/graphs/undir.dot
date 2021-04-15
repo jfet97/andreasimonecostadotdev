@@ -1,0 +1,22 @@
+strict digraph {
+    graph [bgcolor=transparent]
+    node [ fontname=Arial fontsize=20];
+    
+    1 [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=3]
+    2 [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=3]
+    3 [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=3]
+    4 [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=3]
+    5 [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=3]
+    6 [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=3]
+    
+    { rank=same 1 2 3 }
+    { rank=same 4 5 6 }
+    
+    1 -> 4 [color="#3ba3db" arrowhead=none penwidth=3]
+    1 -> 2 [color="#3ba3db" arrowhead=none penwidth=3]
+    2 -> 3 [color="#3ba3db" arrowhead=none penwidth=3]
+    2 -> 4 [color="#3ba3db" arrowhead=none penwidth=3]
+    3 -> 4 [color="#3ba3db" arrowhead=none penwidth=3]
+    3 -> 6 [color="#3ba3db" arrowhead=none penwidth=3]
+    3 -> 5 [color="#3ba3db" arrowhead=none penwidth=3]
+}
