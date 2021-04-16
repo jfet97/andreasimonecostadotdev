@@ -37,8 +37,6 @@
 
         const [utt] = [...document.querySelectorAll("iframe.utterances-frame")]
 
-        console.log(utt.contentWindow)
-
         const message = {
             type: 'set-theme',
             theme: `github-${color}`,
