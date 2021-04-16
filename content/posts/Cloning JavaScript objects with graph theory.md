@@ -57,7 +57,6 @@ const qux = {
 
 We can see them like four lonely nodes:
 
-
 But after having set up the following links between them:
 
 ```js
@@ -72,10 +71,8 @@ qux.bar = bar;
 
 our graph starts to get some edges as well:
 
-
 where if then there is a directed edge because from we can reach out
 
 ## Depth-first Search
 
 One of the most famous algorithm for traversing a graph is the Depth-first search. The algorithm starts at one chosen node and explores as far as possible along each branch before backtracking. It is usually written recursively, but a simple iterative version can be obtained by using a stack data structure (LIFO).
-
