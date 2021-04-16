@@ -123,6 +123,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
     "'unsafe-inline'",
     "https://twemoji.maxcdn.com/",
     "https://gc.zgo.at",
+    "https://utteranc.es/client.js",
   ]
   prefetchsrc = ["'self'"]
   connectsrc = ["'self'"]

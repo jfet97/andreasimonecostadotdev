@@ -353,7 +353,7 @@ const useFetch = (url, cleanup) => {
 
     cleanup(() => controller.abort()) // <--
 
-    return { dataRef, errorMessageRef, isPendingRef } 
+    return { dataRef, errorMessageRef, isPendingRef }
 }
 ```
 
