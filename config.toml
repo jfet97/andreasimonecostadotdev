@@ -110,7 +110,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
     "https://cdn.jsdelivr.net/"
   ]
   formaction = ["'self'"]
-  framesrc = ["'self'"]
+  framesrc = ["'self'", "https://utteranc.es"]
   imgsrc = ["'self'", "https://twemoji.maxcdn.com/", "https://jfet97.goatcounter.com/count"]
   objectsrc = ["'none'"]
   stylesrc = [
@@ -123,7 +123,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
     "'unsafe-inline'",
     "https://twemoji.maxcdn.com/",
     "https://gc.zgo.at",
-    "https://utteranc.es/client.js",
+    "https://utteranc.es",
   ]
   prefetchsrc = ["'self'"]
   connectsrc = ["'self'"]
