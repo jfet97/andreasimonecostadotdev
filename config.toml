@@ -42,7 +42,7 @@ customCSS = []
 # Custom SCSS
 customSCSS = []
 # Custom JS
-customJS = ["js/svg.js"]
+customJS = ["js/svg.js", "js/utts.js"]
 
 [[menu.main]]
 name = "Blog"
