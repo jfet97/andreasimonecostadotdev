@@ -1,0 +1,17 @@
+strict digraph {
+    graph [bgcolor=transparent nodesep=1]
+    node [ fontname=Arial fontsize=20];
+
+    foo [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=2]
+    bar [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=2]
+    baz [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=2]
+    qux [shape="circle" color="#3ba3db" fontcolor="#3ba3db" penwidth=2]
+
+    foo -> bar [minlen=2 color="#3ba3db"]
+    bar -> baz [minlen=2 color="#3ba3db"]
+    baz -> qux [minlen=2 color="#3ba3db"]
+    qux -> bar [minlen=2 color="#3ba3db"]
+
+    { rank=same foo bar }
+    { rank=same baz qux }
+}
