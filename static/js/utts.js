@@ -35,6 +35,8 @@
 
     function setUttColor(color) {
 
+        const toSet = color === "dark" ? "light" : "dark";
+
         const [utt] = [...document.querySelectorAll("iframe.utterances-frame")]
 
         const message = {
