@@ -336,7 +336,7 @@ That's because `useSwitchMapO` is magic enough, like the `useSwitchMap` 🦄🦄
 
 Moreover, you can always use the `cleanup` function argument to set up a cleaup function, e.g. to stop an asynchronous computation:
 
-```js
+```javascript
 const useFetch = (url, cleanup) => {
     const dataRef = ref(null)
     const errorMessageRef = ref("")
