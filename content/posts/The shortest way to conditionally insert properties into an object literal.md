@@ -8,6 +8,8 @@ tags = [
     "objects",
     "specification",
 ]
+featuredImage = "/images/shortest/1.png"
+images = ["/images/shortest/1.png"]
 +++
 
 What am I ranting about?

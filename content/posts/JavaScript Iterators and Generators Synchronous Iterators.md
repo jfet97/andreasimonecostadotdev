@@ -10,6 +10,7 @@ tags = [
     "iterators",
 ]
 featuredImage = "/images/jsitgen/1.png"
+images = ["/images/jsitgen/1.png"]
 +++
 
 __Series__: [JavaScript Iterators and Generators](/series/javascript-iterators-and-generators/)

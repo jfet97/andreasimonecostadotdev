@@ -6,6 +6,8 @@ description = "Let's learn something about graph theory to properly clone JavaSc
 categories = ["javascript"]
 tags = ["objects", "graphs", "graph theory"]
 featuredImage = "/images/graphs/beee.jpg"
+images = ["/images/graphs/beee.jpg"]
+draft = true
 +++
 
 ## Introduction

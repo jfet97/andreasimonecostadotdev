@@ -10,6 +10,7 @@ tags = [
     "monads",
 ]
 featuredImage = "/images/vue-refs-monad/1.png"
+images = ["/images/vue-refs-monad/1.png"]
 +++
 
 # tl;dr

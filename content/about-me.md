@@ -3,6 +3,7 @@ title = "About Me"
 description = "whoami"
 aliases = ["about-me", "myself"]
 author = "Andrea Simone Costa"
+images = ["images/avatar.jpg"]
 +++
 
 ```ts

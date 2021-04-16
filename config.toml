@@ -15,6 +15,7 @@ description = "Andrea Simone Costa's personal website."
 keywords = "blog,developer,personal,fp,javascript,typescript"
 info = "Software Craftsman"
 avatarURL = "images/avatar.jpg"
+images = ["images/avatar.jpg"]
 footerContent = "💻 Computer Scientist wannabe at @UniPisa, contravariant JS | TS developer."
 dateFormat = "January 2, 2006"
 hideFooter = false
