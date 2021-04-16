@@ -41,7 +41,7 @@
 
         const message = {
             type: 'set-theme',
-            theme: `github-${color}`,
+            theme: `github-${toSet}`,
         };
 
         utt.contentWindow.postMessage(message, 'https://utteranc.es');
