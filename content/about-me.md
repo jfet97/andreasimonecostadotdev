@@ -29,4 +29,4 @@ I hope my code is better than my description.
 
 ### My Communities
 
-* [Vue.js Italia](https://t.me/vuejs_ita_aggiornamenti)
+* [Vue.js Italia](https://t.me/vue_ita)
