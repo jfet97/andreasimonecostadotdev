@@ -133,7 +133,9 @@ function safePrint(obj) {
 
 Understanding this function is not so important, feel free to skip it. Its purpose is providing a safe way to print the fist-level fields of objects that may have circular references.
 
-Now it's time for the depth first search:
+&nbsp;
+
+Now it's time for the depth first search!
 
 ```js
 // it does the hard work, traversing the graph
@@ -168,7 +170,7 @@ function DFS(obj) {
 Nothing so scary, right?\
 It uses a `Set` to avoid re-analazying a node that has been already visited, so that the graph visit does end. That's because a graph can have cycles, that is a path that starts from a node and at the end returns to the node from which it has started. In the world of JavaScript objects it translates in the fact that there could be circular references. An object can even be self-referencing!
 
-So if we have already visited a node we return immediately. Otherwise we print its frst-level fields to then visit recursively its neighborhood. This is a DFS!
+So if we have already visited a node we immediately return. Otherwise we print its first-level fields to then visit recursively its neighborhood. This is a DFS!
 
 Obviously the output will be different based on the starting node. Calling the `DFS` function on `foo` will print:
 
@@ -209,3 +211,93 @@ Instead, if we called it on `qux` we'll have:
 ```
 
 It's not possible to reach out `foo` from `qux`, neither with a first-level reference nor with any path in the graph.
+&nbsp;
+
+## Object cloning
+
+Here we are! Let's see how we can reuse what we have just learned about graph traversing. Our goal is to clone the object while we traverse the graph, but we cannot simply clone
+all the properties as they are. That's because if a property is a reference to an object `X`, we have to set up a connection not to `X` but to the clone of `X`.\
+To solve this problem we split the cloning operation of a object in two steps:
+
+1. clone all the properties that are not reference to other objects
+2. clone the adjacent objects setting up the references to the new objects
+
+First let's introduce another function.
+
+### cloneNonObjectProperties
+
+```js
+function cloneNonObjectProperties(obj) {
+    return Object.fromEntries(
+        Object.entries(obj).filter(([, v]) => !isObject(v))
+    )
+}
+```
+
+This function is exactly what we need to accomplish the first step. How does it work?
+
+```js
+
+{ a: 1, b: 2, c: {} }
+|
+v
+Object.entries
+|
+v
+[["a", 1], ["b", 2], ["c", {}]]
+|
+v
+filter
+|
+v
+[["a", 1], ["b", 2]]
+|
+v
+Object.fromEntries
+|
+v
+{ a: 1, b: 2 }
+
+```
+
+&nbsp;
+
+Now it's time for the big boy!
+
+```js
+function cloneNode(obj, helperDict) {
+
+    // if we have already encountered this node
+    // we can just return its clone reference
+    if(helperDict.has(obj)) {
+        return helperDict.get(obj)
+    }
+
+    // otherwise we start by cloning non object properties
+    const clonedNode = cloneNonObjectProperties(obj);
+
+    // then we set the just cloned reference as the obj clone
+    // to avoid reworks on it
+    helperDict.set(obj, clonedNode)
+
+    // now we recursively clone each object reachable by the current node
+    for (const [k, n] of getAdjacentNodes(obj)) {
+        const clonedAdjacentNode = cloneNode(n, helperDict);
+
+        // we can set the new reference on the cloned obj
+        clonedNode[k] = clonedAdjacentNode
+    }
+
+    return clonedNode;
+}
+
+function cloneGraph(obj) {
+    return cloneNode(obj, new Map())
+}
+```
+
+So if we have already visited a node we immediately return its clone. Otherwise we clone its primitive fields, to then clone recursively its neighborhood. After that we are able to set up the references to those new objects. Those references correspond to the ones that the original object had toward other objects.
+
+The use of the `helperDict` is a fundamental piece of the puzzle: it both avoids to revisit already traversed nodes, like the `visitedNodes` `Set` in the `DFS` function did, and keeps track of the new objects corresponding to the original ones. It uses the objects of the old graph as keys and the already cloned objects as values.
+
+In the recursive step we may recounter the object from which the trip has started: in such a case it's essential to already have a reference to its cloned counterpart, even if we know that it will be incomplete, in order to at least set up the new reference. Otherwise we would end up in an infinite recursion, in which to complete the cloning of an object `X` we must before complete the cloning of `X` itself. Furthermore, from the recursive call performed on the adjacent node `n` we expect the reference to the cloned version of `n`, so it is mandatory to always return the reference to the clone of the input node `obj`. That's why every time we encounter an object again we need to use the `helperDict` to retrieve its clone reference.
