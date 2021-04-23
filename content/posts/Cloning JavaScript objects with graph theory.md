@@ -302,4 +302,6 @@ The use of the `helperDict` is a fundamental piece of the puzzle: it both avoids
 
 In the recursive step we may recounter the object from which the trip has started: in such a case it's essential to already have a reference to its cloned counterpart, even if we know that it will be incomplete, in order to at least set up the new reference. Otherwise we would end up in an infinite recursion, in which to complete the cloning of an object `X` we must before complete the cloning of `X` itself. Furthermore, from the recursive call performed on the adjacent node `n` we expect the reference to the cloned version of `n`, so it is mandatory to always return the reference to the clone of the input node `obj`. That's why every time we encounter an object again we need to use the `helperDict` to retrieve its clone reference.
 
+### Conclusion
+
 That's all folks! Graphs are a very interesting and broad topic, I hope this article has teased you enough to delve into this wonderful side of the computer science!
