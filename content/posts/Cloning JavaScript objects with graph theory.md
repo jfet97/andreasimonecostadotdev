@@ -105,7 +105,7 @@ Well you know, it's JavaScript. You can never be too sure eheh.
 function getAdjacentNodes(obj) {
     return (
         Object.entries(obj)
-        .filter(([, v]) => isObject(v));
+        .filter(([, v]) => isObject(v))
     )
 }
 ```
