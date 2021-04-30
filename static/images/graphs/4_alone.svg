@@ -19,7 +19,7 @@
         <g id="node3" class="node">
             <title>baz</title>
             <ellipse fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="2" cx="30.9341" cy="-30.9341" rx="30.9341" ry="30.9341" />
-            <text text-anchor="middle" x="30.9341" y="-28.108" font-family="Arial" font-size="20.00"
+            <text text-anchor="middle" x="30.9341" y="-25.108" font-family="Arial" font-size="20.00"
                 class="jfet-fill" fill="#3ba3db">baz</text>
         </g>
         <!-- bar -->
@@ -34,7 +34,7 @@
             <title>qux</title>
             <ellipse fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="2" cx="174.108" cy="-30.9341" rx="30.9341"
                 ry="30.9341" />
-            <text text-anchor="middle" x="174.108" y="-28.108" font-family="Arial" font-size="20.00"
+            <text text-anchor="middle" x="174.108" y="-25.108" font-family="Arial" font-size="20.00"
                 class="jfet-fill" fill="#3ba3db">qux</text>
         </g>
     </g>
