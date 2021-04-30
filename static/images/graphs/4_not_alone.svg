@@ -1,249 +1,96 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="81.286568mm"
-   height="45.282818mm"
-   viewBox="0 0 81.286568 45.282818"
-   version="1.1"
-   id="svg8"
-   inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"
-   sodipodi:docname="4_not_alone.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="151.69681"
-     inkscape:cy="48.750277"
-     inkscape:document-units="mm"
-     inkscape:current-layer="graph0"
-     inkscape:document-rotation="0"
-     showgrid="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1361"
-     inkscape:window-x="3831"
-     inkscape:window-y="356"
-     inkscape:window-maximized="1"
-     inkscape:pagecheckerboard="true"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Livello 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     style="display:inline"
-     transform="translate(-52.330055,-122.26713)">
-    <g
-       id="graph0"
-       class="graph"
-       transform="matrix(0.25374924,0,0,0.25374924,77.548452,98.087265)">
-      <title
-         id="title833">%0</title>
-      <!-- foo -->
-      <g
-         id="node1"
-         class="node"
-         transform="translate(-98.416044,300.18539)">
-        <title
-           id="title835">foo</title>
-        <circle
-           fill="none"
-           class="jfet-stroke"
-           stroke="#3ba3db"
-           stroke-width="2"
-           cx="30.966999"
-           cy="-172.96091"
-           id="ellipse837"
-           r="30.934099" />
-        <text
-           text-anchor="middle"
-           x="30.966999"
-           y="-166.96091"
-           font-family="Arial"
-           font-size="20px"
-           class="jfet-fill"
-           fill="#3ba3db"
-           id="text839">foo</text>
-      </g>
-      <!-- bar -->
-      <g
-         id="node2"
-         class="node"
-         transform="translate(-133.92201,300.18539)">
-        <title
-           id="title842">bar</title>
-        <circle
-           fill="none"
-           class="jfet-stroke"
-           stroke="#3ba3db"
-           stroke-width="2"
-           cx="236.967"
-           cy="-172.96091"
-           id="ellipse844"
-           r="30.934099" />
-        <text
-           text-anchor="middle"
-           x="236.967"
-           y="-166.96091"
-           font-family="Arial"
-           font-size="20px"
-           class="jfet-fill"
-           fill="#3ba3db"
-           id="text846">bar</text>
-      </g>
-      <!-- foo&#45;&gt;bar -->
-      <g
-         id="edge1"
-         class="edge"
-         transform="matrix(0.74520252,0,0,1,-81.829781,300.18539)">
-        <title
-           id="title849">foo-&gt;bar</title>
-        <path
-           fill="none"
-           class="jfet-stroke"
-           stroke="#3ba3db"
-           d="m 61.9475,-172.9609 c 44.386,0 88.7721,0 133.1581,0"
-           id="path851" />
-        <polygon
-           class="jfet-fill"
-           fill="#3ba3db"
-           points="205.1764,-172.9609 195.1763,-169.461 195.1764,-176.461 "
-           id="polygon853" />
-      </g>
-      <!-- baz -->
-      <g
-         id="node3"
-         class="node"
-         transform="translate(-104.87775,272.92236)">
-        <title
-           id="title856">baz</title>
-        <circle
-           fill="none"
-           class="jfet-stroke"
-           stroke="#3ba3db"
-           stroke-width="2"
-           cx="122.967"
-           cy="-34.108002"
-           id="ellipse858"
-           r="30.934099" />
-        <text
-           text-anchor="middle"
-           x="122.967"
-           y="-28.108"
-           font-family="Arial"
-           font-size="20px"
-           class="jfet-fill"
-           fill="#3ba3db"
-           id="text860">baz</text>
-      </g>
-      <!-- bar&#45;&gt;baz -->
-      <!-- qux -->
-      <g
-         id="node4"
-         class="node"
-         transform="translate(-145.94213,275.91927)">
-        <title
-           id="title870">qux</title>
-        <circle
-           fill="none"
-           class="jfet-stroke"
-           stroke="#3ba3db"
-           stroke-width="2"
-           cx="334.96701"
-           cy="-34.108002"
-           id="ellipse872"
-           r="30.934099" />
-        <text
-           text-anchor="middle"
-           x="334.96701"
-           y="-28.108"
-           font-family="Arial"
-           font-size="20px"
-           class="jfet-fill"
-           fill="#3ba3db"
-           id="text874">qux</text>
-      </g>
-      <!-- baz&#45;&gt;qux -->
-      <!-- qux&#45;&gt;bar -->
-      <g
-         id="edge1-0"
-         class="edge"
-         transform="matrix(0.75163713,0,0,1,3.3812411,413.12105)">
-        <title
-           id="title849-1">foo-&gt;bar</title>
-        <path
-           fill="none"
-           class="jfet-stroke"
-           stroke="#3ba3db"
-           d="m 61.9475,-172.9609 c 44.386,0 88.7721,0 133.1581,0"
-           id="path851-5" />
-        <polygon
-           class="jfet-fill"
-           fill="#3ba3db"
-           points="205.1764,-172.9609 195.1763,-169.461 195.1764,-176.461 "
-           id="polygon853-8" />
-      </g>
-      <g
-         id="edge1-0-2"
-         class="edge"
-         transform="matrix(-0.32083708,0.42896325,-0.96374423,-0.63175821,-64.921881,14.958923)">
-        <title
-           id="title849-1-5">foo-&gt;bar</title>
-        <path
-           fill="none"
-           class="jfet-stroke"
-           stroke="#3ba3db"
-           d="m 61.9475,-172.9609 c 44.386,0 88.7721,0 133.1581,0"
-           id="path851-5-6" />
-        <polygon
-           class="jfet-fill"
-           fill="#3ba3db"
-           points="195.1763,-169.461 195.1764,-176.461 205.1764,-172.9609 "
-           id="polygon853-8-7" />
-      </g>
-      <g
-         id="edge1-0-2-9"
-         class="edge"
-         transform="matrix(-0.33898171,-0.45307071,1.0182478,-0.66726259,372.18226,126.25029)">
-        <title
-           id="title849-1-5-1">foo-&gt;bar</title>
-        <path
-           fill="none"
-           class="jfet-stroke"
-           stroke="#3ba3db"
-           d="m 61.9475,-172.9609 c 44.386,0 88.7721,0 133.1581,0"
-           id="path851-5-6-9" />
-        <polygon
-           class="jfet-fill"
-           fill="#3ba3db"
-           points="205.1764,-172.9609 195.1763,-169.461 195.1764,-176.461 "
-           id="polygon853-8-7-6" />
-      </g>
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="81.286568mm" height="45.282818mm"
+    viewBox="0 0 81.286568 45.282818" version="1.1" id="svg8" inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"
+    sodipodi:docname="4_not_alone.svg">
+    <defs id="defs2" />
+    <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0"
+        inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="2" inkscape:cx="151.69681"
+        inkscape:cy="48.750277" inkscape:document-units="mm" inkscape:current-layer="graph0"
+        inkscape:document-rotation="0" showgrid="false" inkscape:window-width="2560" inkscape:window-height="1361"
+        inkscape:window-x="3831" inkscape:window-y="356" inkscape:window-maximized="1" inkscape:pagecheckerboard="true"
+        fit-margin-top="0" fit-margin-left="0" fit-margin-right="0" fit-margin-bottom="0" />
+    <metadata id="metadata5">
+        <rdf:RDF>
+            <cc:Work rdf:about="">
+                <dc:format>image/svg+xml</dc:format>
+                <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+                <dc:title></dc:title>
+            </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <g inkscape:label="Livello 1" inkscape:groupmode="layer" id="layer1" style="display:inline"
+        transform="translate(-52.330055,-122.26713)">
+        <g id="graph0" class="graph" transform="matrix(0.25374924,0,0,0.25374924,77.548452,98.087265)">
+            <title id="title833">%0</title>
+            <!-- foo -->
+            <g id="node1" class="node" transform="translate(-98.416044,300.18539)">
+                <title id="title835">foo</title>
+                <circle fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="2" cx="30.966999" cy="-172.96091"
+                    id="ellipse837" r="30.934099" />
+                <text text-anchor="middle" x="30.966999" y="-166.96091" font-family="Arial" font-size="20px"
+                    class="jfet-fill" fill="#3ba3db" id="text839">foo</text>
+            </g>
+            <!-- bar -->
+            <g id="node2" class="node" transform="translate(-133.92201,300.18539)">
+                <title id="title842">bar</title>
+                <circle fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="2" cx="236.967" cy="-172.96091"
+                    id="ellipse844" r="30.934099" />
+                <text text-anchor="middle" x="236.967" y="-166.96091" font-family="Arial" font-size="20px"
+                    class="jfet-fill" fill="#3ba3db" id="text846">bar</text>
+            </g>
+            <!-- foo&#45;&gt;bar -->
+            <g id="edge1" class="edge" transform="matrix(0.74520252,0,0,1,-81.829781,300.18539)">
+                <title id="title849">foo-&gt;bar</title>
+                <path fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="3"
+                    d="m 61.9475,-172.9609 c 44.386,0 88.7721,0 133.1581,0" id="path851" />
+                <polygon class="jfet-fill" fill="#3ba3db"
+                    points="205.1764,-172.9609 195.1763,-169.461 195.1764,-176.461 " id="polygon853" />
+            </g>
+            <!-- baz -->
+            <g id="node3" class="node" transform="translate(-104.87775,272.92236)">
+                <title id="title856">baz</title>
+                <circle fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="2" cx="122.967" cy="-34.108002"
+                    id="ellipse858" r="30.934099" />
+                <text text-anchor="middle" x="122.967" y="-28.108" font-family="Arial" font-size="20px"
+                    class="jfet-fill" fill="#3ba3db" id="text860">baz</text>
+            </g>
+            <!-- bar&#45;&gt;baz -->
+            <!-- qux -->
+            <g id="node4" class="node" transform="translate(-145.94213,275.91927)">
+                <title id="title870">qux</title>
+                <circle fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="2" cx="334.96701" cy="-34.108002"
+                    id="ellipse872" r="30.934099" />
+                <text text-anchor="middle" x="334.96701" y="-28.108" font-family="Arial" font-size="20px"
+                    class="jfet-fill" fill="#3ba3db" id="text874">qux</text>
+            </g>
+            <!-- baz&#45;&gt;qux -->
+            <!-- qux&#45;&gt;bar -->
+            <g id="edge1-0" class="edge" transform="matrix(0.75163713,0,0,1,3.3812411,413.12105)">
+                <title id="title849-1">foo-&gt;bar</title>
+                <path fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="3"
+                    d="m 61.9475,-172.9609 c 44.386,0 88.7721,0 133.1581,0" id="path851-5" />
+                <polygon class="jfet-fill" fill="#3ba3db"
+                    points="205.1764,-172.9609 195.1763,-169.461 195.1764,-176.461 " id="polygon853-8" />
+            </g>
+            <g id="edge1-0-2" class="edge"
+                transform="matrix(-0.32083708,0.42896325,-0.96374423,-0.63175821,-64.921881,14.958923)">
+                <title id="title849-1-5">foo-&gt;bar</title>
+                <path fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="3"
+                    d="m 61.9475,-172.9609 c 44.386,0 88.7721,0 133.1581,0" id="path851-5-6" />
+                <polygon class="jfet-fill" fill="#3ba3db"
+                    points="195.1763,-169.461 195.1764,-176.461 205.1764,-172.9609 " id="polygon853-8-7" />
+            </g>
+            <g id="edge1-0-2-9" class="edge"
+                transform="matrix(-0.33898171,-0.45307071,1.0182478,-0.66726259,372.18226,126.25029)">
+                <title id="title849-1-5-1">foo-&gt;bar</title>
+                <path fill="none" class="jfet-stroke" stroke="#3ba3db" stroke-width="3"
+                    d="m 61.9475,-172.9609 c 44.386,0 88.7721,0 133.1581,0" id="path851-5-6-9" />
+                <polygon class="jfet-fill" fill="#3ba3db"
+                    points="205.1764,-172.9609 195.1763,-169.461 195.1764,-176.461 " id="polygon853-8-7-6" />
+            </g>
+        </g>
     </g>
-  </g>
 </svg>
