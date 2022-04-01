@@ -11,12 +11,12 @@ const myself = {
   first_name: "Andrea",
   middle_name: "Simone",
   surname: "Costa",
-  age: 23,
+  age: 24,
   country: "Italy",
   nickname: "jfet97",
   interests: ["functional programming", "computer science", "category theory"],
   occupation: "Software Craftsman @ ExTelos",
-  code: ["javascript", "typescript", "vue", "haskell"],
+  code: ["javascript", "typescript", "vue", "haskell", "scala"],
   email: "andrysimo1997@gmail.com",
 }
 ```
