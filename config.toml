@@ -132,7 +132,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
 languageName = ":uk:"
 
 [languages.it]
-languageName = ":ita:"
+languageName = ":it:"
 
 [params.goatCounter]
 code = "jfet97"
