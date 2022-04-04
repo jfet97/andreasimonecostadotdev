@@ -128,6 +128,11 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   prefetchsrc = ["'self'"]
   connectsrc = ["'self'"]
 
+[languages.en]
+languageName = ":uk:"
 
-  [params.goatCounter]
-  code = "jfet97"
+[languages.it]
+languageName = ":ita:"
+
+[params.goatCounter]
+code = "jfet97"
