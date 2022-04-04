@@ -7,7 +7,6 @@ paginate = 20
 pygmentsStyle = "dracula"
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
-defaultContentLanguageInSubdir = true
 enableEmoji = true
 
 [params]
