@@ -1,12 +1,10 @@
 +++
-title = "Courses"
-description = "Courses I have published"
+title = "Corsi"
+description = "Corsi che ho pubblicato"
 aliases = ["courses", "learning"]
 author = "Andrea Simone Costa"
 images = ["images/avatar.jpg"]
 +++
-
-## Italian
 
 * [JavaScript e lo sviluppo frontend: una todo-list app in Vue.js](https://www.codemotion.com/learning/tp/javascript-e-lo-sviluppo-front-end-una-todo-list-app-in-vue-js-1000) - w/ Codemotion
 * [Programmare con TypeScript](https://devacademy.it/corsi/programmare-con-typescript/) - w/ devACADEMY
