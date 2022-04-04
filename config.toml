@@ -134,5 +134,15 @@ languageName = ":uk:"
 [languages.it]
 languageName = ":it:"
 
+[[languages.it.menu.main]]
+name = "Courses"
+weight = 1
+url  = "/courses"
+
+[[languages.it.menu.main]]
+name = "About Me"
+weight = 1
+url  = "/about-me"
+
 [params.goatCounter]
 code = "jfet97"
