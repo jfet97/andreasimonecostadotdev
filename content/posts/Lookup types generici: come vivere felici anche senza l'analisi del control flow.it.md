@@ -24,9 +24,9 @@ La capacità di TypeScript di rifinire un tipo analizzando il control flow del c
 ```ts
 function foo(x: string | number) {
   if(typeof x === "string") {
-    console.log(x.repeat(x.length))
+    console.log(x.repeat(x.length));
   } else {
-    console.log(Math.sqrt(x))
+    console.log(Math.sqrt(x));
   }
 }
 ```
@@ -41,28 +41,82 @@ Ecco che incontriamo dei problemi in situazioni come la seguente:
 ```ts
 interface Payloads {
   auth: {
-    username: string,
-    password: string,
-  },
+    username: string;
+    password: string;
+  };
   cart: {
-    items: { id: string, quantity: number }[],
-    price: number,
-    appliedCoupon?: string
-  },
+    items: { id: string; quantity: number }[];
+    price: number;
+    appliedCoupon?: string;
+  };
   room: {
-    id: string,
-    name: string,
-    partecipants: { username: string }[]
-  }
+    id: string;
+    name: string;
+    partecipants: { username: string }[];
+  };
 }
 
 function createPayload<K extends keyof Payloads>(service: K): Payloads[K] {
-  switch(service) {
-    case "auth": return { username: "johndoe", password: "eodnhoj" }
-    case "cart": return { items: [], price: 0 }
-    case "room": return { id: "123", name: "kitchen", partecipants: [{ username: "johndoe" }] }
+  switch (service) {
+    case "auth":
+      return { username: "johndoe", password: "eodnhoj" };
+    case "cart":
+      return { items: [], price: 0 };
+    case "room":
+      return {
+        id: "123",
+        name: "kitchen",
+        partecipants: [{ username: "johndoe" }],
+      };
   }
 }
 ```
 
-[Playgrounnd](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgApwJ4BsD2cAmAzsgN4BQyycArmABYBcpFly1h0IcAthE4WCigA5gBoWlAA5xChAO44o+foJHjKAX3XIEcKGCblWyYJG6FDJ5cgFCQY5AEdqccKYxMQ1bgCNoyDQBtAF1tKSEkT28-KDCqSUksYAh8AGEcakkcEAB+FTthFi0WKBwcbkMJK3y1Kq5eGvs46X0IBGBpcAtSNg4oer4bVXsAkKKyDTIyGGoQBDBgbJ0oCDhIdGw8fAAeAGlkCAAPSBAiZABrCAwcGDRMXAJCAD4ACj6AN2BI5F2ASiYNg8iIFdsFmJR5KYEHQ3tBPkhfuDWLoOMgAEQ0ehopgrMDUfo9dicHiDNEAKxwdFOOAgaNEyGksgUSiYaIgOHwIDoODJaICVRRKDRun02OQuPxIB6pgg5iYIXpkgigwADPzjIL0aVymKJQSSNV0QBGABMAGY6cgBqzzlC6BAQJaWpB2p0wN1Agaif0SayKVT8DS+RowZNNBMgA)
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgApwJ4BsD2cAmAzsgN4BQyycArmABYBcpFly1h0IcAthE4WCigA5gG4WlAA5xChAO44o+foJHjKAX3XIEcKGCblWyYJG6FDJ5cgFCQY5AEdqccKYxMQ1bgCNoyDQBtAF1tKSEkT28-KDCqSUksYAh8AGEcakkcEAB+FTsxFi0WKBwcbkMJK3y1Kq5eGvs46X0IBGBpcAtSNg4oer4bVXsAkO1ijTIyGGoQBDBgbJ0oCDhIdGw8fAAeAGlkCAAPSBAiZABrCAwcGDRMXAJCAD4ACj6AN2BI5F2ASiYNg8iIFdsFmJR5KYEHRkG9oJ8kL9waxdBxkAAiGj0dEMKqUFZgaj9HrsTg8QbogBWODopxwEHRABpkNJZAolEx0RAcPgQHQcJT0QE4qiUOjdPocXjkASiSAeqYIOYmCFmZIIoMAAzCqqijGlcpS4z4iCE4lGY2UYDWdEARgATABmJnSygDTnnKF0CAgF2WqR6SDtTpgbqBEi9MkNDHU2n4elCjTBRnS4qaMiTIA)
+
+La funzione `createPayload` evidentemente copre ogni caso restituendo di volta in volta il payload corretto, eppure TypeScript (v. 4.6.2) non è d'accordo e ci segnala due diverse tipologie di errore.
+
+La prima riguarda il tipo di ritorno della funzione: "_Function lacks ending return statement and return type does not include 'undefined'._". In altre parole TypeScript non considera esaustivo lo `switch`/`case` e si aspetta quindi che venga gestito nel codice anche il `default` case, sebbene non potrà mai accadere che ll parametro `service` risulti diverso dai valori `"auth"`, `"cart"` e `"room"`.\
+Possiamo facilmente risolvere l'errore nel seguente modo:
+```ts
+function createPayload<K extends keyof Payloads>(service: K): Payloads[K] {
+  switch (service) {
+    case "auth":
+      return { username: "johndoe", password: "eodnhoj" };
+    case "cart":
+      return { items: [], price: 0 };
+    case "room":
+      return {
+        id: "123",
+        name: "kitchen",
+        partecipants: [{ username: "johndoe" }],
+      };
+    default:
+      throw new Error("undefined service");
+  }
+}
+```
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgApwJ4BsD2cAmAzsgN4BQyycArmABYBcpFly1h0IcAthE4WCigA5gG4WlAA5xChAO44o+foJHjKAX3XIEcKGCblWyYJG6FDJ5cgFCQY5AEdqccKYxMQ1bgCNoyDQBtAF1tKSEkT28-KDCqSUksYAh8AGEcakkcEAB+FTsxFi0WKBwcbkMJK3y1Kq5eGvs46X0IBGBpcAtSNg4oer4bVXsAkO1ijTIyGGoQBDBgbJ0oCDhIdGw8fAAeAGlkCAAPSBAiZABrCAwcGDRMXAJCAD4ACj6AN2BI5F2ASiYNg8iIFdsFmJR5KYEHRkG9oJ8kL9waxdBxkAAiGj0dEMKqUFZgaj9HrsTg8QbogBWODopxwEHRABpkNJZAolEx0RAcPgQHQcJT0QE4qiUOjdPocXjkASiSAeqYIOYmCFmZIIoMAAzCqqijGlcpS4z4iCE4lGY2UYDWdEARgATABmJnSygDTnnKF0CAgF2WqR6SDtTpgbqBEi9MkNDHU2n4elCjTBRnS4rGfAQeDULAGaX0UpyZAgCCFgCiUFKUBe6NmGZgoBSNnhXwZv3GZEmQA)
+
+Il secondo tipo di errore invece risulta molto più prolisso e oscuro, e intacca ogni ramo dello `switch`. TypeScript ci dice che ogni valore restituito "_is not assignable to type 'Payloads[K]'_", in particolare ci dice che non è assegnabile al tipo:
+```ts
+{
+  username: string;
+  password: string;
+} & {
+  items: { id: string; quantity: number }[];
+  price: number;
+  appliedCoupon?: string | undefined;
+} & {
+  id: string;
+  name: string;
+  partecipants: { username: string }[];
+};
+```
+Perché? Da dove saltano fuori quelle intersezioni? Cerchiamo di capire meglio cosa succede.\
+Abbiamo detto che TypeScript non supporta l'analisi del control flow per rifinire un tipo parametrico, e `K` è proprio questo! TypeScript sa che `service` può essere ristretta, ad esempio, al solo caso `"auth'`, perciò ci permette di creare uno `switch`/`case` come quello presente in `createPayload`, ma non rifinisce di conseguenza anche il type parameter `K`. Perciò non sa che `{ username: "johndoe", password: "eodnhoj" }` è assegnabile a `Payload[K]` in quella specifica circostanza.\
+TypeScript è essenzialmente fin troppo cauto, e ci richiede di restituire un valore che per ogni possibile `K` è assegnabile a `Payload[K]`. Il tipo di tale valore non può che essere l'intersezione tra tutti i vari tipi delle proprietà presenti in `Payload`. Dato che nessun ramo dello `switch`/`case` restituisce un valore di tale tipo TypeScript protesta.
+
+&nbsp;
+
+# La soluzione
