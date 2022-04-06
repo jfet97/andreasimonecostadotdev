@@ -34,7 +34,7 @@ TypeScript è in grado di comprendere che se la condizione del costrutto `if` è
 
 # Il problema
 
-TypeScript non supporta il narrowing di un type parameter `T` in base, ad esempio, al valore contenuto in una variabile avente quel tipo. In altre parole, l'analisi del control flow va quasi completamente a farsi benedire. Non dal papa, da Hejlsberg in persona. Questo perché è facilissimo ricadere in una situazione nella quale tale narrowing sarebbe scorretto, o _unsound_, come dicono gli inglesi.
+TypeScript non supporta il narrowing di un type parameter `T` in base, ad esempio, al valore contenuto in una variabile avente quel tipo. In altre parole l'analisi del control flow va quasi completamente a farsi benedire. Non dal papa, da Hejlsberg in persona. Questo perché è facilissimo ricadere in una situazione nella quale tale narrowing sarebbe scorretto, o _unsound_, come dicono gli inglesi.
 
 Ecco che incontriamo dei problemi in situazioni come la seguente:
 ```ts
