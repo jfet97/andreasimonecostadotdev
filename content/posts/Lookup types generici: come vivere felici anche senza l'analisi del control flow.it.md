@@ -97,7 +97,7 @@ function createPayload<K extends keyof Payloads>(service: K): Payloads[K] {
 ```
 [Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgApwJ4BsD2cAmAzsgN4BQyycArmABYBcpFly1h0IcAthE4WCigA5gG4WlAA5xChAO44o+foJHjKAX3XIEcKGCblWyYJG6FDJ5cgFCQY5AEdqccKYxMQ1bgCNoyDQBtAF1tKSEkT28-KDCqSUksYAh8AGEcakkcEAB+FTsxFi0WKBwcbkMJK3y1Kq5eGvs46X0IBGBpcAtSNg4oer4bVXsAkO1ijTIyGGoQBDBgbJ0oCDhIdGw8fAAeAGlkCAAPSBAiZABrCAwcGDRMXAJCAD4ACj6AN2BI5F2ASiYNg8iIFdsFmJR5KYEHRkG9oJ8kL9waxdBxkAAiGj0dEMKqUFZgaj9HrsTg8QbogBWODopxwEHRABpkNJZAolEx0RAcPgQHQcJT0QE4qiUOjdPocXjkASiSAeqYIOYmCFmZIIoMAAzCqqijGlcpS4z4iCE4lGY2UYDWdEARgATABmJnSygDTnnKF0CAgF2WqR6SDtTpgbqBEi9MkNDHU2n4elCjTBRnS4rGfAQeDULAGaX0UpyZAgCCFgCiUFKUBe6NmGZgoBSNnhXwZv3GZEmQA)
 
-Il secondo tipo di errore invece risulta molto più prolisso e oscuro, e intacca ogni ramo dello `switch`. TypeScript ci dice che ogni valore restituito "_is not assignable to type 'Payloads[K]'_", in particolare ci dice che non è assegnabile al tipo:
+il secondo tipo di errore invece risulta molto più prolisso e oscuro, e intacca ogni ramo dello `switch`. TypeScript ci dice che ogni valore restituito "_is not assignable to type 'Payloads[K]'_", in particolare ci dice che non è assegnabile al tipo:
 ```ts
 {
   username: string;
