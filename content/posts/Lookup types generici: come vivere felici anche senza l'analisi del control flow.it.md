@@ -1,7 +1,7 @@
 +++
 author = "Andrea Simone Costa"
 title = "Lookup types generici: come vivere felici anche senza l'analisi del control flow"
-date = "2022-04-04"
+date = "2022-04-06"
 description = "Come risolvere la mancanza di analisi del control flow quando si deve generare un valore il cui tipo è un lookup type generico"
 categories = ["typescript"]
 series = ["TypeScript"]
@@ -10,7 +10,6 @@ tags = [
     "generics",
     "control flow analysis",
 ]
-published = false
 featuredImage = "/images/lookup-generici/generic_lookup.png"
 images = ["/images/lookup-generici/generic_lookup.png"]
 +++
@@ -114,9 +113,34 @@ Il secondo tipo di errore invece risulta molto più prolisso e oscuro, e intacca
 };
 ```
 Perché? Da dove saltano fuori quelle intersezioni? Cerchiamo di capire meglio cosa succede.\
-Abbiamo detto che TypeScript non supporta l'analisi del control flow per rifinire un tipo parametrico, e `K` è proprio questo! TypeScript sa che `service` può essere ristretta, ad esempio, al solo caso `"auth'`, perciò ci permette di creare uno `switch`/`case` come quello presente in `createPayload`, ma non rifinisce di conseguenza anche il type parameter `K`. Perciò non sa che `{ username: "johndoe", password: "eodnhoj" }` è assegnabile a `Payload[K]` in quella specifica circostanza.\
-TypeScript è essenzialmente fin troppo cauto, e ci richiede di restituire un valore che per ogni possibile `K` è assegnabile a `Payload[K]`. Il tipo di tale valore non può che essere l'intersezione tra tutti i vari tipi delle proprietà presenti in `Payload`. Dato che nessun ramo dello `switch`/`case` restituisce un valore di tale tipo TypeScript protesta.
-
-&nbsp;
+Abbiamo detto che TypeScript non supporta l'analisi del control flow per rifinire un tipo parametrico, e `K` è proprio questo! TypeScript sa che `service` può essere ristretta, ad esempio, al solo caso `"auth'`, perciò ci permette di creare uno `switch`/`case` come quello presente in `createPayload`, ma non rifinisce di conseguenza anche il type parameter `K`. Perciò non sa che `{ username: "johndoe", password: "eodnhoj" }` è assegnabile a `Payloads[K]` in quella specifica circostanza.\
+TypeScript è essenzialmente fin troppo cauto, e ci richiede di restituire un valore che per ogni possibile `K` è assegnabile a `Payloads[K]`. Tale valore dovrà quindi contenere ogni possibile proprietà disponibile accedendo ad una qualsiasi chiave di un oggetto `Payloads`, perciò il suo tipo non può che essere l'intersezione tra tutti i vari tipi delle chiavi presenti in `Payloads`. Nessun ramo dello `switch`/`case` restituisce un valore di tale tipo, quindi TypeScript protesta in ognuno.
 
 # La soluzione
+
+Come possiamo creare un valore di tipo `Payloads[K]` in modo pulito? Siamo costretti a restituire sempre un mappazzone con millemila proprietà? Per fortuna no!\
+Ragioniamo sul significato di tale tipo: esso deriva dall'accedere ad un oggetto di tipo `Payloads` con una chiave generica `K`, chiave che deve essere assegnabile a `keyof Payloads`. Abbiamo già questa chiave, è proprio il parametro `service`! Ci manca giusto l'oggetto `Payloads`:
+```ts
+function createPayload<K extends keyof Payloads>(service: K): Payloads[K] {
+  const payloads: Payloads = {
+    auth: {
+      username: "johndoe",
+      password: "eodnhoj",
+    },
+    cart: {
+      items: [],
+      price: 0,
+    },
+    room: {
+      id: "123",
+      name: "kitchen",
+      partecipants: [{ username: "johndoe" }],
+    },
+  };
+
+  return payloads[service];
+}
+```
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgApwJ4BsD2cAmAzsgN4BQyycArmABYBcpFly1h0IcAthE4WCigA5gG4WlAA5xChAO44o+foJHjKAX3XIEcKGCblWyYJG6FDJ5cgFCQY5AEdqccKYxMQ1bgCNoyDQBtAF1tKSEkT28-KDCqSUksYAh8AGEcakkcEAB+FTsxFi0WKBwcbkMJK3y1Kq5eGvs46X0IBGBpcAtSNg4oer4bVXsAkO1ijTIyGGoQBDBgbJ0oCDhIdGw8fAAeAGlkCAAPSBAiZABrCAwcGDRMXAJCAD4ACj6AN2BI5F2ASiYNg8iIFdsFmJQENkBMhpJtHgD7ltiABecGsGj0SrGSjsTg8QYAIgAVjg6KccBACQAaKpSGTyRTWAkQHD4EB0HBE6lVDQ04y6fRY7GmCDmJghPnYyQRQYABklmgVyFK5SFxmATIAjAAmADM3OxyAGTAJ51MCDoEBABqlekg7U6YG6gRIvTxDWQxNJ5MpAWCSt5RXEJQgYGo-RhiMegQ+XwgoTIkyAA)
+
+Ecco che TypeScript è pienamente soddisfatto perché stiamo restituendo un valore di tipo `Payloads[K]`, assegnabile quindi per ogni possibile `K` a `Payloads[K]`. Oltre a ciò non è nemmeno più necessario gestire inutilmente un `default` case sporcando il nostro codice.
