@@ -58,9 +58,15 @@ interface Payloads {
 function createPayload<K extends keyof Payloads>(service: K): Payloads[K] {
   switch (service) {
     case "auth":
-      return { username: "johndoe", password: "eodnhoj" };
+      return { 
+        username: "johndoe",
+        password: "eodnhoj",
+      };
     case "cart":
-      return { items: [], price: 0 };
+      return { 
+        items: [],
+        price: 0,
+      };
     case "room":
       return {
         id: "123",
@@ -81,9 +87,15 @@ Possiamo facilmente risolvere l'errore nel seguente modo:
 function createPayload<K extends keyof Payloads>(service: K): Payloads[K] {
   switch (service) {
     case "auth":
-      return { username: "johndoe", password: "eodnhoj" };
+      return { 
+        username: "johndoe",
+        password: "eodnhoj",
+      };
     case "cart":
-      return { items: [], price: 0 };
+      return { 
+        items: [],
+        price: 0,
+      };
     case "room":
       return {
         id: "123",
