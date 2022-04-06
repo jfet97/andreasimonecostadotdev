@@ -1,6 +1,6 @@
 +++
 author = "Andrea Simone Costa"
-title = "Lookup types generici: come vivere felici anche senza l'analisi del control flow"
+title = "Lookup types generici: come vivere felici senza l'analisi del control flow"
 date = "2022-04-06"
 description = "Come risolvere la mancanza di analisi del control flow quando si deve generare un valore il cui tipo è un lookup type generico"
 categories = ["typescript"]
