@@ -4,5 +4,6 @@
   "build": {
     "dockerfile": "Dockerfile",
   },
-  "overrideCommand": true
+  "overrideCommand": true,
+  "extensions": ["davidanson.vscode-markdownlint"]
 }
