@@ -12,6 +12,7 @@ tags = [
 ]
 featuredImage = "/images/this_tipi_ricorsivi/carbon.png"
 images = ["/images/this_tipi_ricorsivi/carbon.png"]
+published = false
 +++
 
 __Series__: [TypeScript](/it/series/typescript/)
