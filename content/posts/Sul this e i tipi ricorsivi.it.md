@@ -79,7 +79,7 @@ Il nocciolo del problema sta nel fatto che `Recursive<D>` non è assolutamente o
 type RValueAnimal = Recursive<"value"> & { animal: string }
 type RValuePerson = Recursive<"value"> & { person: string }
 
-const rvalues: RValueAnimal[] = [
+const rAnimals: RValueAnimal[] = [
   {
     key: "string1",
     value: "v1",
@@ -100,17 +100,17 @@ const rvalues: RValueAnimal[] = [
   },
 ]
 
-const rprop: RValuePerson = {
+const rPerson: RValuePerson = {
   key: "string4",
   value: "v4",
   person: "p1",
-  children: rvalues // <-- qualquadra non cosa
+  children: rAnimals // <-- qualquadra non cosa
 }
 ```
 
-[Playground](https://www.typescriptlang.org/play?target=99&jsx=0&ssl=6&ssc=3&pln=2&pc=1&ts=next#code/C4TwDgpgBAShDGBXATgZwJYDcIB4AiUEAHsBAHYAmqUqwy6ZA5gHxQC8UA3gFBRQDaAaSgMoeALoAuGnQaMA3NwC+UAGRdeUANYQQ02vSaK+8ABboANhWTlpcJGiy48zfuMVLF3bqEiwAagCGFogQAIJk6AC2weywCCgY2DgARJjBoSms6pxQgZExFvqyTFBKPuDQMEEhEAAKEGgA9mRx9olOqem1WWpcUJDNZMWGjGXe8C20UMjdoah2NaER0cFucfyaPHx8OnpQKQZyAIwpADSafHMQ0mmnFzt5BcG3gfeXUGaW1rYC4ppKB4aR57W5HJgAJnOH2ut0wUKBfHyqyKB0CCI+XysNmGfwBQO2O1BB3BjAAzNDHrCDpgKYinijXnTMeZsb83PjuP9uJMyNNkGBkE0wIsMvVGqgWnFCcTDiVGAAWSlQalpJVAwaS3EpMDvEysn642Zi1DKIA)
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=4.7.0-dev.20220408#code/C4TwDgpgBAShDGBXATgZwJYDcIB4AiUEAHsBAHYAmqUqwy6ZA5gHxQC8UA3gFBRQDaAaSgMoeALoAuGnQaMA3NwC+UAGRdeUANYQQ02vSaK+8ABboANhWTlpcJGiy48zfuMVLF3bqEiwAagCGFogQAIJk6AC2weywCCgY2DgARJjBoSms6pxQgZExFvqyTFBKPuDQMEEhEAAKEGgA9mRx9olOqem1WWpcUJDNZMWGjGXe8C20UMgR0cGodjWhc4VucfyaPHx8OnpQKQZyAIwpADSafN2h0mmnFzt5BcG3gfeXUGaW1rYC4ppKB4aR57W5HJgAJnOH2uEFumChQL4+XmRQOgURHy+Vhswz+AKB2x2oIO4MYAGZoY9YfDKUinqjXnSseYcb83ATuP9uJMyNNkA0hksMvVGqgWnEiSTDiVGAAWKlQGkHTAKoGDcV4lJgd4mVk-PGzZ4WVDKIA)
 
-Nell'esempio creiamo due diversi tipi che estendono il medesimo `Recursive<D> = Recursive<"value">`. La definizione corrente del tipo `Recursive` non ci impedisce di assegnare alla chiave `children` di un `RValuePerson` un array di `RValueAnimal`, o viceversa, perché `children` ha l'unica costrain di essere un `Recursive<"value">` e sia `RValuePerson` che `RValueAnimal` soddisfano questo vincolo. Se invocassimo la `flatten` su `rprop.children` avremmo che `R = RValuePerson`, ma l'array risultante sarebbe un `Omit<RValueAnimal, "children">[]` che non ha nulla a che vedere con il tipo `Omit<RValuePerson, "children">[]` sperato.
+Nell'esempio creiamo due diversi tipi che estendono il medesimo `Recursive<D> = Recursive<"value">`. La definizione corrente del tipo `Recursive` non ci impedisce di assegnare alla chiave `children` di un `RValuePerson` un array di `RValueAnimal`, o viceversa, perché `children` ha l'unica costrain di essere un `Recursive<"value">` e sia `RValuePerson` che `RValueAnimal` soddisfano questo vincolo. Se invocassimo la `flatten` su `rPerson.children` avremmo che `R = RValuePerson`, ma l'array risultante sarebbe un `Omit<RValueAnimal, "children">[]` che non ha nulla a che vedere con il tipo `Omit<RValuePerson, "children">[]` sperato.
 
 Come possiamo impedire di avere l'array `children` out of sync?
 
@@ -156,7 +156,7 @@ Riprendiamo prima in mano l'esempio di `RValuePerson` e `RValueAnimal`:
 type RValueAnimal = Recursive<"value"> & { animal: string }
 type RValuePerson = Recursive<"value"> & { person: string }
 
-const rvalues: RValueAnimal[] = [
+const rAnimals: RValueAnimal[] = [
   {
     key: "string1",
     value: "v1",
@@ -177,15 +177,15 @@ const rvalues: RValueAnimal[] = [
   },
 ]
 
-const rprop: RValuePerson = {
+const rPerson: RValuePerson = {
   key: "string4",
   value: "v4",
   person: "p1",
-  children: rvalues // <- adesso è un errore
+  children: rAnimals // <- adesso è un errore
 }
 ```
 
-[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVl5ADU4dkUIAEEQYABbKJsgpRV1LQAiNSiYrKtArGQ4BOT2D3NvZElpOTRI6IgABWgKAHsQVIVlVQ1NHLyIAoDsZDkVTsqvWhqcHAROqmQoXKaKclRGmPikqNFUoSZcfHwiMmQszzoARiyAGiZ8NZjyHLvH05KyqLe4D6ezDYXB4fGQoiY4k+di+5ze128ACYHoCXhA3mpkdD8KU9hVLnAsYDWBxuLxyBD8FDjoC4ZcEbQAMwor5ojHM7HfPF-DnE4FksGUmqPETzRYgZZQGRQdoyTbbFptTqpE6EEjwqq0AAsLOQbMuah10ImHTBWRkAPwJJB5JWaIovhwQA)
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVl5ADU4dkUIAEEQYABbKJsgpRV1LQAiNSiYrKtArGQ4BOT2D3NvZElpOTRI6IgABWgKAHsQVIVlVQ1NHLyIAoDsZDkVTsqvWhqcHAROqmQoeKSoinJURpi18tFUoSZcfHwiMmQszzoARiyAGiZ8XKbyHLvH05KyqLe4D6ezDYXB4fGQoiY4k+di+5ze128ACYHoCXjE3mpkdD8KV1hVLnAsYDWBxuLxyBD8FDjoC4ZcEbQAMwor5oiAY5nY754v6c4nAslgyk1R4ieaLEDLKCtSZg7ZDGUdLq2E6EEjwqq0AAsLOQbIxOuhEyVbxkAPwJJB5JWew2vhwQA)
 
 Adesso non possiamo più assegnare un array di `RValueAnimal` alla propietà `children` di un `RValuePerson`, perché grazie al `this` essa è correttamente tipizzata come `RValuePerson[]`.
 
@@ -211,10 +211,10 @@ const flatten: FlattenRecursive =
 
 # TypeScript colpisce ancora
 
-Vi è purtroppo un secondo problema, e ce ne accorgiamo se proviamo a invocare la `flatten` sull'array `rvalues`:
+Vi è purtroppo un secondo problema, e ce ne accorgiamo se proviamo a invocare la `flatten` sull'array `rAnimals`:
 
 ```ts
-const rvalues: RValueAnimal[] = [
+const rAnimals: RValueAnimal[] = [
   {
     key: "string1",
     value: "v1",
@@ -238,10 +238,10 @@ const rvalues: RValueAnimal[] = [
 const flatten: FlattenRecursive = 
   rs => rs.flatMap(r => flatten(r.children))
 
-flatten(rvalues) // <-- Argument of type 'RValueAnimal[]' is not assignable to parameter of type 'Recursive<string>[]'
+flatten(rAnimals) // <-- Argument of type 'RValueAnimal[]' is not assignable to parameter of type 'Recursive<string>[]'
 ```
 
-[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVl5ADU4dkUIAEEQYABbKJsgpRV1LQAiNSiYrKtArGQ4BOT2D3NvZEkcBAB7ECpkKFzoiApyVEj2+KSo0VShJlx8fCIyZCzPOgBGLIAaJnw2mPIc+aWxkrKo9bhN5eY2Lh4+ZFEmcS27bYn1me8AJkWj1Yh1tReb-FL+iqmcG+R1YHG4vHIl3w1xGR3uU0etAAzK9tu9Piifjt-vtMSCTuDzlCaksRDhQnJkAAxdhwMBGBTKVQaVJMHR6Qy8ExmLy0BZoDlGbmMjIaHQWCwAChUXVEAEobFYAPKJYBgTSoflZUGnXgFQbkhpNMDIGC0+kQ6nmhkYJmZVn4FSKloUAB0ZrpAFk4DJpc6PRaQNLXTrCXK5eSA0Zpe8KHKgA)
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=4.7.0-dev.20220408#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVl5ADU4dkUIAEEQYABbKJsgpRV1LQAiNSiYrKtArGQ4BOT2D3NvZEkcBAB7ECpkKHikqIpyVEjouLKo0VShJlx8fCIyZCzPOgBGLIAaJnxc3vIc+aWxkv6KqbhN5eY2Lh4+ZFEmcS27bYn1me8AJkWj1Zj1tReb-FL2vaycG+R1YHG4vHIl3w1xGR3uU0etAAzK9tu8IJ8UT8dv91nAsSCTuDzlCaksRDhQnJkAAxdhwMBGBTKVQaVJMHR6Qy8ExmLy0BZoLlGXnMjIaHQWCwAChUXVEAEobFYAPKJYBgTSoQVZUGnXgFQaUhpNMDIGD0xkQ2mWpkYFmZdn4FTKloUAB0FoZAFk4DJZa6vVaQLL3XriQqFZSg0ZZW1yhQFUA)
 
 Notiamo che i type parameter inferiti nella chiamata sono `string` e `Recursive<string>>` anziché i `"value"` e `Recursive<"value">>` attesi:
 
@@ -249,7 +249,7 @@ Notiamo che i type parameter inferiti nella chiamata sono `string` e `Recursive<
 const flatten: <string, Recursive<string>>(rs: Recursive<string>[]) => Omit<Recursive<string>, "children">[]
 ```
 
-Ci stiamo scontrando con una limitazione del type system, [il quale non utilizza le costrain sui generici come punti dai quali fare inferenza per altri generici](https://github.com/microsoft/TypeScript/issues/7234). Ecco che il type parameter `D` che compare nella costrain di `R` non può essere inferito da quest'ultimo, il quale ipotrebbe essere determinato a partire dall'argomento `rvalues`, e quindi viene considerato pari al suo upper bound `string` come tipo di ripiego.
+Ci stiamo scontrando con una limitazione del type system, [il quale non utilizza le costrain sui generici come punti dai quali fare inferenza per altri generici](https://github.com/microsoft/TypeScript/issues/7234). Ecco che il type parameter `D` che compare nella costrain di `R` non può essere inferito da quest'ultimo, il quale ipotrebbe essere determinato a partire dall'argomento `rAnimals`, e quindi viene considerato pari al suo upper bound `string` come tipo di ripiego.
 
 Per risolvere questo primo problema sfruttiamo il fatto che il tipo `Recursive` è ora intersezione di due tipi per ristrutturare il tipo della `flatten`:
 
@@ -258,6 +258,6 @@ type FlattenRecursive =
   <R extends Rec>(rs: R[]) => Omit<R, "children">[] 
 ```
 
-[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVl5ADU4dkUIAEEQYABbKJsgpRV1LQAiNSiYrKtArGQ4BOT2D3NvZEkcBAB7ECpkKFzoiApyVEj2+KSo0VShJlx8fCIyZCzPOgBGLIAaJnw2mPIc+aWxkrKo9bhN5eY2Lh4+ZFEmcS27bYn1me8AJkWj1Yh1tReb-FL+iqmcG+R1YHG4vHIl3w1xGR3uU0etAAzK9tu9Piifjt-vtMSCTuDzlCaksRDhQnJkAAxdhwMBGBTKVQaVJMTSoPSGXgmNIWAAUKi6ogAlDYrAB5RLAMDshZTUGnXgFQbkhpNMDIGC0+kQ6nahkYJmZVn4FRiloUAB0WrpAFk4DIBeabTqQALLQrCcLheSXUYBe8KMKgA)
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=4.7.0-dev.20220408#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVl5ADU4dkUIAEEQYABbKJsgpRV1LQAiNSiYrKtArGQ4BOT2D3NvZEkcBAB7ECpkKHikqIpyVEjouLKo0VShJlx8fCIyZCzPOgBGLIAaJnxc3vIc+aWxkv6KqbhN5eY2Lh4+ZFEmcS27bYn1me8AJkWj1Zj1tReb-FL2vaycG+R1YHG4vHIl3w1xGR3uU0etAAzK9tu8IJ8UT8dv91nAsSCTuDzlCaksRDhQnJkAAxdhwMBGBTKVQaVJMTSoPSGXgmNIWAAUKi6ogAlDYrAB5RLAMCchZTUGnXgFQaUhpNMDIGD0xkQ2m6pkYFmZdn4FQSloUAB0OoZAFk4DIhZa7XqQELrUriaLRZS3UYhW1yhRRUA)
 
 Poiché la property `children` appartiene all'interfaccia `Rec` necessitiamo solo di essa come upper bound del type parameter `R`. Esso è l'unico type parameter che ci interessa davvero, e TypeScript è in grado di inferirlo correttamente.
