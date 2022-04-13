@@ -148,7 +148,7 @@ type Recursive<D extends string> = {
 } & Rec;
 ```
 
-Siamo costretti a separare le due parti sia perché il tipo `this` può essere utilizzato solo nelle interfacce, sia perché ai mapped type non piace che siano dichiarate in parallelo altre proprietà. La cosa importante è il fatto che ogni volta che `Rec` verrà esteso, il `this` si allineerà alla chain "puntando" sempre al "tipo corrente".
+Siamo costretti a separare le due parti sia perché il tipo `this` può essere utilizzato solo nelle interfacce, sia perché ai mapped type non piace che siano dichiarate in parallelo altre proprietà. La cosa importante è il fatto che ogni volta che `Rec` o `Recursive` verranno estesi, il `this` si allineerà alla chain "puntando" sempre al "tipo corrente".
 
 Riprendiamo prima in mano l'esempio di `RValuePerson` e `RValueAnimal`:
 
