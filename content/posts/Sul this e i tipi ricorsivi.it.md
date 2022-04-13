@@ -12,7 +12,6 @@ tags = [
 ]
 featuredImage = "/images/this_tipi_ricorsivi/carbon.png"
 images = ["/images/this_tipi_ricorsivi/carbon.png"]
-published = false
 +++
 
 __Series__: [TypeScript](/it/series/typescript/)
@@ -59,8 +58,7 @@ const flatten: FlattenRecursive =
 
 [Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/C4TwDgpgBAShDGBXATgZwJYDcIB4AiUEAHsBAHYAmqUqwy6ZA5gHxQC8UA3gFBRQDaAaSgMoeALoAuGnQaMA3NwC+UAGRdeUANYQQ02vSaK+8ABboANhWTlpcJGiy48zfuMVLF3UJCgAxCwBDYFIyexQMbHYoTXxCEnIqGUNGABpYeNCk8MdsfGZmAAo0OzcASnZWAHkAW3RgHBh0gCIzS2tyZtdxGO54AHsyWigAMyCQ239x0JzI6A5NNEqoNAA6MeCAWUCwYuWNibJi1barGzIysu4gA)
 
-Semplicemente vorremmo spacchettare la struttura ricorsiva in un array flat di oggetti di tipo `R extends Recursive<D>` privati della proprietà `children`, che appunto è stata ricorsivamente appiattita.\
-It was all fun and games until TypeScript says:
+Semplicemente vorremmo spacchettare la struttura ricorsiva in un array flat di oggetti di tipo `R extends Recursive<D>` privati della proprietà `children`, che appunto è stata ricorsivamente appiattita. TypeScript però non è molto d'accordo:
 
 ```ts
 Type 'Omit<Recursive<D>, "children">[]' is not assignable to type 'Omit<R, "children">[]'.
@@ -145,7 +143,7 @@ interface Rec {
   key: string;
   children: this[]; // <-- notare il this
 }
-type Recursive<D extends PropertyKey> = {
+type Recursive<D extends string> = {
   [K in D]: string;
 } & Rec;
 ```
@@ -183,14 +181,83 @@ const rprop: RValuePerson = {
   key: "string4",
   value: "v4",
   person: "p1",
-  children: rvalues // <- errore
+  children: rvalues // <- adesso è un errore
 }
 ```
 
-[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VkABSgB7OVGkBpEgD5kAXmxMhd5KGTaR5KhoQBhxxZAAyNAxGKVl5ADU4dkUIAEEQYABbJNcopRV1LQAiNSSUoudIrGQ4DOz2AOo6ZElpOTRE5IgzaApLEFyFZVUNTRKyiAqI7GQbPr5KJuCWnBwEfqpkKFKuinJUTpT0rKTRXKEmXHx8IjJkIsC6AEYigBomfB2U8hKX9+uanUkj84H8Psw2FweAtRExxP93ADbj9HsEAExvcFfCA-NQYhH4WonBr3OD48GsDjcXjkWH4eGXcHI+6o2gAZkxAOxuI5BMBxJBvIpkOpMJEcPe4rWGzAWxkVhk+0O3V6-VyV0IJBRS1oABZOchufc1PqEXN+j8ZGD8JSoTSttiKKEcEA)
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVl5ADU4dkUIAEEQYABbKJsgpRV1LQAiNSiYrKtArGQ4BOT2D3NvZElpOTRI6IgABWgKAHsQVIVlVQ1NHLyIAoDsZDkVTsqvWhqcHAROqmQoXKaKclRGmPikqNFUoSZcfHwiMmQszzoARiyAGiZ8NZjyHLvH05KyqLe4D6ezDYXB4fGQoiY4k+di+5ze128ACYHoCXhA3mpkdD8KU9hVLnAsYDWBxuLxyBD8FDjoC4ZcEbQAMwor5ojHM7HfPF-DnE4FksGUmqPETzRYgZZQGRQdoyTbbFptTqpE6EEjwqq0AAsLOQbMuah10ImHTBWRkAPwJJB5JWaIovhwQA)
 
 Adesso non possiamo più assegnare un array di `RValueAnimal` alla propietà `children` di un `RValuePerson`, perché grazie al `this` essa è correttamente tipizzata come `RValuePerson[]`.
 
+Ed ecco che abbiamo risolto il problema iniziale, in quanto `r.children` adesso è correttamente tipizzato come `R[]` e quindi la chiamata ricorsiva a `flatten` restituisce l'`Omit<R, "children">[]` desiderato:
 
+```ts
+interface Rec {
+  key: string;
+  children: this[];
+}
+type Recursive<D extends string> = {
+  [K in D]: string;
+} & Rec;
 
-[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VkABSgB7OVGkBpEgD5kAXmxMhd5KGTaR5KhoQBhxxZAAyNAxGKVkUADF2ODAjBWVVDVdkJh09Q14TSmo6ABo0PKNCtJV1LW1HRwAKFXJUUQBKV2cAeQBbYDBNVDKAIlYObl4Rx1FsnARLECpkGCSU3nJE5NSMdNqsphUu5BUAOlXkgFk4GWbji-WQZtPxrh4QdvacIA)
+type FlattenRecursive = 
+  <D extends string, R extends Recursive<D>>(rs: R[]) => Omit<R, "children">[] 
+
+const flatten: FlattenRecursive = 
+  rs => rs.flatMap(r => flatten(r.children))
+```
+
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVkUADF2ODAjBWVVDRtkJh09Q14TMy9aABo0NKNMuJV1LW0LCwAKFXJUUQBKGysAeQBbYDBNVDyAIlYObl4ei1FknAQAexAqZBgomN5ySOjYjHjSpKYVJuQVADo56IBZOBlqncOFkGq9-q4eEHr6nCA)
+
+# TypeScript colpisce ancora
+
+Vi è purtroppo un secondo problema, e ce ne accorgiamo se proviamo a invocare la `flatten` sull'array `rvalues`:
+
+```ts
+const rvalues: RValueAnimal[] = [
+  {
+    key: "string1",
+    value: "v1",
+    animal: "a1",
+    children: []
+  },
+  {
+    key: "string2",
+    value: "v2",
+    animal: "a2",
+    children: []
+  },
+  {
+    key: "string3",
+    value: "v3",
+    animal: "a3",
+    children: []
+  },
+]
+
+const flatten: FlattenRecursive = 
+  rs => rs.flatMap(r => flatten(r.children))
+
+flatten(rvalues) // <-- Argument of type 'RValueAnimal[]' is not assignable to parameter of type 'Recursive<string>[]'
+```
+
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVl5ADU4dkUIAEEQYABbKJsgpRV1LQAiNSiYrKtArGQ4BOT2D3NvZEkcBAB7ECpkKFzoiApyVEj2+KSo0VShJlx8fCIyZCzPOgBGLIAaJnw2mPIc+aWxkrKo9bhN5eY2Lh4+ZFEmcS27bYn1me8AJkWj1Yh1tReb-FL+iqmcG+R1YHG4vHIl3w1xGR3uU0etAAzK9tu9Piifjt-vtMSCTuDzlCaksRDhQnJkAAxdhwMBGBTKVQaVJMHR6Qy8ExmLy0BZoDlGbmMjIaHQWCwAChUXVEAEobFYAPKJYBgTSoflZUGnXgFQbkhpNMDIGC0+kQ6nmhkYJmZVn4FSKloUAB0ZrpAFk4DJpc6PRaQNLXTrCXK5eSA0Zpe8KHKgA)
+
+Notiamo che i type parameter inferiti nella chiamata sono `string` e `Recursive<string>>` anziché i `"value"` e `Recursive<"value">>` attesi:
+
+```ts
+const flatten: <string, Recursive<string>>(rs: Recursive<string>[]) => Omit<Recursive<string>, "children">[]
+```
+
+Ci stiamo scontrando con una limitazione del type system, [il quale non utilizza le costrain sui generici come punti dai quali fare inferenza per altri generici](https://github.com/microsoft/TypeScript/issues/7234). Ecco che il type parameter `D` che compare nella costrain di `R` non può essere inferito da quest'ultimo, il quale ipotrebbe essere determinato a partire dall'argomento `rvalues`, e quindi viene considerato pari al suo upper bound `string` come tipo di ripiego.
+
+Per risolvere questo primo problema sfruttiamo il fatto che il tipo `Recursive` è ora intersezione di due tipi per ristrutturare il tipo della `flatten`:
+
+```ts
+type FlattenRecursive = 
+  <R extends Rec>(rs: R[]) => Omit<R, "children">[] 
+```
+
+[Playground](https://www.typescriptlang.org/play?target=99&jsx=0#code/JYOwLgpgTgZghgYwgAgEoQcg3gKGcgawgE8AuZAZzClAHMBuPZBAC2ABsATKCEcsNhQDaAXUYBfHGGIAHFOgQBXKBWAA3CAB4AIsggAPSCE4VK1OgD5kAXmxMhAaWShk2keSo0QDHOOQAyNAxGKVl5ADU4dkUIAEEQYABbKJsgpRV1LQAiNSiYrKtArGQ4BOT2D3NvZEkcBAB7ECpkKFzoiApyVEj2+KSo0VShJlx8fCIyZCzPOgBGLIAaJnw2mPIc+aWxkrKo9bhN5eY2Lh4+ZFEmcS27bYn1me8AJkWj1Yh1tReb-FL+iqmcG+R1YHG4vHIl3w1xGR3uU0etAAzK9tu9Piifjt-vtMSCTuDzlCaksRDhQnJkAAxdhwMBGBTKVQaVJMTSoPSGXgmNIWAAUKi6ogAlDYrAB5RLAMDshZTUGnXgFQbkhpNMDIGC0+kQ6nahkYJmZVn4FRiloUAB0WrpAFk4DIBeabTqQALLQrCcLheSXUYBe8KMKgA)
+
+Poiché la property `children` appartiene all'interfaccia `Rec` necessitiamo solo di essa come upper bound del type parameter `R`. Esso è l'unico type parameter che ci interessa davvero, e TypeScript è in grado di inferirlo correttamente.
