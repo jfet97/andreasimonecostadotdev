@@ -136,3 +136,8 @@ languageName = ":it:"
 
 [params.goatCounter]
 code = "jfet97"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
