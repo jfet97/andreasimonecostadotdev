@@ -74,7 +74,8 @@ Type 'Omit<Recursive<D>, "children">[]' is not assignable to type 'Omit<R, "chil
 
 <img src="/images/this_tipi_ricorsivi/what.jpeg" width="550" style="display: block;margin-left: auto;margin-right: auto;" alt="what"/>
 
-Keep calm e concentriamoci sulla prima riga: stiamo erroneamente cercando di assegnare qualcosa di più generale, un `Omit<Recursive<D>, "children">[]`, dove è richiesto un qualcosa di più specifico, ovvero un `Omit<R, "children">[]`. In effetti il tipo di `r.children` è tipizzato come un generico `Recursive<D>`, quindi la `flatten` ricorsiva può solo restituire un `Omit<Recursive<D>, "children">[]`. Il nocciolo del problema sta nel fatto che `Recursive<D>` non è assolutamente obbligato ad essere uguale al tipo `R`:
+Keep calm e concentriamoci sulla prima riga: stiamo erroneamente cercando di assegnare qualcosa di più generale, un `Omit<Recursive<D>, "children">[]`, dove è richiesto un qualcosa di più specifico, ovvero un `Omit<R, "children">[]`. In effetti il tipo di `r.children` è tipizzato come un generico `Recursive<D>`, quindi la `flatten` ricorsiva può solo restituire un `Omit<Recursive<D>, "children">[]`.\
+Il nocciolo del problema sta nel fatto che `Recursive<D>` non è assolutamente obbligato ad essere uguale al tipo `R`:
 
 ```ts
 type RValueAnimal = Recursive<"value"> & { animal: string }
@@ -111,6 +112,8 @@ const rprop: RValuePerson = {
 
 [Playground](https://www.typescriptlang.org/play?target=99&jsx=0&ssl=6&ssc=3&pln=2&pc=1&ts=next#code/C4TwDgpgBAShDGBXATgZwJYDcIB4AiUEAHsBAHYAmqUqwy6ZA5gHxQC8UA3gFBRQDaAaSgMoeALoAuGnQaMA3NwC+UAGRdeUANYQQ02vSaK+8ABboANhWTlpcJGiy48zfuMVLF3bqEiwAagCGFogQAIJk6AC2weywCCgY2DgARJjBoSms6pxQgZExFvqyTFBKPuDQMEEhEAAKEGgA9mRx9olOqem1WWpcUJDNZMWGjGXe8C20UMjdoah2NaER0cFucfyaPHx8OnpQKQZyAIwpADSafHMQ0mmnFzt5BcG3gfeXUGaW1rYC4ppKB4aR57W5HJgAJnOH2ut0wUKBfHyqyKB0CCI+XysNmGfwBQO2O1BB3BjAAzNDHrCDpgKYinijXnTMeZsb83PjuP9uJMyNNkGBkE0wIsMvVGqgWnFCcTDiVGAAWSlQalpJVAwaS3EpMDvEysn642Zi1DKIA)
 
-Nell'esempio due diversi tipi che estendono il medesimo `Recursive<D> = Recursive<"value">`. La definizione del tipo `Recursive` che abbiamo non ci impedisce di assegnare alla chiave `children` di un `RValuePerson` un array di `RValueAnimal`, o viceversa, perché `children` ha l'unica costrain di essere un `Recursive<"value">` e sia `RValuePerson` che `RValueAnimal` soddisfano questo vincolo.
+Nell'esempio creiamo due diversi tipi che estendono il medesimo `Recursive<D> = Recursive<"value">`. La definizione corrente del tipo `Recursive` non ci impedisce di assegnare alla chiave `children` di un `RValuePerson` un array di `RValueAnimal`, o viceversa, perché `children` ha l'unica costrain di essere un `Recursive<"value">` e sia `RValuePerson` che `RValueAnimal` soddisfano questo vincolo. Se invocassimo la `flatten` su `rprop.children` avremmo che `R = RValuePerson`, ma l'array risultante sarebbe un `Omit<RValueAnimal, "children">[]` che nulla ha a che vedere con il tipo `Omit<RValuePerson, "children">[]` sperato.
 
-Assegnamento ok perché array covarianti, esempio tipo ricorsivo con array
+Come possiamo impedire di avere l'array `children` out of sync?
+
+# La soluzione
