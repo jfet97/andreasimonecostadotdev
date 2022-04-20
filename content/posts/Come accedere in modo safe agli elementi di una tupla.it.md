@@ -5,7 +5,6 @@ date = "2022-04-20"
 description = "Come accedere in modo safe agli elementi di una tupla"
 categories = ["typescript"]
 series = ["TypeScript"]
-published = false
 tags = [
     "types",
     "tuple",
@@ -57,7 +56,7 @@ get2([1,2,3] as Array<number>, 1) // T inferred as number[]
 
 [Playground](https://www.typescriptlang.org/play?jsx=0#code/CYUwxgNghgTiAEAzArgOzAFwJYHtXwHMQMAeAFXhAA8MRVgBneKVATwG0BdAPgAoNkABwggAXPHYA6aWU4AaeFnrVxqZAFsARiBgBKcWXZqtOzgCgiGXuwCMcgExyAzPPg3d8APSf4FJYh04YGYmIw1tGAVjCKjw0wtiaztHFxD4AEEYGChWEmidbgV3Lx8-VACskGCoJnyYLjNG0EhYBBR0bDxCYntySho6RmY2Lj4BYTFfBSVQKlU4vQMwkxhzS3skh2dXYu9fRXLAqrS6hvXNlM40zOzcusK3Dz2yiqCTha4gA)
 
-Purtroppo TypeScript non ci permette di garantire a tempo di compilazione che l'accesso ad un elemento di un array sia sempre safe; per fare questo servono i dependent types. Se ci limitiamo però alle tuple, ovvero ad array dichiarati staticamente, possiamo nuovamente rendere funzioni come la `get` sopra più sicure. Nulla ci impedirà di accedere a `tuple[500]`, però possiame costringere l'indice `i` proveniente dall'esterno ad essere corretto per la tupla in questione, oltre bloccare l'uso della funzione se in ingresso viene rilevato dal type system un array anziché una tupla.
+Purtroppo TypeScript non ci permette di garantire a tempo di compilazione che l'accesso ad un elemento di un array sia sempre safe; per fare questo servirebbero i dependent type. Se ci limitiamo però alle tuple, ovvero ad array dichiarati staticamente, possiamo nuovamente rendere funzioni come la `get` più sicure. Nulla ci impedirà di accedere a `tuple[500]`, però possiame costringere l'indice `i` proveniente dall'esterno ad essere corretto per la tupla in questione. Possiamo inoltre bloccare l'uso della funzione se il type system rileva in ingresso un array anziché una tupla.
 
 # La soluzione
 
@@ -131,7 +130,7 @@ type ValidIndex<T extends any[], I extends number> =
   : never;
 ```
 
-Questa type function semplicemente controlla se il tipo indice `I`, trasformato in stringa, faccia parte degli indici safe utilizzabili sulla tupla `T`. In caso positivo restituisce `I` stesso, altrimenti `never`:
+Questa type function semplicemente controlla se il tipo indice `I`, trasformato in stringa, fa effettivamente parte degli indici safe utilizzabili sulla tupla `T`. In caso positivo restituisce l'indice `I` stesso, altrimenti `never`:
 
 ```ts
 type test1 = ValidIndex<[1, 2, 3], 1> // 1
@@ -140,4 +139,27 @@ type test3 = ValidIndex<Array<string>, 1> // never
 ```
 [Playground](https://www.typescriptlang.org/play?jsx=0&ssl=15&ssc=51&pln=13&pc=1#code/C4TwDgpgBAkgdgEwgDwgZwNIRGg8gMwBUBXMAGwgB5CoVgJE0oBDOEAbQF0A+KAXigBRZAGMyxJJQBQUKAGtsAe3xQaAMihpgAJwCWcAOYAaGfKUrWHTlO4BuKVNCQoAOWIBbAEYRthRQGUdfQNKF1pkekYoOA9vbSgAHyhPXQN9YF4BAAMAEgBvFwBfLPtHcGgANWYyXQR4JGRqcMiEJksuI1hmhlbo2J9MqFM3Lx8-QL1DShheOh6mepR0LBwCEnIqQm5TAH5YUwAuaIgANx9Sp2h6LQBGfigqmrrEFEp2G86AJk6AZk5Om68AD0QKgNzKzmuwE+90etUWjXeX1+-ygABZgaC4KcfBCruhgD9YdV4S9GgBBbTaZggShaSYGbgAzHHM7aIA)
 
-Osserviamo che se l'indice non è safe oppure se `T` è una tupla anziché un array allora il risultato è il tipo `never`. 
+Osserviamo che se l'indice non è safe oppure se `T` è un tipo array, anziché un tipo tupla, allora il risultato è il tipo `never`.
+
+## Accesso safe
+
+Possiamo ora creare una qualsiasi funzione che prende in ingresso solo tuple e un indice corretto per accedere ad un qualsiasi elemento in piena sicurezza:
+
+```ts
+function fn<T extends any[], I extends number>(
+  t: readonly [...T],
+  i: ValidIndex<T, I>
+): void {
+  // ...
+}
+
+fn(["hi", "how", "are", "you", "?"], 2); // ok
+fn(["hi", "how", "are", "you", "?"], 5); // error
+
+fn(["hi", "how", "are", "you", "?"] as Array<string>, 2); // error
+fn(["hi", "how", "are", "you", "?"] as Array<string>, 5); // error
+```
+
+[Playground](https://www.typescriptlang.org/play?jsx=0#code/C4TwDgpgBAkgdgEwgDwgZwNIRGg8gMwBUBXMAGwgB5CoVgJE0oBDOEAbQF0A+KAXigBRZAGMyxJJQBQUKAGtsAe3xQaAMihpgAJwCWcAOYAaGfKUrWHTlO4BuKVNCQoAOWIBbAEYRthRQGUdfQNKF1pkekYoOA9vbSgAHyhPXQN9YF4BAAMAEgBvFwBfLPtHcGgANWYyXQR4JGRqcMiEJksuI1hmhlbo2J9MqFM3Lx8-QL1DShheOh6mepR0LBwCEnIqQm5TAH5YUwAuaIgANx9S-GI4EWBdRTgofDgmuaj2zk6YbqiY0e1uAAUpmAR20EGYCHuZBAUHYADoEYQPqZdEcqjU6ogUNRPtsAJRHE6KWpQPKmAD05KgCLhUkKDieAPYACIABa6ZmdNmKADunKgzOYYP5zJAimIIp2zI+UAATHj7IyWeyRazeSKhRARWKJVypTKAKwKqCUqAAQW0Bg8DGAUGUUCc0AA5L84k6oLomHBFLbmGg0Kk4MxPBQHYooGAhcx3BB6PF7Y6oC7Tj4nbSpEq2RyuWq+VzNdrxZLpSwmBbtMwQJQtJMDNxOvLbCaqRarTG4LaE+Uk67Ux6vT7SwGDEGQ9BgOHIxWY3G7SpE8mzto0xm4Eys6r1fnhVydcXOKXzdoK1Wa8F61AjU3Ta3rR25w7uy7+sv+9FB37h6PQxOI1GZz4D4LnAKbLrSQA)
+
+L'errore che otteniamo, cioè `Argument of type 'number' is not assignable to parameter of type 'never'` deriva dal fatto che su input errati il tipo `ValidIndex<T, I>` si riduce a `never`, e valori di tipo `never` non ne esistono.
