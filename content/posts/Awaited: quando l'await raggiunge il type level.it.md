@@ -18,7 +18,7 @@ images = ["/images/awaited/copertina.png"]
 
 ## Introduzione
 
-La versione 4.5 di TypeScript ha introdotto una nuova type function: l'`Awaited`. Il suo scopo è quello di aiutarci a modellare meglio tutte quelle situazioni in cui è implicato un `await`, o comunque il metodo `then` delle promise. La situazione è meno banale di quanto si potrebbe pensare, in quanto il JavaScript "unwrappa" automaticamente eventuali promise innestate, una espressione come `await 42` è perfettamente lecita e vi è il supporto ai thenable, ovvero plain objects che dichiarano il metodo `then`.
+La versione 4.5 di TypeScript ha introdotto la type function `Awaited`. Il suo scopo è quello di aiutarci a modellare meglio tutte quelle situazioni in cui è implicato un `await`, o comunque il metodo `then` delle promise. La situazione è meno banale di quanto si potrebbe pensare, in quanto il JavaScript "unwrappa" automaticamente eventuali promise innestate, una espressione come `await 42` è perfettamente lecita e vi è il supporto ai thenable, ovvero plain objects che dichiarano il metodo `then`.
 
 Ecco che la type function `Awaited` è lo strumento adeguato per tutte queste casistiche:
 
@@ -60,4 +60,4 @@ interface PromiseConstructor {
 }
 ```
 
-L'array o la tupla presi come input possono contenere, da specifica, qualunque valore. Il risultato sarà una promise contenente un array, o una tupla, mutabile dove il tipo di ogni cella è pari al tipo della corrispondente cella dell'input dato in pasto proprio all'`Awaited`.
+L'array o la tupla presi come input possono contenere, da specifica, qualunque valore. Il risultato sarà una promise contenente un array, o una tupla, mutabile dove il tipo di ogni cella è pari al tipo della corrispondente cella dell'input dato in pasto proprio alla `Awaited`.
