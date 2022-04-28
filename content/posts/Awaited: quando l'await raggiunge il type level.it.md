@@ -14,6 +14,8 @@ featuredImage = "/images/awaited/copertina.png"
 images = ["/images/awaited/copertina.png"]
 +++
 
+__Series__: [TypeScript](/it/series/typescript/)
+
 # Awaited<T>
 
 ## Introduzione
