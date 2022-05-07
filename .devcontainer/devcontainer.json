@@ -2,7 +2,7 @@
 {
   "name": "Hugo Dev",
   "build": {
-    "dockerfile": "Dockerfile",
+    "dockerfile": "Dockerfile"
   },
   "overrideCommand": true,
   "extensions": ["davidanson.vscode-markdownlint"]
