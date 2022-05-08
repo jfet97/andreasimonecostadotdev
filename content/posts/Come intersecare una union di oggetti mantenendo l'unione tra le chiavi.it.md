@@ -36,7 +36,7 @@ type result = {
 
 Abbiamo che la chiave `prop1` compare solo una volta nell'input e ha tipo `number`, e tale e quale viene riportata nel tipo risultante. La chiave `prop2` invece ha tipo `string` nel primo oggetto e `boolean` nel secondo, quindi risulta nella union `string | boolean`. Similmente `prop3` risulta nella union `string[] | [boolean] | undefined`, in quanto in uno degli input compariva come propietà opzionale.
 
-# Soluzione
+# La soluzione
 
 ### AllKeys
 
