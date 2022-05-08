@@ -61,7 +61,7 @@ type unionAllKeys = AllKeys<union> // "prop1" | "prop2" | "prop3"
 
 ### Lookup
 
-La seconda type function, `Lookup`, distribuisce l'operazione di lookup con una chiave `K` su un tipo `T` rispetto ad una union di oggetti: 
+La seconda type function, `Lookup`, distribuisce l'operazione di lookup con una chiave `K` su un tipo `T` rispetto ad una union di oggetti:
 
 ```ts
 type Lookup<T, K extends PropertyKey> = T extends any ? T[K & keyof T] : never;
@@ -120,12 +120,12 @@ type test3 = Lookup<union, "prop3"> // string[] | [boolean] | undefined
 
 Nei risultati sono stati semplificati i `never` che teoricamente dovrebbero essere presenti nelle tre unioni, in quanto nessun costituente possiede tutte e tre le chiavi e quindi almeno un lookup fallisce sempre. Ricordiamo che per ogni tipo `A` è vero che `A | never` è identico ad `A`.
 
-### MergeUnion
+### MergeAsUnion
 
-Ed eccoci arrivati finalmente alla type function `MergeUnion`:
+Ed eccoci arrivati finalmente alla type function `MergeAsUnion`:
 
 ```ts
-type MergeUnion<T> = { [K in AllKeys<T>]: Lookup<T, K> };
+type MergeAsUnion<T> = { [K in AllKeys<T>]: Lookup<T, K> };
 ```
 
 Esso è un mapped type che itera su tutte le chiavi dell'unione `T`, condivise o meno, e per ognuna di esse effettua il lookup di `K` nell'unione `T` utilizzando la nostra type function `Lookup`:
@@ -136,7 +136,7 @@ type union =
   | { prop2: boolean, prop3: string[] }
   | { prop3?: [boolean] }
 
-type result = MergeUnion<union>
+type result = MergeAsUnion<union>
 /*
 {
   prop1: number;
@@ -145,4 +145,5 @@ type result = MergeUnion<union>
 }
 */
 ```
-[Playground](https://www.typescriptlang.org/play?ssl=18&ssc=3&pln=6&pc=1#code/C4TwDgpgBAggNnA0hEBnAPAFQHxQLxSZQQAewEAdgCapQCuFA1hQPYDuFUA-FIyiwDNCUAFxQKEAG4QATgChQkKABkWLRnTBYANFETEylGlAAKMlpBmhkIXASKly1WgEMKIboQDa+gGS9+IUwAXVFxKVkAbgVwaABZWQBzCABVCgBLFgosOygAbygfKHTOeCQUDBxgsVV1TR09XABfaLkYpQZMzjw5KCgAH3yoMHMwAEYxCjoAWwAjWV0RiwAmMVRgGRLEqCbegaGlsFWoWbU4CDdF0YBmNY2tr1DdvsGCw+uuMS9TlnO3J7aimgMggqDocGA+CgCRkyTSXXQnSy2DkAHoAFRyPJ7Q4TcQzeYyaJ9Q7HdabCjbQY-P4UYnDG53CmJR77b5nC4UUKDBhUCACEoQKjRXbo1FtIA)
+
+[Playground](https://www.typescriptlang.org/play?#code/C4TwDgpgBAggNnA0hEBnAPAFQHxQLxSZQQAewEAdgCapQCuFA1hQPYDuFUA-FIyiwDNCUAFxQKEAG4QATgChQkKABkWLRnTBYANFETEylGlAAKMlpBmhkIXASKly1WgEMKIboQDa+gGS9+IUwAXVFxKVkAbgVwaABZWQBzCBhUAFUKAEsWCiw7KABvKB8oTM54JBQMHGCxVXVNHT1cAF9ouRilBmzOPDkoKAAfQqgwczAARjEKOgBbACNZXTGLACYxVGAZMsSoFv6hkZWwdah5tTgIN2XxgGYNrZ2vUP2B4aLj264xL3OWS7cLw6imgMggqDocGA+CgCRkyVSGR66G6OWwcgA9AAqOQFA7HKbiOaLGTRAbHU6bbYUXbDP4Aihk0Z3B7UxLPQ6-C5XCihYYMKgQARlCBUaL7LEYjpAA)
