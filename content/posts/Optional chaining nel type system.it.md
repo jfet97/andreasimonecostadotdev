@@ -94,7 +94,7 @@ Vi sono innanzitutto alcune proprietà importanti da tenere presenti:
 1. per ogni tipo `T` diverso da `any` si ha che `T[never] = never`
 2. per ogni tipo `K` assegnabile a `string | number | symbol` si ha che `never[K] = never`
 3. per ogni tripla di tipi `A`, `B` e `C` si ha che `(A | B) & C = (A & C) | (B & C)`, ovvero l'intersezione si distribuisce rispetto all'unione
-4. per ogni coppia di tipi `A & B` si ha che se non esistono valori assegnabili sia ad `A` che a `B` allora `A & B = never`
+4. per ogni coppia di tipi `A` e `B` si ha che se non esistono valori assegnabili sia ad `A` che a `B` allora `A & B = never`
 5. per ogni tipo `A` si ha che `A | never = A`
 
 Analizziamo ora la semantica della type function `OptionalLookup`. Per le proprietà `3`, `4` e `5` se la generica chiave `K` è assegnabile a `keyof T` allora `K & keyof T` si riduce semplicemente a `K`, altrimenti si riduce a `never`. Perciò nel primo caso avremmo che `OptionalLookup<T, K> = T[K]`, cioè si comporta come il normale lookup, mentre nel secondo caso avremmo che `OptionalLookup<T, K> = T[never] = never` grazie alla proprietà `1`. Infine, per la proprietà `2` abbiamo che `OptionalLookup` può essere innestato a piacimento anche nel caso in cui il lookup fallisca nel tipo `never`:
