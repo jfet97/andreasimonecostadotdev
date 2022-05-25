@@ -19,9 +19,7 @@ __Series__: [TypeScript](/it/series/typescript/)
 
 # Introduzione
 
-Rinfreschiamoci la memoria: che cosa è l'optional chaining? Quando abbiamo un oggetto con alcune proprietà che potrebbero essere `undefined`
-
-L'optional chaining che prende forma nell'operatore `?.`, l'elvis operator per gli amici, ci permettere di leggere il valore di una proprietà in profondità in una chain di oggetti senza preoccuparci che ogni singola reference sia valida anziché `undefined`:
+Rinfreschiamoci la memoria: che cosa è l'optional chaining? L'optional chaining che prende forma nell'operatore `?.`, l'elvis operator per gli amici, ci permettere di leggere il valore di una proprietà in profondità in una chain di oggetti senza preoccuparci che ogni singola reference sia valida anziché `undefined`:
 
 ```ts
 const customer = {
