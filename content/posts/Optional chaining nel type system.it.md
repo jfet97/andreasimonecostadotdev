@@ -83,7 +83,7 @@ ma TypeScript ci ferma: `"post"` non appartiene alle chiavi di `UserAPI[Path]` d
 
 # La soluzione
 
-## OptionalLookup
+### OptionalLookup
 
 ```ts
 type OptionalLookup<T, K extends PropertyKey> = T[K & keyof T]
