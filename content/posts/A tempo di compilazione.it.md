@@ -21,21 +21,21 @@ Nella mia limitata esperienza come trainer mi sono reso conto di quanto per molt
 
 Uno snippet come il seguente è raro che metta in difficoltà qualcuno, a meno di non essere completamente a digiuno di programmazione:
 ```ts
-function isDieci(t: number) {
-  return t === 10 ? "è dieci" : "no, direi di no"
+function isTen(t: number) {
+  return t === 10 ? "yes, it is" : "no, it's not"
 }
 ```
 
 Mentre la stessa cosa trasformata in type function sembra essere capace di mettere in crisi un considerevole numero di sviluppatori:
 ```ts
-type IsDieci<T extends number> = T extends 10 ? "è dieci" : "no, direi di no"
+type IsTen<T extends number> = T extends 10 ? "yes, it is" : "no, it's not"
 ```
 
 Ciò che prima era un banale algoritmo adesso è diventato magia. Cosa significa codice del genere? Perché possiamo scriverlo? Proviamo a fare un po' luce sulla situazione.
 
 ## I type literal
 
-In TypeScript esistono tipi come `"ciao"` o `42`. Essi vengono detti type literal, e se visti come insiemi sono dei [singoletti](https://en.wikipedia.org/wiki/Singleton_(mathematics)). Ad esempio il tipo `42` può essere visto come un insieme contente solo il numero `42`. Ecco come il corpo della type function `IsDieci` acquisisce senso: i valori `10`, `"è dieci"` e `"no, direi di no"` hanno un diretto corrispondente nel type system, ed è tale corrispondente ad essere utilizzato nella definizione.
+In TypeScript esistono tipi come `"ciao"` o `42`. Essi vengono detti type literal, e se visti come insiemi sono dei [singoletti](https://en.wikipedia.org/wiki/Singleton_(mathematics)). Ad esempio il tipo `42` può essere visto come un insieme contente solo il numero `42`. Ecco come il corpo della type function `IsTen` acquisisce senso: i valori `10`, `"yes, it is"` e `"no, it's not"` hanno un diretto corrispondente nel type system, ed è tale corrispondente ad essere utilizzato nella definizione.
 
 ## Il compilatore esegue del codice
 
@@ -43,7 +43,7 @@ Dirò una banalità, ma tutti ci aspettiamo che il codice che scriviamo venga es
 
 Forse vi sorprenderà sapere che anche un compilatore potrebbe eseguire parte del nostro codice, e ciò avviene ovviamente a _compile time_. Si tratta di particolari tipi di esecuzione atti a migliorare l'analisi statica dei nostri programmi, come ad esempio l'[esecuzione simbolica](https://en.wikipedia.org/wiki/Symbolic_execution). Lo scopo solitamente è quello di capire se è possibile applicare alcune ottimizzazioni o trasformazioni mantenendo intatta la semantica del programma.
 
-Esiste anche la possibilità di scrivere del codice che verrà eseguito solo a compile time e non a runtime. Un esempio? Le macro del C, le quali vengono analizzate ed eseguite dal pre-processore per produrre altro codice. Un altro esempio? Le type function di TypeScript, che vengono eseguite dal compilatore per creare nuovi tipi a partire da tipi già esistenti.
+Esiste anche la possibilità di scrivere del codice che verrà eseguito solo a compile time e non a runtime. Un esempio? Le macro del C, le quali vengono analizzate ed eseguite dal pre-processore per produrre altro codice. Un altro esempio? Le type function di TypeScript, le quali sono funzioni che vengono eseguite dal compilatore, e non a runtime, per creare nuovi tipi a partire da tipi già esistenti.
 
 ## Esistono due linguaggi
 
@@ -58,7 +58,7 @@ function sum(a: number, b: number) {
 }
 ```
 
-Possiamo "tranquillamente" fare lo stesso nel type system di TypeScript:
+Possiamo "tranquillamente" fare lo stesso nel type system di TypeScript. Non spaventatevi, non è necessario capire il seguente listato:
 ```ts
 // TS >= 4.8
 
@@ -170,7 +170,7 @@ type Dodici = Sum.SumNumbers<4, 8> // 12
 
 La definizione di `SumNumbers` è molto più complessa della `sum` e nessuno si sognerebbe mai di voler programmare applicazioni reali in un linguaggio che richiede così tanti sforzi anche solo per le cose più semplici. Ciò che sto cercando di trasmettere con questo esempio è la consapevolezza del fatto che non sta accadendo nulla di strano: abbiamo scritto un algoritmo che viene eseguito dal compilatore anziché dall'interprete.
 
-Risulta poi che gli esiti di queste computazioni a tempo di compilazione vengono considerati come tipi delle entità che esistono a runtime, ma da un punto di vista teorico non siamo obbligati a fare questa associazione. Un esempio lampante è [HypeScript](https://github.com/ronami/HypeScript), nel quale viene utilizzato esclusivamente il type system del linguaggio per il parsing e il type checking di programmi TypeScript. Potremmo addirittura riuscire a far eseguire alcuni programmi JavaScript, che generalmente dovrebbero girare a runtime, dal compilatore invece, considerando i valori restituiti dalle varie type function non più come tipi ma, appunto, come i valori che sarebbero dovuti esistere a runtime.
+Risulta poi che gli esiti di queste computazioni a tempo di compilazione vengono considerati dal compilatore i tipi delle entità che esistono a runtime, ma da un punto di vista teorico non siamo obbligati a fare questa associazione. Un esempio lampante è [HypeScript](https://github.com/ronami/HypeScript), nel quale viene utilizzato esclusivamente il type system del linguaggio per il parsing e il type checking di programmi TypeScript. Potremmo addirittura riuscire a far eseguire alcuni programmi JavaScript, che generalmente dovrebbero girare a runtime, dal compilatore invece, considerando i valori restituiti dalle varie type function non più come tipi ma, appunto, come i valori che sarebbero dovuti esistere a runtime.
 
 Ovviamente questi utilizzi esotici del type system non hanno alcuna valenza pratica, se non quella di chiarire (confondere) la natura dei concetti in gioco. L'unico scopo effettivo degli algoritmi scritti nel type system rimane quello di creare e manipolare tipi che siano utili nella verifica della correttezza dei nostri programmi.
 
@@ -183,35 +183,35 @@ Non possiamo lanciare eccezioni nel type system, non direttamente almeno, perci�
 Utilizzare un upper bound nella dichiarazione di un type parameter ha come conseguenza automatica la generazione di un errore a tempo di compilazione nel qual caso il tipo concreto non rispetti il bound:
 
 ```ts
-type IsDieci<T extends number> = T extends 10 ? "è dieci" : "no, direi di no"
+type IsTen<T extends number> = T extends 10 ? "yes, it is" : "no, it's not"
 
-type T0 = IsDieci<["ciao"]> // Type '["ciao"]' does not satisfy the constraint 'number'.
+type T0 = IsTen<["ciao"]> // Type '["ciao"]' does not satisfy the constraint 'number'.
 ```
 
 Questo è praticamente l'unico modo per segnalare in modo evidente un errore, e purtroppo è piuttosto limitato. Per poter codificare un comportamento come il seguente:
 
 ```ts
-type NonIlDieci<T> = T extends 10 ? throw "ti prego il dieci no" : T
+type TenIsForbidden<T> = T extends 10 ? throw "please, not the ten" : T
 ```
 
 abbiamo bisogno di una sana dose di inventiva, dato che non è direttamente supportato dal type checker:
 
 ```ts
 type Id<T> = T extends unknown ? T : never
-type NonIlDieci<T extends NonIlDieci<T>> = Id<T> extends 10 ? "ti prego il dieci no" : Id<T>
+type TenIsForbidden<T extends TenIsForbidden<T>> = Id<T> extends 10 ? "please, not the ten" : Id<T>
 
-type T1 = NonIlDieci<15> // 15
-type T2 = NonIlDieci<10> // Type '10' does not satisfy the constraint '"ti prego il dieci no"'
+type T1 = TenIsForbidden<15> // 15
+type T2 = TenIsForbidden<10> // Type '10' does not satisfy the constraint '"please, not the ten"'
 ```
 
 È comune quindi sfruttare il tipo `never`, che personalmente chiamo "il `null` del type system", restituendolo ogniqualvolta qualcosa non va:
 
 ```ts
-type NonIlDieci<T> = T extends 10 ? never : T
+type TenIsForbidden<T> = T extends 10 ? never : T
 
 type Pop<T extends readonly any[]> = T extends [...infer REST, any] ? REST : never
 ```
 
 La ratio sta nel fatto che non esistono valori aventi tipo `never`, quindi se il tipo risultante da una computazione nel type system fosse proprio esso molto probabilmente incontreremmo, in un secondo momento, alcuni problemi nella compilazione del nostro codice.
 
-Questo approccio ha ovviamente dei contro. Innanzitutto viene oscurata la causa originale del problema: di per se il tipo `never` non aiuta a comprendere la reale natura dell'errore. Oltre a ciò `never` è sottotipo di qualunque altro tipo, quindi componendo più type function potremmo ritrovarci davanti a risultati davvero inaspettati dato che tutti i check fatti con gli `extends` hanno esito positivo. 
+Questo approccio ha ovviamente dei contro. Innanzitutto viene oscurata la causa originale del problema: di per se il tipo `never` non aiuta a comprendere la reale natura dell'errore. Oltre a ciò `never` è sottotipo di qualunque altro tipo, quindi componendo più type function potremmo ritrovarci davanti a risultati davvero inaspettati dato che tutti i check fatti con gli `extends` hanno esito positivo.
