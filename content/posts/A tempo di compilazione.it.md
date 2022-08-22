@@ -194,7 +194,7 @@ Questo è praticamente l'unico modo per segnalare in modo evidente un errore, e 
 type TenIsForbidden<T> = T extends 10 ? throw "please, not the ten" : T
 ```
 
-abbiamo bisogno di una sana dose di inventiva, dato che non è direttamente supportato dal type checker:
+abbiamo bisogno di una sana dose di inventiva e di qualche trick meno noto, sui quali magari scriverò un articolo in futuro:
 
 ```ts
 type Id<T> = T extends unknown ? T : never
