@@ -61,7 +61,10 @@ A seconda di quello che sarà il valore effettivo del field `_tag`, TypeScript �
 Ipotizziamo ora di voler quadrare un cerchio. Ovvero, vogliamo creare una funzione che prenda in ingresso esclusivamente un `"circle"` e restituisca un `"square"`. A disposizione abbiamo però solo il tipo `Shape`, non i suoi costituenti. Ci viene quindi in aiuto la type function `Extract`, disponibile nella stdlib dalla versione `2.8` di TypeScript.
 
 ```ts
+// { _tag: "circle"; radius: number; }
 type Circle =  Extract<Shape, { _tag: "circle" }>;
+
+// { _tag: "square"; side: number; }
 type Square = Extract<Shape, { _tag: "square" }>;
 
 function squareCircle(circle: Circle): Square {
