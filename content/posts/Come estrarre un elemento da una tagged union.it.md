@@ -62,7 +62,7 @@ Ipotizziamo ora di voler quadrare un cerchio. Ovvero, vogliamo creare una funzio
 
 ```ts
 // { _tag: "circle"; radius: number; }
-type Circle =  Extract<Shape, { _tag: "circle" }>;
+type Circle = Extract<Shape, { _tag: "circle" }>;
 
 // { _tag: "square"; side: number; }
 type Square = Extract<Shape, { _tag: "square" }>;
