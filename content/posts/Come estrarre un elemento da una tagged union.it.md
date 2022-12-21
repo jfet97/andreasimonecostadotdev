@@ -8,8 +8,7 @@ series = ["TypeScript"]
 tags = [
     "union",
     "extract",
-    "conditional type",
-    "mapped type"
+    "conditional type"
 ]
 featuredImage = "/images/estrarre_da_unione/carbon.png"
 images = ["/images/estrarre_da_unione/carbon.png"]
