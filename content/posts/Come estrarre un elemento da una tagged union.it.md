@@ -139,7 +139,7 @@ type T6 =  Extract<Shape, { _tag: "circle" }>;
 
 `T5` risulta `false` poiché `boolean` viene espanso in `true | false` e per la distribuzione rispetto all'unione `Extract<true | false, false>` è pari a `Extract<true, false> | Extract<false, false>` ovvero `never | false` ovvero `false`, in quanto `never` è l'elemento neutro dell'unione (`never` corrisponde sostanzialmente all'insieme vuoto).
 
-`T6` risulta `{ _tag: "circle"; radius: number; }` poiché `Shape` viene espanso nei tre costituenti ed `Extract` si distribuisce rispetto a tale unione, ma solo uno dei tre elementi, ovvero `{ _tag: "circle"; radius: number; }`, è assegnabile al tipo `{ _tag: "circle" }`, per quanto detto prima sulle regole di assegnabilità.
+`T6` risulta `{ _tag: "circle"; radius: number; }` poiché `Shape` viene espanso nei tre costituenti ed `Extract` si distribuisce rispetto a tale unione, ma solo uno dei tre elementi, ovvero `{ _tag: "circle"; radius: number; }`, è assegnabile al tipo `{ _tag: "circle" }` per quanto detto prima sulle regole di assegnabilità.
 
 ```ts
 Extract<Shape, { _tag: "circle" }>
@@ -163,7 +163,7 @@ Extract<
 
 | { _tag: "circle"; radius: number; }
 | never // _tag: "square" non assegnabile a _tag: "circle"
-| never // // _tag: "rectangle" non assegnabile a _tag: "circle"
+| never // _tag: "rectangle" non assegnabile a _tag: "circle"
 
 // diventa
 
