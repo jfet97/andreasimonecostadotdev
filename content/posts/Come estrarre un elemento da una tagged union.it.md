@@ -38,7 +38,7 @@ type Shape =
 
 In gergo tecnico un tipo come `Shape` si chiama __sum type__. Questo perché l'insieme dei valori avente tale tipo è esattamente l'unione dei valori dei suoi costituenti e questi ultimi non hanno elementi in comune: sono disgiunti. Il discriminante, in questo esempio, è il field `_tag`, che deve essere unico per ogni componente di `Shape`.
 
-Questo pattern ha innumerevoli vantaggi, tra i quali la possibilità di sfruttare le piene capacità di code flow analysis e narrowing del linguaggio.
+Questo pattern ha innumerevoli vantaggi, tra i quali la possibilità di sfruttare le piene capacità di _code flow analysis_ e _type narrowing_ del linguaggio.
 
 ```ts
 function getArea(shape: Shape): number {
