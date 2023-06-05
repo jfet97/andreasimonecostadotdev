@@ -83,6 +83,7 @@ Comprendo che la tentazione di flexare un generico sia forte in un caso come que
 Il generico `T` lo dichiariamo tra le parentesi angolate e utilizzandolo per tipare il parametro `xs` chiediamo a TypeScript di assegnarvi il tipo degli elementi di `xs` ogniqualvolta la funzione `len` viene invocata. Quello che manca, però, è almeno un "uso futuro" di tale tipo.
 
 Possiamo riscrivere `len` nel seguente modo, senza utilizzare alcun generico:
+
 ```ts
 function len(xs: readonly unknown[]): number {
   return xs.length;
@@ -92,15 +93,33 @@ function len(xs: readonly unknown[]): number {
 ### Esempio 2
 
 ```ts
+function snd<A, B>(ab: [A, B]): B {
+  return ab[1];
+}
+```
+La funzione `snd` estrae il secondo elemento di una tupla. È perfettamente ragionevole voler far inferire a TypeScript il tipo di tale secondo elemento, in modo tale da poterlo restituire aumentando la precisione della segnatura della nostra funzione. Questo è un "uso futuro" di tutto rispetto. D'altra parte non vi è necessità di inferire anche il tipo del primo elemento. Il generico `A` verrà istanziato, ma mai utilizzato.
+
+Possiamo riscrivere `snd` nel seguente modo, senza utilizzare il generico `A`:
+
+```ts
+function snd<B>(ab: [unknown, B]): B {
+  return ab[1];
+}
+```
+
+### Esempio 3
+
+```ts
 function printObjKey<T, K extends keyof T>(obj: T, key: K): void {
   console.log(obj[key]);
 }
 ```
 
-In questo caso stiamo dichiarando due variabili: una utile, l'altra inutile. Il nostro obiettivo è quello di assicurare che la chiave `key` scelta per indicizzare `obj` sia una chiave effettivamente presente in esso. Quindi chiediamo a TypeScript di inferire il tipo di `obj`, salvarlo nella variabile `T` e poi utilizziamo l'operatore `keyof` su `T` per calcolare le effettive chiavi di `obj` e limitare di conseguenza il tipo del secondo argomento `key`.\
-Tale limitazione passa per un'altra variabile, `K`, il cui upper-bound è `keyof T`. Stiamo quindi chiedendo a TypeScript di inferire il tipo del secondo argomento, salvarlo nella variabile `K`, controllare che tale tipo sia assegnabile a `keyof T` e in caso contrario segnalare un errore. Della variabile `K`, però, non ce ne facciamo niente. Non è necessario salvare il tipo del secondo argomento in `K` e non vi è alcun "uso futuro" di tale tipo.
+In questo caso stiamo dichiarando due variabili: una utile, l'altra inutile. Il nostro obiettivo è quello di assicurare che la chiave `key` scelta per indicizzare `obj` sia una chiave effettivamente presente in esso. Quindi chiediamo a TypeScript di inferire il tipo di `obj`, salvarlo nella variabile `T` e poi utilizziamo l'operatore `keyof` su `T` per calcolare le effettive chiavi di `obj` e limitare di conseguenza il tipo del secondo argomento `key`. Questo è l'"uso futuro" di `T`, l'"uso futuro" del tipo che sarà memorizzato al suo interno.\
+La limitazione del tipo di `key` passa per un'altra variabile, `K`, il cui upper-bound è `keyof T`. Stiamo quindi chiedendo a TypeScript di inferire il tipo del secondo argomento, salvarlo nella variabile `K`, controllare che tale tipo sia assegnabile a `keyof T` e in caso contrario segnalare un errore. Della variabile `K`, però, non ce ne facciamo niente. Non è necessario salvare il tipo del secondo argomento in `K` poiché non vi è alcun "uso futuro" di tale tipo.
 
 Possiamo riscrivere `printObjKey` nel seguente modo, senza utilizzare il generico `K`:
+
 ```ts
 function printObjKey<T>(obj: T, key: keyof T): void {
   console.log(obj[key]);
