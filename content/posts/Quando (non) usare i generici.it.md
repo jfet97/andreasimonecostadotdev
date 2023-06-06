@@ -151,7 +151,7 @@ Per quanto banale, l'identità è un ottimo esempio di un buon uso di un generic
 ### Esempio 2
 
 ```ts
-function getObjKey<T, K extends keyof T>(obj: T, key: T): T[K] {
+function getObjKey<T, K extends keyof T>(obj: T, key: K): T[K] {
   return obj[key];
 }
 ```
