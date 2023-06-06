@@ -5,7 +5,7 @@ date = "2023-06-05"
 description = "Alcune linee guida per capire quando è il caso di usare i generici"
 categories = ["typescript"]
 series = ["TypeScript"]
-published = false
+published = true
 tags = [
     "generics",
 ]
