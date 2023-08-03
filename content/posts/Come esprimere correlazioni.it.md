@@ -136,6 +136,58 @@ function processRecord<K extends keyof TypeMap>(record: UnionRecordType[K]) {
 
 Le chiavi del mapped type `UnionRecordType` sono infatti le chiavi della type map, e l'indicizzazione `UnionRecordType[K]` avviene con un index type generico `K` il cui upper bound sono sempre le chiavi della type map.
 
+Vi è però una differenza non indifferente rispetto ai casi precedente: con questa soluzione TypeScript non è in grado di inferire il tipo attuale di `K` durante l'invocazione di `processRecord`. Esso sarà sempre `keyof TypeMap`, come mostrato in [questo playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-dev.20230801#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAKo5mPHACUIAYx4UAJnDkZMkqCagBtAApRWUANYQQPAGax4yMAF0CR077usdAgsqYz8TADcCfUQUSw8QsJMnAgAKSNdIdziASnQAPihwnmYdUJNRSQlpWWhFZTVNbR10BSUVdS1daLN7Rxdo9w8pSSdCHA1geqgwCh4NCFpaDqaAHgBpKAgAD2AIHB1aOwdnDJiwPJSKRt0COvbrvXgzNY9cn1Mrzp0AOidLh++4WyUgqkhmcwWSweKWwtgCBAARDgETR0gBGAAMNGSUDSBBwJHIFFyaAKWhwtAEEG+-B4bDSUAAVFBMdlRNlJAB6TlQAB6AH4gA). Entrambe le precedenti soluzioni non soffrono di questo problema.
+
 ### Estrarre le funzioni
 
 Come pretesto per mostrare la potenza del pattern estraiamo le funzioni `f` in un'altra struttura, slegata dalla principale. Vedremo che possiamo correlare anche quest'ultima sempre attraverso la type map.
+
+```ts
+type TypeMap = { n: number, s: string, b: boolean };
+
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = { 
+    [P in K]: {
+        kind: P,
+        v: TypeMap[P]
+    }
+}[K];
+
+type FuncRecord = { 
+    [P in keyof TypeMap]: (x: TypeMap[P]) => void
+};
+
+function processRecord<K extends keyof TypeMap>(
+    recv: ValueRecord<K>,
+    recfs: FuncRecord
+) {
+    return recfs[recv.kind](recv.v);
+}
+```
+
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAGpJ+hCACUIAYx4UAJgB4A0lAgAPYBBw7aUANYQQPAGax4yVBjsPncSG4B86FhQklChUADaAApQrFAGALoEmCFhqTasOgSRVCmpoQBuBD6IKFHxuWKSouEJUjLwUABihDga6lq6gdgVUTEink4uviiJUAAUJkWupZHxAJToAfk8zDpVdY4tGsDMPCJgFDwaELS07dr6RqbmltYD3tNgfmMUmoUKSirnuoZ+NK8aRz0Jpbb46BbJVKvYCECgiAFA8IA-IAOnSlniLzeKPycykomkkgORxOZ00FzG2HRmSgAHIcLSaO8ACwAJjENEhYXwuEWUC0OFoAggKP4PDYYxwKOAPEazBMEB0Y1ZczmOVSwOsaACAqFglF4rGtFFFjYwAAFmqKlwoKQ+brhQaJXaAPxQACMUAIAAYraI8UA)
+
+Abbiamo che sia `ValueRecord` che `FuncRecord` sono definiti in funzione della type map. `ValueRecord` è basato sulla versione "verbosa", in modo tale che il generico `K` possa essere inferito con precisione durante l'invocazione di `processRecord`. La definizione di `FuncRecord` può quindi essere resa la più semplice possibile.
+
+All'interno di `processRecord` il `kind` di `recv` viene utilizzato per indicizzare la funzione corrispondente all'interno della struttura `FuncRecord`, e tale funzione verrà invocata sul valore `v` di `recv`. TypeScript non batte ciglio.
+
+&nbsp;
+
+## Come non far funzionare un fico secco: lo switch
+
+Ho estratto le funzioni in una struttura separata non solo per mostrare le potenzialità del pattern, ma anche per indicare la strategia corretta da utilizzare per risolvere il seguente problema:
+
+```ts
+type NumberRecord = { kind: "n", v: number };
+type StringRecord = { kind: "s", v: string };
+type BooleanRecord = { kind: "b", v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => b ? 1 : 0; 
+
+function processRecord(record: UnionRecord) {
+    switch
+}
+
+```
