@@ -19,7 +19,7 @@ __Series__: [TypeScript](/it/series/typescript/)
 
 In questo articolo illustro nel dettaglio un pattern semi-sconosciuto e sufficientemente complicato ma piuttosto potente per esprimere correlazioni tra diverse entità. Nel corso del tempo mi sono ritrovato più volte a vederlo consigliato per risolvere problemi all'apparenza differenti, ma che, in realtà, avevano una radice comune. Il pattern in questione è ben presentato in [questa pull request](https://github.com/microsoft/TypeScript/pull/47109), sebbene sia in realtà disponibile da diverso tempo. Dalla versione `4.6` del linguaggio è stato discretamente potenziato.
 
-Ho un rapporto di amore e di odio con questo pattern. L'amore deriva dalla possibilità di esprimere correlazioni che altrimenti richiederebbero rischiose _type assertion_. L'odio è basato sul fatto che si è costretti a definire i tipi in gioco in un modo alquanto inusuale, mi azzarderei a dire non idiomatico, e soprattutto non semplice da comprendere.
+Ho un rapporto di amore e di odio con questo pattern. L'amore deriva dalla possibilità di esprimere correlazioni che altrimenti richiederebbero rischiose _type assertion_, esplicite o implicite. L'odio è basato sul fatto che si è costretti a definire i tipi in gioco in un modo alquanto inusuale, mi azzarderei a dire non idiomatico, e soprattutto non semplice da comprendere.
 
 Parliamone francamente, la struttura del pattern è piuttosto orrenda. Il buon vecchio [jcalz](https://stackoverflow.com/users/2887218/jcalz), il quale si è fatto portavoce dell'intera comunità nel richiedere il [supporto all'espressione di tali correlazioni](https://github.com/microsoft/TypeScript/issues/30581), una volta commentò dicendo: "_Do real world TS programmers know what to do with this?_". Ed è proprio jcalz a suggerire spesso su SO alcune strategie semplificate per poter utilizzare più agilmente il pattern. Ci tengo a sottolineare che jcalz è uno degli utenti più esperti del linguaggio, con una vasta conoscenza e una esperienza sconfinata ben superiore alla mia. È perciò interessante vedere come uno sviluppatore di tale calibro sia fondamentalmente scontento dello stato attuale e preferisca suggerire soluzioni in una certa misura differenti dall'unica ufficiale.
 
@@ -186,9 +186,15 @@ const double = (n: number) => n * 2;
 const trim = (s: string) => s.trim();
 const toNum = (b: boolean) => b ? 1 : 0; 
 
-function processRecord(record: UnionRecord) {
-    switch
+function processRecord(record: NumberRecord): number
+function processRecord(record: StringRecord): string
+function processRecord(record: BooleanRecord): number
+function processRecord<R extends UnionRecord>(record: R) {
+    switch(record.kind) {
+        case 'n': return double(record.v)
+        case 's': return trim(record.v)
+        case 'b': return toNum(record.v)
+    }
 }
-
 ```
-[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRXBoDKHwcOCQbVQAKGh4+NABKYgA+KBooACooACYxUvLDBHqtfXT5NqJOrQA6UbqWoaiRnHj6pEY-PPsZzqQoAH4oAEYoRgAGYShRUQAzOBosYEjusFQcLAgtLST8AAedBQCAAD2AEDoWig4XeAPadVQWU06DapFEUCxUC0AHcqMAsAALJEo+ZufDozHYmlYWxaaAAchojMYyOAcFQ3Uq1RspMK804LWpNKxdIZUEZWlZUHZnO6S2RAqFItF4qZSBlcq5UGAG0Q-KcguFNMEojN93upigAGE1og0Ko7WUHagAIJQVLOrSusye232hBoG33WiQ1APWw-AMuoPusgUxiMt2MjhaGpoeREpoJVBmsNoSPR72+hMaJNmRn5mjhovQEtxm1l9ySm1Vq0hKAAKRwRxIPaQHtSA79w97IdEBYjUegA49pFMjAbaDdAG1GRTGQBdDjDV1LwMr6u1mfd3t+hchA+xtBmdebndQPdx68+uNmY+F08DpuXyCv10bXvDRt13Q9UAAxsLSnOsoAABS+MAtEBJtwUhaEYzfNBOgxLE-GzW1gLoUDqWfNAlzELEACte2ORg-wgJciPwbchCgAAyKAAHkEAJQEAFEIVQKNgEBAcOAYpiNxArdBHaDgmFMJh2jEC1hmAKAEFsQkiVUFDQQhKF8BhZdUERUgyNQDgaKQDh8MERgEJwJCUPaA4yGpPECWJOp8KpWl6SZFN6FVLFtW6SzbgAeiiiocE4ZEkBQUE-jQaAAAM539Z58AgB5aAgfB0tVdVJUrELRVlCAOR1GzotiyoEogJLoF+BlkSgTLz2yug8oKoqSsC1tWVCqqau6OqoBiuKmpalL2oyn8ety-KaEK4qsTNQQgA)
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRXBoDKHwcOCQbVQAKGh4+NABKYgA+KBooACooACYxUvLDBHqtfXT5NqJOrQA6UbqWoaiRnHj6pEY-PPsZzqQoAH4oAEYoRgAGYShRUQAzOBosYEjusFQcLAgtLST8HVUFlNPF+ACWk0EqhHs9Xu8oJ9vr9-iCgSDGDI5BkIZNsfJYS83lFEV8fn8AejCoxcgECk5IV1mjCnkSEUjyajCgAedBQCAAD2AEDoWig4XeAPaVKcjHQbVIoigyqgWgA7lRgFgABYygjzNz4BVKlWmrC2LTQADkNCtjGBwDgqG6lWqNj1+HmnBaJtNyvNlqgVq0dqgDqd3SWwMKXp9fpVAetSFD4edUGAG0QHtjvqEokEQA)
