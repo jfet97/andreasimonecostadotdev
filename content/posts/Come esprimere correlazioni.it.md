@@ -30,3 +30,81 @@ Quindi, perché ho scritto questo articolo? Innanzitutto per spiegare il pattern
 La mia proposta è fortemente basata sulle strategie alternative suggerite da jcalz, ma ho fatto il possibile per identificare le ragioni di alcuni malfunzionamenti delle stesse risolvendo i problemi riscontrati. Ho passato letteralmente ore a ragionare, testare e martellare, finché non ho raggiunto un compromesso che sento di poter condividere. Ho cercato di identificare quale fosse l'essenza del pattern e come poter quindi plasmare una soluzione sempre corretta ma leggermente più alla mano.
 
 ## Il problema
+
+```ts
+type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
+type StringRecord = { kind: "s", v: string, f: (v: string) => void };
+type BooleanRecord = { kind: "b", v: boolean, f: (v: boolean) => void };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+function processRecord(record: UnionRecord) {
+  record.f(record.v); // error!
+ // Argument of type 'string | number | boolean' is not assignable to parameter
+ // of type 'never'
+}
+```
+
+Per costruzione il codice qua sopra è certamente corretto, ma TypeScript non è in grado di vedere la correlazione tra `record.v` e `record.f`. Il significato dell'errore è presto spiegato: TypeScript sa che `record.f` è una funzione, ma non è in grado di sapere quale delle tre, quindi per sicurezza richiede che il parametro vada bene in ogni caso. Esso deve quindi essere sia un `number` che una `string` che un `boolean`, ma non esistono valori che soddisfano questa richiesta. L'intersezione tra `number`, `string` e `boolean` è proprio il tipo `never` che non ha abitanti.
+
+## Il pattern
+
+Come primo step modifichiamo leggermente il punto di partenza del problema, cambiando la definizione del tipo `UnionRecord` nel seguente modo:
+
+```ts
+type UnionRecord = 
+    | { kind: "n", v: number, f: (v: number) => void }
+    | { kind: "s", v: string, f: (v: string) => void }
+    | { kind: "b", v: boolean, f: (v: boolean) => void };
+
+function processRecord(record: UnionRecord) {
+    record.f(record.v);  // Error, 'string | number | boolean' not assignable to 'never'
+}
+```
+
+Quella che sembra una modifica di secondaria importanza in esempi didattici come questo è invece la principale causa del mio disgusto quando è necessario applicare il pattern in casi reali, but more on that later.
+
+Il punto chiave è la presenza di una proprietà discriminante tra le varie casistiche della union, cioè la proprietà `kind`. I valori di questa proprietà possono essere utilizzati a loro volta come chiavi di un oggetto, ed è su questa semplice osservazione che fa perno l'intero pattern. Dobbiamo infatti definire una __type map__ che fungerà da colonna portante dell'intera correlazione. Vediamo come:
+
+```ts
+type TypeMap = { n: number, s: string, b: boolean };
+
+type RecordType<K extends keyof TypeMap> = { 
+  kind: K, 
+  v: TypeMap[K], 
+  f: (v: TypeMap[K]) => void 
+};
+
+type UnionRecord = RecordType<'n'> | RecordType<'s'> | RecordType<'b'>;
+
+function processRecord<K extends keyof TypeMap>(record: RecordType<K>) {
+    record.f(record.v);
+}
+```
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-dev.20230801#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAEoQAxjwoATOJAA8AaSgQAHsAg41tKAGsIIHgDNY8ZGAB86LFElRLrNQR01PKAA3Ak1EFABtHQBdAK9bAgAKEIdIJyjogEp0VyCeZjUPCWlZaABVHGYeHEUVdTda1Q14LQByHFbXAB8FZSawttpOqB7G9QHW0k6pSVtCHCVgKpEwCh4lCFpaMbVdfSMTM0trO1Twl0SKPvUCHYGdZ2zMQK8rurUAOltL68+gzPEXgA9ECoAB5CySUSSIA)
+
+La type map associa il `kind` di cui sopra con il corrispondente tipo del campo `v` che è anche il tipo del parametro della funzione `f` nella stessa entry dell'unione. Vedremo più avanti che abbiamo discreta libertà nella definizione della type map che regge l'intera correlazione; in questo caso però questa precisa definizione è l'unica sensata.
+
+La type function `RecordType<K>` codifica perfettamente la corrispondenza tra i `kind`, i tipi e le due proprietà correlate. Essa __è definita in funzione di `TypeMap`__ ,la quale funge da upper bound per il type parameter `K` e viene utilizzata per correlare il campo `v` con il parametro della `f`. Essi hanno infatti entrambi il tipo `TypeMap[K]`.
+
+`RecordType` non è altro che lo scheletro dell'unione `UnionRecord` definita nello snippet precedente, unione che può essere facilmente espressa come ` RecordType<'n'> | RecordType<'s'> | RecordType<'b'>`.
+
+Notiamo infine che anche la funzione `processRecord` è stata definita in termini della type map. In particolare il tipo del parametro non è `UnionRecord` né un type parameter il cui upper bound è `UnionRecord`, bensì è un generico `RecordType<K>`. All'interno della funzione si ha che il tipo di `record.f` è `(v: TypeMap[K]) => void`, mentre il tipo di `record.v` è `TypeMap[K]`. All fine and dandy.
+
+### Offuscamento del codice
+
+Viene poi consigliato di unire assieme `RecordType` e `UnionRecord` per evitare la possibilità di creare record non distribuiti (e.g. `RecordType<"n" | "b">`) e per automatizzare la definizione stessa di `UnionRecord` a partire dalle entry della `TypeMap`:
+
+```ts
+type TypeMap = { n: number, s: string, b: boolean };
+
+type UnionRecord<K extends keyof TypeMap = keyof TypeMap> = { [P in K]: {
+    kind: P,
+    v: TypeMap[P],
+    f: (v: TypeMap[P]) => void
+}}[K];
+
+function processRecord<K extends keyof TypeMap>(record: UnionRecord<K>) {
+    record.f(record.v);
+}
+```
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-dev.20230801#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAKo5mPHACUIAYx4UAJgB4A0lAgAPYBBw7aUANYQQPAGax4yVBjsPncSG4B86FhQANoAClCsUAYAugSYklCJtqw6BKFUCUkAbgQ+iChh0RlJUI4EABQ5Lr4FodEAlOgBWTzMOpKiosExUpKOhDgawMoiYBQ8GhC0tOpauobGZhZWtvZO1flgfuUUmtqpCkoqs-uGfo3xJbtzOgB0jjt7urdZ9VKiQA)
