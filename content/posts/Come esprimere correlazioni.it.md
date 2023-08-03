@@ -38,9 +38,9 @@ type BooleanRecord = { kind: "b", v: boolean, f: (v: boolean) => void };
 type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
 
 function processRecord(record: UnionRecord) {
-  record.f(record.v); // error!
- // Argument of type 'string | number | boolean' is not assignable to parameter
- // of type 'never'
+    record.f(record.v); // error!
+    // Argument of type 'string | number | boolean' is not assignable to parameter
+    // of type 'never'
 }
 ```
 
@@ -69,9 +69,9 @@ Il punto chiave è la presenza di una proprietà discriminante tra le varie casi
 type TypeMap = { n: number, s: string, b: boolean };
 
 type RecordType<K extends keyof TypeMap> = { 
-  kind: K, 
-  v: TypeMap[K], 
-  f: (v: TypeMap[K]) => void 
+    kind: K,
+    v: TypeMap[K], 
+    f: (v: TypeMap[K]) => void 
 };
 
 type UnionRecord = RecordType<'n'> | RecordType<'s'> | RecordType<'b'>;
@@ -108,3 +108,34 @@ function processRecord<K extends keyof TypeMap>(record: UnionRecord<K>) {
 }
 ```
 [Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-dev.20230801#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAKo5mPHACUIAYx4UAJgB4A0lAgAPYBBw7aUANYQQPAGax4yVBjsPncSG4B86FhQANoAClCsUAYAugSYklCJtqw6BKFUCUkAbgQ+iChh0RlJUI4EABQ5Lr4FodEAlOgBWTzMOpKiosExUpKOhDgawMoiYBQ8GhC0tOpauobGZhZWtvZO1flgfuUUmtqpCkoqs-uGfo3xJbtzOgB0jjt7urdZ9VKiQA)
+
+In poche parole `RecordType` viene direttamente __distribuito__ su un sottoinsieme `K` di chiavi di `TypeMap`. Il valore di default del generico non è strettamente necessario ma è comodo nel momento in cui necessitiamo dell'intera union.
+
+### Deoffuscamento del codice
+
+Lo snippet seguente mostra che la correlazione viene mantenuta anche nel caso in cui si indicizzi un mapped type non generico, ma definito in funzione della type map, con un index type generico appropriato:
+
+```ts
+type TypeMap = { n: number, s: string, b: boolean };
+
+type UnionRecordType = {
+    [P in keyof TypeMap]: {
+        kind: P,
+        v: TypeMap[P],
+        f: (v: TypeMap[P]) => void
+    }
+};
+
+type UnionRecord = UnionRecordType[keyof TypeMap];
+
+function processRecord<K extends keyof TypeMap>(record: UnionRecordType[K]) {
+    record.f(record.v);
+}
+```
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-dev.20230801#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAKo5mPHACUIAYx4UAJnDkZMkqCagBtAApRWUANYQQPAGax4yMAF0CR077usdAgsqYz8TADcCfUQUSw8QsJMnAgAKSNdIdziASnQAPihwnmYdUJNRSQlpWWhFZTVNbR10BSUVdS1daLN7Rxdo9w8pSSdCHA1geqgwCh4NCFpaDqaAHgBpKAgAD2AIHB1aOwdnDJiwPJSKRt0COvbrvXgzNY9cn1Mrzp0AOidLh++4WyUlEQA)
+
+Le chiavi del mapped type `UnionRecordType` sono infatti le chiavi della type map, e l'indicizzazione `UnionRecordType[K]` avviene con un index type generico `K` il cui upper bound sono sempre le chiavi della type map.
+
+### Estrarre le funzioni
+
+Come pretesto per mostrare la potenza del pattern estraiamo le funzioni `f` in un'altra struttura, slegata dalla principale. Vedremo che possiamo correlare anche quest'ultima sempre attraverso la type map.
