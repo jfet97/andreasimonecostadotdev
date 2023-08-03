@@ -14,9 +14,8 @@ const myself = {
   age: 26,
   country: "Italy",
   nickname: "jfet97",
-  interests: ["functional programming", "computer science", "category theory"],
-  occupation: "Software Craftsman @ Nomizz",
-  code: ["javascript", "typescript", "vue", "haskell", "scala"],
+  interests: ["functional programming", "computer science"],
+  occupation: "Software Craftsman",
   email: "andrysimo1997@gmail.com",
 }
 ```
