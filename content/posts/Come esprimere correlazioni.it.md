@@ -189,12 +189,13 @@ const toNum = (b: boolean) => b ? 1 : 0;
 function processRecord(record: NumberRecord): number
 function processRecord(record: StringRecord): string
 function processRecord(record: BooleanRecord): number
-function processRecord<R extends UnionRecord>(record: R) {
+function processRecord<R extends UnionRecord>(record: R): string | number {
     switch(record.kind) {
-        case 'n': return double(record.v)
-        case 's': return trim(record.v)
-        case 'b': return toNum(record.v)
+        case 'n': return "ciao"
+        case 's': return "ciao"
+        case 'b': return "ciao"
+        default: throw 3
     }
 }
 ```
-[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRXBoDKHwcOCQbVQAKGh4+NABKYgA+KBooACooACYxUvLDBHqtfXT5NqJOrQA6UbqWoaiRnHj6pEY-PPsZzqQoAH4oAEYoRgAGYShRUQAzOBosYEjusFQcLAgtLST8HVUFlNPF+ACWk0EqhHs9Xu8oJ9vr9-iCgSDGDI5BkIZNsfJYS83lFEV8fn8AejCoxcgECk5IV1mjCnkSEUjyajCgAedBQCAAD2AEDoWig4XeAPaVKcjHQbVIoigyqgWgA7lRgFgABYygjzNz4BVKlWmrC2LTQADkNCtjGBwDgqG6lWqNj1+HmnBaJtNyvNlqgVq0dqgDqd3SWwMKXp9fpVAetSFD4edUGAG0QHtjvqEokEQA)
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta&ssl=20&ssc=2&pln=1&pc=1#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRXBoDKHwcOCQbVQAKGh4+NABKYgA+KBooACooACYxUvLDBHqtfXT5NqJOrQA6UbqWoaiRnHj6pEY-PPsZzqQoAH4oAEYoRgAGYShRUQAzOBosYEjusFQcLAgtLST8HVUFlNPF+ACWk0EqhHs9Xu8oJ9vr9-iCgSDGDI5BkIZNsfJYS83lFEV8fn8AejCoxcgECk5IV1mjCnkSEUjyajCgAedBQCAAD2AEDoWig4XeAPaVKcjHQjIM+KgqV40LIoigmqgWgA7lRgFgABYygjzNz4NqkDVam1YWxaaAAchojsYwOAcFQ3SYWCothwTGtNs1dodUEdWldUHdnu9vv9geDWtDTqQUZjXuY8YDQeD+AgD1scCswEYwENXx1UAAzLnBKJBEA)
