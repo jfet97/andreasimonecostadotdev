@@ -5,7 +5,7 @@ date = "2023-08-04"
 description = "Esprimere correlazioni tra diverse entità non è mai stato così difficile"
 categories = ["typescript"]
 series = ["TypeScript"]
-published = false
+published = true
 tags = [
     "correlations",
 ]
@@ -101,17 +101,19 @@ Viene poi consigliato di unire assieme `RecordType` e `UnionRecord` per evitare 
 ```ts
 type TypeMap = { n: number, s: string, b: boolean };
 
-type UnionRecord<K extends keyof TypeMap = keyof TypeMap> = { [P in K]: {
-    kind: P,
-    v: TypeMap[P],
-    f: (v: TypeMap[P]) => void
-}}[K];
+type UnionRecord<K extends keyof TypeMap = keyof TypeMap> = {
+    [P in K]: {
+        kind: P,
+        v: TypeMap[P],
+        f: (v: TypeMap[P]) => void
+    }
+}[K];
 
 function processRecord<K extends keyof TypeMap>(record: UnionRecord<K>) {
     record.f(record.v);
 }
 ```
-[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-dev.20230801#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAKo5mPHACUIAYx4UAJgB4A0lAgAPYBBw7aUANYQQPAGax4yVBjsPncSG4B86FhQANoAClCsUAYAugSYklCJtqw6BKFUCUkAbgQ+iChh0RlJUI4EABQ5Lr4FodEAlOgBWTzMOpKiosExUpKOhDgawMoiYBQ8GhC0tOpauobGZhZWtvZO1flgfuUUmtqpCkoqs-uGfo3xJbtzOgB0jjt7urdZ9VKiQA)
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-dev.20230801#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAKo5mPHACUIAYx4UAJgB4A0lAgAPYBBw7aUANYQQPAGax4yVBjsPncSG4B86FiSUCFQANoAClCsUAYAugSYwaEpNqw6BBFUySkhAG4EPogokXHZuaGOBAAUBS6+JRFxAJToAXk8zDo5YpKiYfFSko6EOBrAyiJgFDwaELS06lq6hsZmFla29k71xWB+1RSa2hkKSipLJ4Z+rUkpR8s6AHSOh8e6T3nNUqJAA)
 
 In poche parole `RecordType` viene direttamente __distribuito__ su un sottoinsieme `K` di chiavi di `TypeMap`. Il valore di default del generico non è strettamente necessario ma è comodo nel momento in cui necessitiamo dell'intera union.
 
@@ -271,14 +273,14 @@ const double = (n: number) => n * 2;
 const trim = (s: string) => s.trim();
 const toNum = (b: boolean) => (b ? 1 : 0);
 
-function match
-    <R extends UnionRecord>
-(record: R): { n: number, s: string, b: number }[R["kind"]] {
-  return {
-    n: double(record.v), // 'string | number | boolean' is not assignable to 'number'
-    s: trim(record.v), // 'string | number | boolean' is not assignable to 'string'
-    b: toNum(record.v) // 'string | number | boolean' is not assignable to 'boolean'
-  }[record.kind]; // "n" | "s" | "b" instead of something like R["kind"]
+function match<
+    R extends UnionRecord
+>(record: R): { n: number, s: string, b: number }[R["kind"]] {
+    return {
+        n: double(record.v), // 'string | number | boolean' not assignable to 'number'
+        s: trim(record.v), // 'string | number | boolean' not assignable to 'string'
+        b: toNum(record.v) // 'string | number | boolean' not assignable to 'boolean'
+    }[record.kind]; // "n" | "s" | "b" instead of something like R["kind"]
 }
 ```
 
@@ -298,16 +300,22 @@ const toNum = (b: boolean) => (b ? 1 : 0);
 
 function match<
     R extends Extract<UnionRecord, { kind: K }>,
-    K extends UnionRecord["kind"] = R["kind"]>
-(record: R): { n: number, s: string, b: number }[K] {
-  return {
-    get n() { return double(record.v as number) },
-    get s() { return trim(record.v as string) },
-    get b() { return toNum(record.v as boolean) }
-  }[record.kind];
+    K extends UnionRecord["kind"] = R["kind"]
+>(record: R): { n: number; s: string; b: number }[K] {
+    return {
+        get n() {
+            return double(record.v as number);
+        },
+        get s() {
+            return trim(record.v as string);
+        },
+        get b() {
+            return toNum(record.v as boolean);
+        },
+    }[record.kind];
 }
 ```
-[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwNxQBujNiKqUAL5sAUKEhQAysFS0A5plwFiZSrQbMAzuy6NNM+UNHjoAIRw4ANhACGNRXkIly1OoyZId3KEgvW7RmLg0ACqNFQ49tiOKvDIaA7KAD5SBjQK0clQ5la2UUr4oiK4NPpQ+DhwSNYqABQ0PHxoAJTEAHxQNFAAVFAATKIlZQYIdZp6aXKtRB2aAHQjtc2DkcM4cXVIjL65dtMdtUhQAPxQAIxQjAAMyyIiAGZwNFjAEV0INsBYABYAPCJQQFQdBQCAAD2AEDomigAFEIagbC9fmE3ol8AAaVSuDQAaSEbQxAKB+PBkOhUFRkXRAG0mDimABdFToOkMxltES1VCZDToZqMcgNTpNVBY8ZQfSydJYrYi+ICQQ03HM0jEnnAOCoLpqoFQOQQYCdJaqDVaroVKrWbm8uacKA2GG8BWtQREvUGo2aE3kM3aqCLHkFO0OmFS+Su91Az0+H1QP1dYDrRA24P2x0+Px5V3EpVBxxzHGM0SCIA)
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwNxQBujNiKqUAL5sAUKEhQAysFS0A5plwFiZSrQbMAzuy6NNM+UNHjoAIRw4ANhACGNRXkIly1OoyZId3KEgvW7RmLg0ACqNFQ49tiOKvDIaA7KAD5SBjQK0clQ5la2UUr4oiK4NPpQ+DhwSNYqABQ0PHxoAJTEAHxQNFAAVFAATKIlZQYIdZp6aXKtRB2aAHQjtc2DkcM4cXVIjL65dtMdtUhQAPxQAIxQjAAMyyIiAGZwNFjAEV0INsBYABYAPCJQQFQdBQCAAD2AEDomigAFEIagbC9fmE3ol8AAaVSuDQAaSEbQxAKB+PBkOhUFRkXRAG0mDimABdFToOkMxkiNq1VCZDToZqMcgNTpNVAccZQfSydIcLYi+ICQQ03HM0jEwE84BwVBdNVA-VQOQQYCdJZkdUG-Wa7VdCpVazc3lzThQGww3gK26WwGCInew3GyVmvX+oHWnVQRY8grO10wqXyL3e30W-VGk1IYOp73hrrAdaIR0xl1unx+PJJy0p-VK6OOOY4xmiQQiIA)
 
 ### La soluzione
 
@@ -346,7 +354,7 @@ function match<K extends keyof TypeMap>(
 ```
 [Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta&ssl=34&ssc=48&pln=32&pc=1#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgNxQDOBtwFAljgOY2kGkD2PANhCQ4oAXyoAoCaEhQAakn6EIAJQgBjHhQAmAHgDSUCAA9gEHNtpQA1hBA8AZrHjJUGW-adxIrgHzosCSgoAG0ABShWKH0AXQJMIOCbVm0CMMkkqAA3Am9EFHCYjLFJURDYyQlNHEYoCg0HKwwEzPwoAAo2nBJyCgBKdH8RACooACYAGkTg+g7ZxhZ2AbR-WgA6JmZidr6pzK4Og94BIRw+gm6ySkHDqAB+KABGKAIABj6JUSkZaAB5QmAYABrgCLVChiiHkczh8KDiUDUwEIFBweV07R+0Pq6kafXKMV8n0qPygADFCDh1GpNDpQYlwpERFCvC44QR2sZcqywIVlv5-oDgQUwkUiVIHBT1MBmDwRMQkMB1AALAxGUzmSw2OzQvJ+dqJbE5eSKZTUrR6fS+PZ1BqzcmUs06CTnKACoHAVz4wLBepIlE2nG0EKGtbWFIxdohrJ9UpSCTyxVK9rYMMWAgAIhw6Ym2QIABYxmIc9jcVAAPRlohXCjxhXK5PJNNQdO0bO55vqZhIHjposB0sVuibdi1xMN1OpZukNtGhyKWjQUTF20DQeXXpAA)
 
-Come prima `ValueRecord` è definito in modo verboso, mentre `OutputMap` e `FuncRecord` non sono altro che mapped type basati sulle chiavi della type map `TypeMap`. In `FuncRecord` il tipo di ogni parametro deve obbligatoriamente essere il tipo del campo `v` corrispondente, altrimenti non potremmo invocare tali funzioni, mentre il tipo di ritorno è arbitrariamente determinato dalle funzioni in `recfs`. All'interno di `match` il `kind` di `recv` viene nuovamente utilizzato per indicizzare la funzione corrispondente all'interno di `recfs`, e tale funzione verrà invocata sul valore `v` di `recv`.
+Come prima `ValueRecord` è definito in modo verboso, mentre `OutputMap` e `FuncRecord` non sono altro che mapped type basati sulle chiavi della type map `TypeMap`. In `FuncRecord` il tipo di ogni parametro deve obbligatoriamente essere il tipo del campo `v` corrispondente, altrimenti non potremmo invocare tali funzioni, mentre il tipo di ritorno è arbitrariamente determinato dalle funzioni in `recfs`. All'interno di `match` il `kind` di `recv` viene nuovamente utilizzato per indicizzare la funzione corrispondente all'interno di `recfs`, e tale funzione verrà invocata sul valore `v` di `recv`. Il tipo restituito da `match` viene espresso in funzione della `OutputMap`.
 
 &nbsp;
 
@@ -366,7 +374,7 @@ const trim = (s: string) => s.trim();
 const toNum = (b: boolean) => b ? 1 : 0;
 
 
-// ... a così
+// ...a così
 type TypeMap = { n: number; s: string; b: boolean };
 
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
@@ -417,7 +425,7 @@ type TypeMap = {
 };
 ```
 
-La definizione di `ValueRecord` si complica leggermente. Siamo costretti ad definire manualmente i tipi dei campi `kind` e `v`, sempre in funzione della type map, perché questi due campi sono quelli ai quali funzione `match` accede direttamente. Il tipo `{ kind: P, v: TypeMap[K]["v"] } & Omit<TypeMap[K], "kind" | "v">` è concettualmente identico a `TipeMap[K]`, ma TypeScript si perde all'interno di `match` se usiamo anzi quest'ultimo. Osserviamo che in questo specifico esempio l'intersezione con `Omit<TypeMap[K], "kind" | "v">` potrebbe essere omessa in quanto i record non possiedono altre proprietà oltre a `kind` e `v`.
+La definizione di `ValueRecord` si complica leggermente. Siamo costretti ad definire manualmente i tipi dei campi `kind` e `v`, sempre in funzione della type map, perché questi due campi sono quelli ai quali funzione `match` accede direttamente. Il tipo `{ kind: P, v: TypeMap[K]["v"] } & Omit<TypeMap[K], "kind" | "v">` è concettualmente identico a `TipeMap[K]`, ma TypeScript si perde all'interno di `match` se usiamo quest'ultimo. Osserviamo che in questo specifico esempio l'intersezione con `Omit<TypeMap[K], "kind" | "v">` potrebbe essere omessa in quanto i record non possiedono altre proprietà oltre a `kind` e `v`.
 
 ```ts
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = { 
@@ -459,4 +467,4 @@ function match<K extends keyof TypeMap>(
 
 ## Conclusione
 
-Esprimere correlazioni tra diverse entità non è mai stato così difficile. Prego.
+Esprimere correlazioni tra diverse entità non è mai stato così difficile. Non serve che mi ringraziate.
