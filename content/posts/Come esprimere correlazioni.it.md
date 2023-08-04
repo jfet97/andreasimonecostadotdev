@@ -397,7 +397,7 @@ Di cosa stiamo parlando? È allucinante. Allucinante. È idiomatico definire pri
 
 ## L'alternativa
 
-Metto le mani avanti, non aspettatevi la rivelazione ultima. Non esiste la panacea a questo delirio, solo strategie per attenuare la situazione, che non migliora più di tanto. I miei sforzi si sono concentrati sul mantenere le definizioni dei componenti di `UnionRecord` separate, come è idiomatico fare. Il resto rimane quasi del tutto invariato: non possiamo sbarazzarci né della type map né delle restanti definizioni costruite in funzione di essa.
+Metto le mani avanti, non aspettatevi la rivelazione ultima. Non esiste la panacea a questo delirio, solo strategie per attenuare la situazione che comunque non migliora più di tanto. I miei sforzi si sono concentrati sul mantenere le definizioni dei componenti di `UnionRecord` separate, come è idiomatico fare. Il resto rimane quasi del tutto invariato: non possiamo sbarazzarci né della type map né delle restanti definizioni costruite in funzione di essa.
 
 Iniziamo quindi definendo i tipi dei record:
 
