@@ -29,6 +29,8 @@ Quindi, perché ho scritto questo articolo? Innanzitutto per spiegare il pattern
 
 La mia proposta è fortemente basata sulle strategie alternative suggerite da jcalz, ma ho fatto il possibile per identificare le ragioni di alcuni malfunzionamenti delle stesse risolvendo i problemi riscontrati. Ho passato letteralmente ore a ragionare, testare e martellare, finché non ho raggiunto un compromesso che sento di poter condividere. Ho cercato di identificare quale fosse l'essenza del pattern e come poter quindi plasmare una soluzione sempre corretta ma leggermente più alla mano.
 
+&nbsp;
+
 ## Il problema
 
 ```ts
@@ -45,6 +47,8 @@ function processRecord(record: UnionRecord) {
 ```
 
 Per costruzione il codice qua sopra è certamente corretto, ma TypeScript non è in grado di vedere la correlazione tra `record.v` e `record.f`. Il significato dell'errore è presto spiegato: TypeScript sa che `record.f` è una funzione, ma non è in grado di sapere quale delle tre, quindi per sicurezza richiede che il parametro vada bene in ogni caso. Esso deve quindi essere sia un `number` che una `string` che un `boolean`, ma non esistono valori che soddisfano questa richiesta. L'intersezione tra `number`, `string` e `boolean` è proprio il tipo `never` che non ha abitanti.
+
+&nbsp;
 
 ## Il pattern
 
@@ -84,7 +88,7 @@ function processRecord<K extends keyof TypeMap>(record: RecordType<K>) {
 
 La type map associa il `kind` di cui sopra con il corrispondente tipo del campo `v` che è anche il tipo del parametro della funzione `f` nella stessa entry dell'unione. Vedremo più avanti che abbiamo discreta libertà nella definizione della type map che regge l'intera correlazione; in questo caso però questa precisa definizione è l'unica sensata.
 
-La type function `RecordType<K>` codifica perfettamente la corrispondenza tra i `kind`, i tipi e le due proprietà correlate. Essa __è definita in funzione di `TypeMap`__ ,la quale funge da upper bound per il type parameter `K` e viene utilizzata per correlare il campo `v` con il parametro della `f`. Essi hanno infatti entrambi il tipo `TypeMap[K]`.
+La type function `RecordType<K>` codifica perfettamente la corrispondenza tra i `kind`, i tipi e le due proprietà correlate. Essa __è definita in funzione di `TypeMap`__, la quale funge da upper bound per il type parameter `K` e viene utilizzata per correlare il campo `v` con il parametro della `f`. Essi hanno infatti entrambi il tipo `TypeMap[K]`.
 
 `RecordType` non è altro che lo scheletro dell'unione `UnionRecord` definita nello snippet precedente, unione che può essere facilmente espressa come ` RecordType<'n'> | RecordType<'s'> | RecordType<'b'>`.
 
@@ -166,9 +170,11 @@ function processRecord<K extends keyof TypeMap>(
 
 [Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAGpJ+hCACUIAYx4UAJgB4A0lAgAPYBBw7aUANYQQPAGax4yVBjsPncSG4B86FhQklChUADaAApQrFAGALoEmCFhqTasOgSRVCmpoQBuBD6IKFHxuWKSouEJUjLwUABihDga6lq6gdgVUTEink4uviiJUAAUJkWupZHxAJToAfk8zDpVdY4tGsDMPCJgFDwaELS07dr6RqbmltYD3tNgfmMUmoUKSirnuoZ+NK8aRz0Jpbb46BbJVKvYCECgiAFA8IA-IAOnSlniLzeKPycykomkkgORxOZ00FzG2HRmSgAHIcLSaO8ACwAJjENEhYXwuEWUC0OFoAggKP4PDYYxwKOAPEazBMEB0Y1ZczmOVSwOsaACAqFglF4rGtFFFjYwAAFmqKlwoKQ+brhQaJXaAPxQACMUAIAAYraI8UA)
 
-Abbiamo che sia `ValueRecord` che `FuncRecord` sono definiti in funzione della type map. `ValueRecord` è basato sulla versione "verbosa", in modo tale che il generico `K` possa essere inferito con precisione durante l'invocazione di `processRecord`. La definizione di `FuncRecord` può quindi essere resa la più semplice possibile.
+Abbiamo che sia `ValueRecord` che `FuncRecord` sono definiti in funzione della type map. `ValueRecord` è basato sulla versione "verbosa", in modo tale che il generico `K` possa essere inferito con precisione durante l'invocazione di `processRecord`. La definizione di `FuncRecord` può invece essere resa la più semplice possibile: un mapped type non generico le cui chiavi sono le medesime type map.
 
 All'interno di `processRecord` il `kind` di `recv` viene utilizzato per indicizzare la funzione corrispondente all'interno della struttura `FuncRecord`, e tale funzione verrà invocata sul valore `v` di `recv`. TypeScript non batte ciglio.
+
+&nbsp;
 
 ## Il male di tutti i mali: lo switch
 
@@ -218,7 +224,7 @@ function match(record: UnionRecord): string | number {
 
 ### Tentativo 2: far casino col tipo di ritorno
 
-La soluzione si commenta da sola, la quale funziona solo grazie alle type assertion esplicite con tutti i rischi che ne conseguono. Le type assertion sono necessarie perché TypeScript non supporta l’analisi del control flow per rifinire un tipo parametrico: il tipo di `record` viene raffinato all'interno dei casi dello `switch`, ma altrettanto non avviene al type parameter `R`.
+La soluzione direi che si commenta da sola. Quel che è peggio è che sta in piedi solo grazie alle type assertion esplicite con tutti i rischi che ne conseguono. Le type assertion sono necessarie perché TypeScript non supporta l’analisi del control flow per rifinire un tipo parametrico: il tipo di `record` viene raffinato all'interno dei casi dello `switch`, ma altrettanto non avviene al type parameter `R`.
 
 ```ts
 type NumberRecord = { kind: "n"; v: number };
@@ -302,3 +308,42 @@ function match<
 }
 ```
 [Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwNxQBujNiKqUAL5sAUKEhQAysFS0A5plwFiZSrQbMAzuy6NNM+UNHjoAIRw4ANhACGNRXkIly1OoyZId3KEgvW7RmLg0ACqNFQ49tiOKvDIaA7KAD5SBjQK0clQ5la2UUr4oiK4NPpQ+DhwSNYqABQ0PHxoAJTEAHxQNFAAVFAATKIlZQYIdZp6aXKtRB2aAHQjtc2DkcM4cXVIjL65dtMdtUhQAPxQAIxQjAAMyyIiAGZwNFjAEV0INsBYABYAPCJQQFQdBQCAAD2AEDomigAFEIagbC9fmE3ol8AAaVSuDQAaSEbQxAKB+PBkOhUFRkXRAG0mDimABdFToOkMxltES1VCZDToZqMcgNTpNVBY8ZQfSydJYrYi+ICQQ03HM0jEnnAOCoLpqoFQOQQYCdJaqDVaroVKrWbm8uacKA2GG8BWtQREvUGo2aE3kM3aqCLHkFO0OmFS+Su91Az0+H1QP1dYDrRA24P2x0+Px5V3EpVBxxzHGM0SCIA)
+
+### La soluzione
+
+È necessario ricorrere nuovamente al pattern discusso in questo articolo. La soluzione non è altro che una estensione di [questo caso](#estrarre-le-funzioni), dove adesso ogni funzione ha un proprio tipo di ritorno.
+
+```ts
+type TypeMap = { n: number; s: string; b: boolean };
+
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
+  [P in K]: {
+    kind: P;
+    v: TypeMap[P];
+  };
+}[K];
+
+const recfs = {
+    n: (n: number) => n * 2,
+    s: (s: string) => s.trim(),
+    b: (b: boolean): number => (b ? 1 : 0)
+}
+
+type OutputMap = {
+  [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
+};
+
+type FuncRecord = {
+  [P in keyof TypeMap]: (x: TypeMap[P]) => OutputMap[P];
+};
+
+function match<K extends keyof TypeMap>(
+  recv: ValueRecord<K>,
+  recfs: FuncRecord
+): OutputMap[K] {
+  return recfs[recv.kind](recv.v);
+}
+```
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta&ssl=34&ssc=48&pln=32&pc=1#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgNxQDOBtwFAljgOY2kGkD2PANhCQ4oAXyoAoCaEhQAakn6EIAJQgBjHhQAmAHgDSUCAA9gEHNtpQA1hBA8AZrHjJUGW-adxIrgHzosCSgoAG0ABShWKH0AXQJMIOCbVm0CMMkkqAA3Am9EFHCYjLFJURDYyQlNHEYoCg0HKwwEzPwoAAo2nBJyCgBKdH8RACooACYAGkTg+g7ZxhZ2AbR-WgA6JmZidr6pzK4Og94BIRw+gm6ySkHDqAB+KABGKAIABj6JUSkZaAB5QmAYABrgCLVChiiHkczh8KDiUDUwEIFBweV07R+0Pq6kafXKMV8n0qPygADFCDh1GpNDpQYlwpERFCvC44QR2sZcqywIVlv5-oDgQUwkUiVIHBT1MBmDwRMQkMB1AALAxGUzmSw2OzQvJ+dqJbE5eSKZTUrR6fS+PZ1BqzcmUs06CTnKACoHAVz4wLBepIlE2nG0EKGtbWFIxdohrJ9UpSCTyxVK9rYMMWAgAIhw6Ym2QIABYxmIc9jcVAAPRlohXCjxhXK5PJNNQdO0bO55vqZhIHjposB0sVuibdi1xMN1OpZukNtGhyKWjQUTF20DQeXXpAA)
+
+Come prima `ValueRecord` è definito in modo verboso, mentre `OutputMap` e `FuncRecord` non sono altro che mapped type basati sulle chiavi della type map `TypeMap`. All'interno di `match` il `kind` di `recv` viene nuovamente utilizzato per indicizzare la funzione corrispondente all'interno di `recfs`, e tale funzione verrà invocata sul valore `v` di `recv`.
