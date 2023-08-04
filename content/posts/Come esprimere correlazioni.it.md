@@ -170,11 +170,28 @@ Abbiamo che sia `ValueRecord` che `FuncRecord` sono definiti in funzione della t
 
 All'interno di `processRecord` il `kind` di `recv` viene utilizzato per indicizzare la funzione corrispondente all'interno della struttura `FuncRecord`, e tale funzione verrà invocata sul valore `v` di `recv`. TypeScript non batte ciglio.
 
-&nbsp;
+## Il male di tutti i mali: lo switch
 
-## Come non far funzionare un fico secco: lo switch
+Torniamo alla definizione iniziale dei record, i quali ora contengono solo dati. Ipotizziamo adesso di voler invocare su ciascun valore `v` una funzione specifica, la quale avrà un proprio valore di ritorno potenzialmente diverso dalle altre. L'obiettivo è quello di definire una funzione di `match` che preso un `UnionRecord` invochi sul `v` contenuto in esso la funzione corrispondente e restituisca il valore ritornato col giusto tipo.
 
-Ho estratto le funzioni in una struttura separata non solo per mostrare le potenzialità del pattern, ma anche per indicare la strategia corretta da utilizzare per risolvere il seguente problema:
+```ts
+type NumberRecord = { kind: "n", v: number };
+type StringRecord = { kind: "s", v: string };
+type BooleanRecord = { kind: "b", v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => b ? 1 : 0;
+
+function match(record: UnionRecord): ?? {
+    // ??
+}
+```
+
+### Tentativo 1: gli overload
+
+Una prima soluzione del problema consiste nell'unire uno `switch` con i necessari overload della funzione `match`. Il problema di questo approccio, con o senza tipo di ritorno specificato nell'implementazione, è che siamo in presenza di type assertion implicite: nulla ci garantisce che l'implementazione rispetti le indicazioni delle signature dei vari overload. [Provare per credere](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRXBoDKHwcOCQbVQAKGh4+NABKYgA+KBooACooACYxUvLDBHqtfXT5NqJOrQA6UbqWoaiRnHj6pEY-PPsZzqQoAH4oAEYoRgAGYShRUQAzOBosYEjuhFtgLAALOtQspp4vwkvgWk0EqhHs9Xu8oJ9vn8AYVGDI5BlQeCoAZ0fJoS83lF4V9fv9AYxcgECk4sbxIfjYUSEaTkU5GOF3pjJrioKk6fwyKIoMKoADgHBUN0mFgqLYcExRIIgA).
 
 ```ts
 type NumberRecord = { kind: "n", v: number };
@@ -186,16 +203,100 @@ const double = (n: number) => n * 2;
 const trim = (s: string) => s.trim();
 const toNum = (b: boolean) => b ? 1 : 0; 
 
-function processRecord(record: NumberRecord): number
-function processRecord(record: StringRecord): string
-function processRecord(record: BooleanRecord): number
-function processRecord<R extends UnionRecord>(record: R): string | number {
+function match(record: NumberRecord): number
+function match(record: StringRecord): string
+function match(record: BooleanRecord): number
+function match(record: UnionRecord): string | number {
     switch(record.kind) {
-        case 'n': return "ciao"
-        case 's': return "ciao"
-        case 'b': return "ciao"
-        default: throw 3
+        case 'n': return double(record.v)
+        case 's': return trim(record.v)
+        case 'b': return toNum(record.v)
     }
 }
 ```
-[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta&ssl=20&ssc=2&pln=1&pc=1#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRXBoDKHwcOCQbVQAKGh4+NABKYgA+KBooACooACYxUvLDBHqtfXT5NqJOrQA6UbqWoaiRnHj6pEY-PPsZzqQoAH4oAEYoRgAGYShRUQAzOBosYEjusFQcLAgtLST8HVUFlNPF+ACWk0EqhHs9Xu8oJ9vr9-iCgSDGDI5BkIZNsfJYS83lFEV8fn8AejCoxcgECk5IV1mjCnkSEUjyajCgAedBQCAAD2AEDoWig4XeAPaVKcjHQjIM+KgqV40LIoigmqgWgA7lRgFgABYygjzNz4NqkDVam1YWxaaAAchojsYwOAcFQ3SYWCothwTGtNs1dodUEdWldUHdnu9vv9geDWtDTqQUZjXuY8YDQeD+AgD1scCswEYwENXx1UAAzLnBKJBEA)
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRXBoDKHwcOCQbVQAKGh4+NABKYgA+KBooACooACYxUvLDBHqtfXT5NqJOrQA6UbqWoaiRnHj6pEY-PPsZzqQoAH4oAEYoRgAGYShRUQAzOBosYEjuhFtgLAALOtQspp4vwkvgWk0EqhHs9Xu8oJ9vn8AYVGDI5BlQeCoAZ0fJoS83lF4V9fv9AYxcgECk4sbxIfjYUSEaTkU5GOF3pjJrioKk6fwyKIoMLsQB3KiIsmFeZuMGCkUKqBYWxaaAAchoasYAOAcFQ3Uq1RsUqc804LSFiuFytVUDVWi1UB1eu6S1ZBDNFqt1pV6qQjud+qgwA2iBNHvNluFglEgiAA)
+
+### Tentativo 2: far casino col tipo di ritorno
+
+La soluzione si commenta da sola, la quale funziona solo grazie alle type assertion esplicite con tutti i rischi che ne conseguono. Le type assertion sono necessarie perché TypeScript non supporta l’analisi del control flow per rifinire un tipo parametrico: il tipo di `record` viene raffinato all'interno dei casi dello `switch`, ma altrettanto non avviene al type parameter `R`.
+
+```ts
+type NumberRecord = { kind: "n"; v: number };
+type StringRecord = { kind: "s"; v: string };
+type BooleanRecord = { kind: "b"; v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => (b ? 1 : 0);
+
+type MatchRet<R extends UnionRecord> = R["kind"] extends "n"
+  ? number
+  : R["kind"] extends "s"
+  ? string
+  : R["kind"] extends "b"
+  ? number
+  : never;
+
+function match<R extends UnionRecord>(record: R): MatchRet<R> {
+  switch (record.kind) {
+    case "n":
+      return double(record.v) as MatchRet<R>;
+    case "s":
+      return trim(record.v) as MatchRet<R>;
+    case "b":
+      return toNum(record.v) as MatchRet<R>;
+  }
+}
+```
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwNxQBujNiKqUAL5sAUKEhQAysFS0A5plwFiZSrQbMAzuy6NNM+UNHjoAIRw4ANhACGNRXkIly1OoyZId3KEgvW7RmLg0ACqNFQ49tiOKvDIaA7KAD5SBjQK0clQ5la2UUr4oiK4NPpQ+DhwSNYqABQ0PHxoAJTEAHxQNFAAVFAATKIlZQYIdZp6aXKtRB2aAHQjtc2DkcM4cXVIjL65dtMdtUhQAPxQAIxQjAAMyyJBEgCyNsBYABaYwAA86FAQAB7ACB0TRQMIRfKODokdAAbSYrnwTAAur8AUD8CCWEwRFATp0mqgcZcoLD4epkajAcCtNjcad9LJ0kTGKSERT-lSMcxPETTrx4oTcTwIJw0EUAGZwGhYYDgqAIZ5vb6U9EgsGRRL4Nq1VCZDToZqMJ4vd4QL7oDqkImaADuVBNUB1ermCNaVtxuKwNk00Cx9CJHqguuAcFQXQqVWsToKc04rW9UGNbw+3zaokDXp9NP9gdxwdDXUWupjcagCaTpvNaYDUEzvs8Odz+bDUGA60Q0ccsfjIIrKYt6aEIkEQA)
+
+### Tentativo 3: gli oggetti
+
+In [questo articolo](../lookup-types-generici-come-vivere-felici-senza-lanalisi-del-control-flow) ho presentato una soluzione alternativa all'uso del malefico costrutto `switch`, soluzione che putroppo non è applicabile a questa situazione.
+
+```ts
+type NumberRecord = { kind: "n"; v: number };
+type StringRecord = { kind: "s"; v: string };
+type BooleanRecord = { kind: "b"; v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => (b ? 1 : 0);
+
+function match<R extends UnionRecord>(record: R) {
+  return {
+    n: double(record.v), // 'string | number | boolean' is not assignable to 'number'
+    s: trim(record.v), // 'string | number | boolean' is not assignable to 'string'
+    b: toNum(record.v) // 'string | number | boolean' is not assignable to 'boolean'
+  }[record.kind];
+}
+```
+
+In primo luogo la costruzione dell'oggetto indicizzato avviene prima dell'indicizzazione. Tale costruzione è di fatto impossibile in quanto abbiamo solo un `record` a disposizione, il cui `v` non è di certo utilizzabile come parametro per tutte le tre funzioni. Inoltre, per poter allineare dovutamente il parametro di ritorno, è necessario avere accesso nel type level al tipo concreto del campo `kind`, ma TypeScript non lo inferisce a partire da `R`.
+
+Il miglior compromesso è il seguente, nel quale utilizzo un paio di barbatrucchi per risolvere tali problemi. Purtroppo però si perde il refinement su `record`: dobbiamo quindi ricorrere nuovamente a delle type assertion.
+
+```ts
+type NumberRecord = { kind: "n"; v: number };
+type StringRecord = { kind: "s"; v: string };
+type BooleanRecord = { kind: "b"; v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => (b ? 1 : 0);
+
+function match<
+    R extends Extract<UnionRecord, { kind: K }>,
+    K extends UnionRecord["kind"] = R["kind"]>
+(record: R): { n: number, s: string, b: number }[K] {
+  return {
+    get n() { return double(record.v as number) },
+    get s() { return trim(record.v as string) },
+    get b() { return toNum(record.v as boolean) }
+  }[record.kind];
+}
+```
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwNxQBujNiKqUAL5sAUKEhQAysFS0A5plwFiZSrQbMAzuy6NNM+UNHjoAIRw4ANhACGNRXkIly1OoyZId3KEgvW7RmLg0ACqNFQ49tiOKvDIaA7KAD5SBjQK0clQ5la2UUr4oiK4NPpQ+DhwSNYqABQ0PHxoAJTEAHxQNFAAVFAATKIlZQYIdZp6aXKtRB2aAHQjtc2DkcM4cXVIjL65dtMdtUhQAPxQAIxQjAAMyyIiAGZwNFjAEV0INsBYABYAPCJQQFQdBQCAAD2AEDomigAFEIagbC9fmE3ol8AAaVSuDQAaSEbQxAKB+PBkOhUFRkXRAG0mDimABdFToOkMxltES1VCZDToZqMcgNTpNVBY8ZQfSydJYrYi+ICQQ03HM0jEnnAOCoLpqoFQOQQYCdJaqDVaroVKrWbm8uacKA2GG8BWtQREvUGo2aE3kM3aqCLHkFO0OmFS+Su91Az0+H1QP1dYDrRA24P2x0+Px5V3EpVBxxzHGM0SCIA)
