@@ -265,16 +265,18 @@ const double = (n: number) => n * 2;
 const trim = (s: string) => s.trim();
 const toNum = (b: boolean) => (b ? 1 : 0);
 
-function match<R extends UnionRecord>(record: R) {
+function match
+    <R extends UnionRecord>
+(record: R): { n: number, s: string, b: number }[R["kind"]] {
   return {
     n: double(record.v), // 'string | number | boolean' is not assignable to 'number'
     s: trim(record.v), // 'string | number | boolean' is not assignable to 'string'
     b: toNum(record.v) // 'string | number | boolean' is not assignable to 'boolean'
-  }[record.kind];
+  }[record.kind]; // "n" | "s" | "b" instead of something like R["kind"]
 }
 ```
 
-In primo luogo la costruzione dell'oggetto indicizzato avviene prima dell'indicizzazione. Tale costruzione è di fatto impossibile in quanto abbiamo solo un `record` a disposizione, il cui `v` non è di certo utilizzabile come parametro per tutte le tre funzioni. Inoltre, per poter allineare dovutamente il parametro di ritorno, è necessario avere accesso nel type level al tipo concreto del campo `kind`, ma TypeScript non lo inferisce a partire da `R`.
+In primo luogo la costruzione dell'oggetto indicizzato avviene prima dell'indicizzazione. Tale costruzione è di fatto impossibile in quanto abbiamo solo un `record` a disposizione, il cui `v` non è di certo utilizzabile come parametro per tutte le tre funzioni. Inoltre, per poter allineare dovutamente il parametro di ritorno è necessaria una più precisa inferenza del campo `kind`, il cui tipo viene invece immediatamente espanso all'upper bound `"n" | "s" | "b"`.
 
 Il miglior compromesso è il seguente, nel quale utilizzo un paio di barbatrucchi per risolvere tali problemi. Purtroppo però si perde il refinement su `record`: dobbiamo quindi ricorrere nuovamente a delle type assertion.
 
