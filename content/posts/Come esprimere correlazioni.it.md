@@ -1,7 +1,7 @@
 +++
 author = "Andrea Simone Costa"
 title = "Come esprimere correlazioni"
-date = "2023-08-03"
+date = "2023-08-04"
 description = "Esprimere correlazioni tra diverse entità non è mai stato così difficile"
 categories = ["typescript"]
 series = ["TypeScript"]
@@ -27,7 +27,7 @@ Parliamone francamente, la struttura del pattern è piuttosto orrenda. Il buon v
 
 Quindi, perché ho scritto questo articolo? Innanzitutto per spiegare il pattern in questione: vedremo una istanza del problema che risolve e come sfruttarlo a regola d'arte nel caso specifico. Adlilà dell'opinione che posso avere rimane un utilissimo strumento da inserire nella propria toolbox, nonché l'unico per affrontare determinate situazioni. Spiegherò poi cosa è che proprio non mi piace, cosa in particolare trovo scomodo nel suo utilizzo, e proporrò una soluzione per arginare queste difficoltà.
 
-La mia proposta è fortemente basata sulle strategie alternative suggerite da jcalz, ma ho fatto il possibile per identificare le ragioni di alcuni malfunzionamenti delle stesse risolvendo i problemi riscontrati. Ho passato letteralmente ore a ragionare, testare e martellare, finché non ho raggiunto un compromesso che sento di poter condividere. Ho cercato di identificare quale fosse l'essenza del pattern e come poter quindi plasmare una soluzione sempre corretta ma leggermente più alla mano.
+La mia proposta è fortemente basata sulle strategie alternative suggerite da jcalz, ma ho fatto il possibile per identificare le ragioni di alcuni malfunzionamenti delle stesse risolvendo i problemi riscontrati. Ho passato letteralmente ore a ragionare, testare e martellare, finché non ho raggiunto un compromesso che sento di poter condividere. Ho cercato di identificare quale fosse l'essenza del pattern e come poter quindi plasmare una soluzione sempre corretta ma leggermente più alla mano. Forse.
 
 &nbsp;
 
@@ -115,7 +115,7 @@ function processRecord<K extends keyof TypeMap>(record: UnionRecord<K>) {
 
 In poche parole `RecordType` viene direttamente __distribuito__ su un sottoinsieme `K` di chiavi di `TypeMap`. Il valore di default del generico non è strettamente necessario ma è comodo nel momento in cui necessitiamo dell'intera union.
 
-### Deoffuscamento del codice
+### Deoffuscamento parziale del codice
 
 Lo snippet seguente mostra che la correlazione viene mantenuta anche nel caso in cui si indicizzi un mapped type non generico, ma definito in funzione della type map, con un index type generico appropriato:
 
@@ -317,10 +317,10 @@ function match<
 type TypeMap = { n: number; s: string; b: boolean };
 
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
-  [P in K]: {
-    kind: P;
-    v: TypeMap[P];
-  };
+    [P in K]: {
+        kind: P;
+        v: TypeMap[P];
+    };
 }[K];
 
 const recfs = {
@@ -330,20 +330,131 @@ const recfs = {
 }
 
 type OutputMap = {
-  [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
+    [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
 };
 
 type FuncRecord = {
-  [P in keyof TypeMap]: (x: TypeMap[P]) => OutputMap[P];
+    [P in keyof TypeMap]: (x: TypeMap[P]) => OutputMap[P];
 };
 
 function match<K extends keyof TypeMap>(
-  recv: ValueRecord<K>,
-  recfs: FuncRecord
+    recv: ValueRecord<K>,
+    recfs: FuncRecord
 ): OutputMap[K] {
-  return recfs[recv.kind](recv.v);
+    return recfs[recv.kind](recv.v);
 }
 ```
 [Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta&ssl=34&ssc=48&pln=32&pc=1#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgNxQDOBtwFAljgOY2kGkD2PANhCQ4oAXyoAoCaEhQAakn6EIAJQgBjHhQAmAHgDSUCAA9gEHNtpQA1hBA8AZrHjJUGW-adxIrgHzosCSgoAG0ABShWKH0AXQJMIOCbVm0CMMkkqAA3Am9EFHCYjLFJURDYyQlNHEYoCg0HKwwEzPwoAAo2nBJyCgBKdH8RACooACYAGkTg+g7ZxhZ2AbR-WgA6JmZidr6pzK4Og94BIRw+gm6ySkHDqAB+KABGKAIABj6JUSkZaAB5QmAYABrgCLVChiiHkczh8KDiUDUwEIFBweV07R+0Pq6kafXKMV8n0qPygADFCDh1GpNDpQYlwpERFCvC44QR2sZcqywIVlv5-oDgQUwkUiVIHBT1MBmDwRMQkMB1AALAxGUzmSw2OzQvJ+dqJbE5eSKZTUrR6fS+PZ1BqzcmUs06CTnKACoHAVz4wLBepIlE2nG0EKGtbWFIxdohrJ9UpSCTyxVK9rYMMWAgAIhw6Ym2QIABYxmIc9jcVAAPRlohXCjxhXK5PJNNQdO0bO55vqZhIHjposB0sVuibdi1xMN1OpZukNtGhyKWjQUTF20DQeXXpAA)
 
-Come prima `ValueRecord` è definito in modo verboso, mentre `OutputMap` e `FuncRecord` non sono altro che mapped type basati sulle chiavi della type map `TypeMap`. All'interno di `match` il `kind` di `recv` viene nuovamente utilizzato per indicizzare la funzione corrispondente all'interno di `recfs`, e tale funzione verrà invocata sul valore `v` di `recv`.
+Come prima `ValueRecord` è definito in modo verboso, mentre `OutputMap` e `FuncRecord` non sono altro che mapped type basati sulle chiavi della type map `TypeMap`. In `FuncRecord` il tipo di ogni parametro deve obbligatoriamente essere il tipo del campo `v` corrispondente, altrimenti non potremmo invocare tali funzioni, mentre il tipo di ritorno è arbitrariamente determinato dalle funzioni in `recfs`. All'interno di `match` il `kind` di `recv` viene nuovamente utilizzato per indicizzare la funzione corrispondente all'interno di `recfs`, e tale funzione verrà invocata sul valore `v` di `recv`.
+
+&nbsp;
+
+## L'odio e il disgusto
+
+Soffermiamoci un momento a considerare di quanto sia peggiorata la struttura iniziale, la chiarezza e la pulizia del nostro codice per poter applicare il pattern:
+
+```ts
+// Da così...
+type NumberRecord = { kind: "n", v: number };
+type StringRecord = { kind: "s", v: string };
+type BooleanRecord = { kind: "b", v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => b ? 1 : 0;
+
+
+// ... a così
+type TypeMap = { n: number; s: string; b: boolean };
+
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
+    [P in K]: {
+        kind: P;
+        v: TypeMap[P];
+    };
+}[K];
+
+const recfs = {
+    n: (n: number) => n * 2,
+    s: (s: string) => s.trim(),
+    b: (b: boolean): number => (b ? 1 : 0)
+}
+
+type OutputMap = {
+    [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
+};
+
+type FuncRecord = {
+    [P in keyof TypeMap]: (x: TypeMap[P]) => OutputMap[P];
+};
+```
+
+Di cosa stiamo parlando? È allucinante. Allucinante. È idiomatico definire prima i componenti di una eventuale unione e poi definire l'unione tramite l'operatore `|` piuttosto che inglobare il tutto nella medesima type function, come viene fatto con `ValueRecord`. Bisogna considerare poi che non sempre è possibile usare linearmente quest'ultimo approccio, che risulta parecchio scomodo in certi casi. Che dire infatti se i componenti dell'unione da inglobare non sono `type` o `interface`, ma delle classi? Oppure che fare se, come spesso accade, ogni componente ha diverse proprietà uniche non condivise con gli altri elementi? Siamo costretti ad abusare della type map creando inutili ridondanze e/o trasformando ogni chiave in un tipo oggetto, e fino a qui nulla di troppo immorale, inserendo poi almeno un field fittizio nel quale definire le peculiarità della specifica chiave. Non porto esempi di queste casistiche, ma credetemi sulla parola: la situazione degenera velocemente.
+
+&nbsp;
+
+## L'alternativa
+
+Metto le mani avanti, non aspettatevi la rivelazione ultima. Non esiste la panacea a questo delirio, solo strategie per attenuare la situazione, che non migliora più di tanto. I miei sforzi si sono concentrati sul mantenere le definizioni dei componenti di `UnionRecord` separate, come è idiomatico fare. Il resto rimane quasi del tutto invariato: non possiamo sbarazzarci né della type map né delle restanti definizioni costruite in funzione di essa.
+
+Iniziamo quindi definendo i tipi dei record:
+
+```ts
+type NumberRecord = { kind: "n", v: number };
+type StringRecord = { kind: "s", v: string };
+type BooleanRecord = { kind: "b", v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+```
+
+La type map itera `UnionRecord` e associa ad ogni `kind` il record corrispondente:
+
+```ts
+// { n: NumberRecord; s: StringRecord; b: BooleanRecord; }
+type TypeMap = {
+    [K in UnionRecord["kind"]]: Extract<UnionRecord, { kind: K }>; 
+};
+```
+
+La definizione di `ValueRecord` si complica leggermente. Siamo costretti ad definire manualmente i tipi dei campi `kind` e `v`, sempre in funzione della type map, perché questi due campi sono quelli ai quali funzione `match` accede direttamente. Il tipo `{ kind: P, v: TypeMap[K]["v"] } & Omit<TypeMap[K], "kind" | "v">` è concettualmente identico a `TipeMap[K]`, ma TypeScript si perde all'interno di `match` se usiamo anzi quest'ultimo. Osserviamo che in questo specifico esempio l'intersezione con `Omit<TypeMap[K], "kind" | "v">` potrebbe essere omessa in quanto i record non possiedono altre proprietà oltre a `kind` e `v`.
+
+```ts
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = { 
+    [P in K]: { kind: P, v: TypeMap[K]["v"] } & Omit<TypeMap[K], "kind" | "v">
+}[K];
+```
+
+Le definizioni delle funzioni e le altre due mappe sono quasi identiche a prima, bisogna solamente allineare il tipo del parametro in `FuncRecord`:
+
+```ts
+const recfs = {
+    n: (n: number) => n * 2,
+    s: (s: string) => s.trim(),
+    b: (b: boolean): number => (b ? 1 : 0)
+}
+
+type OutputMap = {
+    [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
+};
+
+type FuncRecord = {
+    [P in keyof TypeMap]: (x: TypeMap[P]["v"]) => OutputMap[P];
+};
+```
+
+La definizione della funzione `match` rimane invariata:
+```ts
+function match<K extends keyof TypeMap>(
+    recv: ValueRecord<K>,
+    recfs: FuncRecord
+): OutputMap[K] {
+    return recfs[recv.kind](recv.v);
+}
+```
+
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQAVEIBZWzBVUlEoBqgAbQBpKFoocMiCpyamN3wmAF0hxgBRAA9ZWyxgAB4uqKT8DlcNRjbBAD5hKFERURLoADVbKzgIZbm2iCmIOi1KCBAcADMocsgqmpIKZ7ePpVqltantGs0AArtGhQFqjNQDRgQjg+T4Qb6tIZ9TjDIRQABkUAA8ggqPM0Ri4Rx+homFBUkwcVt9pjirgaAYoKhsK9Hi56o0aIwABRCqC8BKoACUxBBMIAVFAAExsAUNLQijVQAxyDIyoggrQAOkMCGFUtV4KQIutvn8+SlPD4aFlUGFSCgAH4oABGKCMAAMUv2h1MxLgwDAEe+tQFrWhTxe7wp1XhmGAcFQNDRc2FpgB3KwvKlmOZByOUAAYnAaFhlrGGk0oR0-knAV9UyKJowU2Am1jGcN9SCiRGo8AMRChmJy68a7NulAELZgFgABbXKC3YD3fCPVsA3tbYUCws+U7nS5ZfDXLaWrk8rXV2vLUSO8OR6PVTFkU8QDNZg+RZaE0Z5GgMQzCmBnBSjOhzLqua7Cms7jMKwKKMAALEqQgcIWxZQAA9IR4rOqgogIeuyHqKhTA6BhzBYFQtg4HSgh4Y+MrEdq6TyBRK5UShmieN4jCvGcWjQOxQEEdxEr8EAA)
+
+## Conclusione
+
+Esprimere correlazioni tra diverse entità non è mai stato così difficile. Prego.
