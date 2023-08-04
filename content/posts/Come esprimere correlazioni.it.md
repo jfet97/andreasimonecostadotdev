@@ -391,7 +391,7 @@ type FuncRecord = {
 };
 ```
 
-Di cosa stiamo parlando? È allucinante. Allucinante. È idiomatico definire prima i componenti di una eventuale unione e poi definire l'unione tramite l'operatore `|` piuttosto che inglobare il tutto nella medesima type function, come viene fatto con `ValueRecord`. Bisogna considerare poi che non sempre è possibile usare linearmente quest'ultimo approccio, che risulta parecchio scomodo in certi casi. Che dire infatti se i componenti dell'unione da inglobare non sono `type` o `interface`, ma delle classi? Oppure che fare se, come spesso accade, ogni componente ha diverse proprietà uniche non condivise con gli altri elementi? Siamo costretti ad abusare della type map creando inutili ridondanze e/o trasformando ogni chiave in un tipo oggetto, e fino a qui nulla di troppo immorale, inserendo poi almeno un field fittizio nel quale definire le peculiarità della specifica chiave. Non porto esempi di queste casistiche, ma credetemi sulla parola: la situazione degenera velocemente.
+Di cosa stiamo parlando? È allucinante. Allucinante. È idiomatico definire prima i componenti di una eventuale unione e poi definire l'unione tramite l'operatore `|` piuttosto che inglobare il tutto nella medesima type function, come viene fatto con `ValueRecord`. Bisogna considerare poi che non sempre è possibile usare linearmente quest'ultimo approccio, che risulta parecchio scomodo in certi casi. Che dire infatti se i componenti dell'unione da inglobare non sono `type` o `interface`, ma delle classi? Oppure che fare se, come spesso accade, ogni componente ha diverse proprietà uniche non condivise con gli altri elementi? Siamo costretti ad abusare della type map e, credetemi sulla parola, la situazione degenera velocemente.
 
 &nbsp;
 
