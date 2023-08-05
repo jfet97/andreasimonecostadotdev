@@ -1,11 +1,11 @@
 +++
 author = "Andrea Simone Costa"
 title = "Come esprimere correlazioni"
-date = "2023-08-04"
+date = "2023-08-05"
 description = "Esprimere correlazioni tra diverse entità non è mai stato così difficile"
 categories = ["typescript"]
 series = ["TypeScript"]
-published = false
+published = true
 tags = [
     "correlations",
 ]
