@@ -421,7 +421,7 @@ La type map itera `UnionRecord` e associa ad ogni `kind` il record corrispondent
 ```ts
 // { n: NumberRecord; s: StringRecord; b: BooleanRecord; }
 type TypeMap = {
-    [K in UnionRecord["kind"]]: Extract<UnionRecord, { kind: K }>; 
+    [K in UnionRecord["kind"]]: Extract<UnionRecord, { kind: K }>;
 };
 ```
 
@@ -440,7 +440,7 @@ const recfs = {
     n: (n: number) => n * 2,
     s: (s: string) => s.trim(),
     b: (b: boolean): number => (b ? 1 : 0)
-}
+};
 
 type OutputMap = {
     [P in keyof TypeMap]: ReturnType<(typeof recfs)[P]>
