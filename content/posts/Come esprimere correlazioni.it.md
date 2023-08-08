@@ -425,11 +425,11 @@ type TypeMap = {
 };
 ```
 
-La definizione di `ValueRecord` si complica leggermente. Siamo costretti ad definire manualmente i tipi dei campi `kind` e `v`, sempre in funzione della type map, perché questi due campi sono quelli ai quali funzione `match` accede direttamente. Il tipo `{ kind: P, v: TypeMap[K]["v"] } & Omit<TypeMap[K], "kind" | "v">` è concettualmente identico a `TipeMap[K]`, ma TypeScript si perde all'interno di `match` se usiamo quest'ultimo. Osserviamo che in questo specifico esempio l'intersezione con `Omit<TypeMap[K], "kind" | "v">` potrebbe essere omessa in quanto i record non possiedono altre proprietà oltre a `kind` e `v`.
+La definizione di `ValueRecord` si complica leggermente. Siamo costretti ad definire manualmente i tipi dei campi `kind` e `v`, sempre in funzione della type map, perché questi due campi sono quelli ai quali funzione `match` accede direttamente. Il tipo `{ kind: P, v: TypeMap[P]["v"] } & Omit<TypeMap[P], "kind" | "v">` è concettualmente identico a `TipeMap[P]`, ma TypeScript si perde all'interno di `match` se usiamo quest'ultimo. Osserviamo che in questo specifico esempio l'intersezione con `Omit<TypeMap[P], "kind" | "v">` potrebbe essere omessa in quanto i record non possiedono altre proprietà oltre a `kind` e `v`.
 
 ```ts
-type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = { 
-    [P in K]: { kind: P, v: TypeMap[K]["v"] } & Omit<TypeMap[K], "kind" | "v">
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
+    [P in K]: { kind: P, v: TypeMap[P]["v"] } & Omit<TypeMap[P], "kind" | "v">
 }[K];
 ```
 
@@ -461,7 +461,7 @@ function match<K extends keyof TypeMap>(
 }
 ```
 
-[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQAVEIBZWzBVUlEoBqgAbQBpKFoocMiCpyamN3wmAF0hxgBRAA9ZWyxgAB4uqKT8DlcNRjbBAD5hKFERURLoADVbKzgIZbm2iCmIOi1KCBAcADMocsgqmpIKZ7ePpVqltantGs0AArtGhQFqjNQDRgQjg+T4Qb6tIZ9TjDIRQABkUAA8ggqPM0Ri4Rx+homFBUkwcVt9pjirgaAYoKhsK9Hi56o0aIwABRCqC8BKoACUxBBMIAVFAAExsAUNLQijVQAxyDIyoggrQAOkMCGFUtV4KQIutvn8+SlPD4aFlUGFSCgAH4oABGKCMAAMUv2h1MxLgwDAEe+tQFrWhTxe7wp1XhmGAcFQNDRc2FpgB3KwvKlmOZByOUAAYnAaFhlrGGk0oR0-knAV9UyKJowU2Am1jGcN9SCiRGo8AMRChmJy68a7NulAELZgFgABbXKC3YD3fCPVsA3tbYUCws+U7nS5ZfDXLaWrk8rXV2vLUSO8OR6PVTFkU8QDNZg+RZaE0Z5GgMQzCmBnBSjOhzLqua7Cms7jMKwKKMAALEqQgcIWxZQAA9IR4rOqgogIeuyHqKhTA6BhzBYFQtg4HSgh4Y+MrEdq6TyBRK5UShmieN4jCvGcWjQOxQEEdxEr8EAA)
+[Link al playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.2.0-beta#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQAVEIBZWzBVUlEoBqgAbQBpKFoocMiCpyamN3wmAF0hxgBRAA9ZWyxgAB4uqKT8DlcNRjbBAD5hKFERURLoADVbKzgIZbm2iCmIOi1KCBAcADMocsgqmpIKZ7ePpVqltantGs0AArtGhQFqjNQDRgQjg+T4Qb5NCFDPqcYZCKAAMigAHkEFR5miMViOP0NEwoKkmLitvtWkNirgaAYoKhsK9Hi56o0aIwABQiqC8BKoACUxBBMIAVFAAExsIUNLRirVQAxyDJyoggrQAOkMCFFMvV4KQYttvn8+RlPD4aHlUFFSCgAH4oABGKCMAAMMv2h1MJLgwDAUe+tSFrWhTxe70p1XhmGAcFQNDRc1FpgBvKw-JlbJZByOUAAYnAaFhlvGGpik38U4CvumxRNGGmwJjsUzhoaQcSozHgFT2ftiq867NulAELZgFgABbXKC3YD3fCPNsAvtbUVC4s+U7nS5ZfDXLbWnl8nW1+vLUTOyPR2PVNlkU8QLM5g+JZaE0Z4mgMQyimBnAymIgiHMuq5rqKazuMwrAoowAAsKpCBwxallAAD0RGSq6qCiIh64oeoaFMDomHMFgVC2Dg9KCPhj5yiRurpPIlErtRqGaJ43iMK8ZxaNAHFAYRPFSvwQA)
 
 &nbsp;
 
