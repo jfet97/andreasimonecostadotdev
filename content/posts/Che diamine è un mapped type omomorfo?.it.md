@@ -43,7 +43,7 @@ Tra gli argomenti del [workshop](https://www.eventbrite.it/e/biglietti-advanced-
 
 La mia definizione di mapped type omomorfo sembrava essere un po' troppo lasca, alla luce di alcune proprietà che ero certo ogni mapped type omomorfo dovesse possedere. In particolare mi riferisco alla preservazione dei tipi tupla/array e alla possibilità di essere invertiti (ma questa è un'altra storia). Tuttavia, sembrava che queste proprietà andassero perse quando veniva utilizzata la clausola `as` per rinominare i field.
 
-Restringere la definizione di mapped type omomorfo escludendo ogni mapped type che usi la clausola `as` è però eccessivo, poiché se ne scartano alcuni che TypeScript stesso considera omomorfi. Essi infatti posseggono proprietà, come la distribuzione rispetto all'unione, che sono esclusive dei mapped type omomorfi.
+Restringere la definizione di mapped type omomorfo escludendo ogni mapped type che usi la clausola `as` è però eccessivo, poiché se ne scartano alcuni che TypeScript stesso considera omomorfi. Essi infatti posseggono proprietà, come la distribuzione rispetto all'unione, che sono esclusive di questo tipo di mapped type.
 
 ## La soluzione
 
@@ -142,4 +142,4 @@ Di nuovo abbiamo il `!(target as MappedType).declaration.nameType` che impedisce
 
 ## Conclusione
 
-I mapped type omomorfi sono quelli aventi forma `{ [K in keyof T (as ...) ]: ... }` dove `T` è un type parameter e le parentesi tonde indicano che la clausola `as` è opzionale. I mapped type omomorfi senza clausola `as` sono i migliori mapped type esistenti, quelli con la clausola `as` non sono malaccio ma hanno qualche proprietà in meno.
+I mapped type omomorfi sono quelli aventi forma `{ [K in keyof T (as ...) ]: ... }` dove `T` è un type parameter e le parentesi tonde indicano che la clausola `as` è opzionale. I mapped type omomorfi senza clausola `as` sono i migliori mapped type esistenti e godono di speciali proprietà, quelli con la clausola `as` non sono malaccio ma hanno qualche proprietà in meno.
