@@ -43,7 +43,7 @@ Tra gli argomenti del [workshop](https://www.eventbrite.it/e/biglietti-advanced-
 
 La mia definizione di mapped type omomorfo sembrava essere un po' troppo lasca, alla luce di alcune proprietà che ero certo ogni mapped type omomorfo dovesse possedere. In particolare mi riferisco alla preservazione dei tipi tupla/array e alla possibilità di essere invertiti (ma questa è un'altra storia). Tuttavia, sembrava che queste proprietà andassero perse quando veniva utilizzata la clausola `as` per rinominare i field.
 
-Eliminando le pecore nere con l'unica definizione più rigorosa che avesse senso dare ecco che tagliavo fuori tutta una serie di mapped type che però sono omomorfi secondo TypeScript, perché posseggono proprietà come la distribuzione rispetto all'unione.
+Restringere la definizione di mapped type omomorfo escludendo ogni mapped type che usi la clausola `as` è però eccessivo, poiché se ne scarta tutta una serie che TypeScript stesso considera omomorfi. Essi infatti posseggono proprietà, come la distribuzione rispetto all'unione, che sono proprie esclusivamente dei mapped type omomorfi.
 
 ## La soluzione
 
