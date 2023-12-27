@@ -65,10 +65,10 @@ So, what properties do homomorphic mapped type have? Oh, and what about the `as`
 This function comes into play when it's necessary to instantiate a mapped type. Here's the catch:  homomorphic mapped types are handled in a special way, and you can observe this by examining the first if statement. Comments help us understand some of their special properties:
 
 1. if the homomorphic mapped type is applied to a primitive type, the result is the primitive type itself
-  ```ts
-  HMT<1> = 1
-  HMT<string> = string
-  ```
+    ```ts
+    HMT<1> = 1
+    HMT<string> = string
+    ```
 1. if the homomorphic mapped type is applied to a union type, the result is the union of the mapped type applied to each member of the union
   ```ts
   HMT<A | B> = HTM<A> | HTM<B>
