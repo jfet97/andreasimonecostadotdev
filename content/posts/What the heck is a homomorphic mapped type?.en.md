@@ -93,7 +93,7 @@ This function comes into play when it's necessary to instantiate a mapped type. 
     HMT<[A, B, C]> = [F<A>, F<B>, F<C>]
     ```
 
-Basically, an homomorphic mapped type is going to iterate only over the numeric (`` number | `${number}` ``) keys of the object, leaving the rest untouched. The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. Now, I haven't quite nailed down the meaning of this `nameType` within the codebase, but I can assure you that if you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename the keys, as we would likely lose the specific numeric keys associated with these types.
+Basically, an homomorphic mapped type is going to iterate only over the numeric (`` number | `${number}` ``) keys of the array (tuple), leaving the rest untouched. The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. Now, I haven't quite nailed down the meaning of this `nameType` within the codebase, but I can assure you that if you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename the keys, as we would likely lose the specific numeric keys associated with these types.
 
 Therefore, using the `as` clause doesn't disqualify a mapped type from being homomorphic; it simply has fewer properties.
 
