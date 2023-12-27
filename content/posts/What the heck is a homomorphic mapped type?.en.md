@@ -80,13 +80,17 @@ HMT<A | B> = HTM<A> | HTM<B>
 1. if the homomorphic mapped type is applied to an array, the result is still an array where the element type has been transformed by the logic of the mapped type
 
 ```ts
-// todo
+type HMT<T> = { [P in keyof T]: F<T[K]> }
+
+HMT<A[]> = F<A>[]
 ```
 
 1. if the homomorphic mapped type is applied to a tuple, the result is still a tuple where the element types have been transformed by the logic of the mapped type
 
 ```ts
-HMT<[A, B, C]> = [HMT<A>, HMT<B>, HMT<C>]
+type HMT<T> = { [P in keyof T]: F<T[K]> }
+
+HMT<[A, B, C]> = [F<A>, F<B>, F<C>]
 ```
 
 Basically, an homomorphic mapped type is going to iterate only over the numeric (`` number | `${number}` ``) keys of the object, leaving the rest untouched. The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. Now, I haven't quite nailed down the meaning of this `nameType` within the codebase, but I can assure you that if you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename the keys, as we would likely lose the specific numeric keys associated with these types.
