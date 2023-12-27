@@ -69,7 +69,7 @@ This function comes into play when it's necessary to instantiate a generic mappe
 1. if the homomorphic mapped type is applied to an array, the result is still an array where the element type has been transformed by the logic of the mapped type
 1. if the homomorphic mapped type is applied to a tuple, the result is still a tuple where the element types have been transformed by the logic of the mapped type
 
-Basically, an homomorphic mapped type is going to iterate only over the numeric (`number | \`${number}\``) keys of the object, leaving the rest untouched. The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. Now, I haven't quite nailed down the meaning of this `nameType` within the codebase, but I can assure you that if you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename the keys, as we would likely lose the specific numeric keys associated with these types.
+Basically, an homomorphic mapped type is going to iterate only over the numeric ``(number | `${number}`)`` keys of the object, leaving the rest untouched. The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. Now, I haven't quite nailed down the meaning of this `nameType` within the codebase, but I can assure you that if you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename the keys, as we would likely lose the specific numeric keys associated with these types.
 
 ```ts
 function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol?: Symbol, aliasTypeArguments?: readonly Type[]): Type {
@@ -119,9 +119,7 @@ function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol
 }
 ```
 
-### resolveMappedTypeMembers and getModifiersTypeFromMappedType
-
-In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, seems always to be able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because homomorphic mapped types respect that form, they preserve the modifiers.
+Therefore, using the as clause doesn't disqualify a mapped type from being homomorphic; it simply has fewer properties.
 
 ### inferFromObjectTypes
 
@@ -139,3 +137,7 @@ if (getObjectFlags(target) & ObjectFlags.Mapped && !(target as MappedType).decla
 ```
 
 Once again, we have `!(target as MappedType).declaration.nameType`, which prevents the inversion in the case of using the `as` clause. While being homomorphic isn't an absolute requirement for inversion, because even some non-homomorphic mapped types can be inverted, it does serve as a good indicator that TypeScript might pull off the inversion.
+
+### resolveMappedTypeMembers and getModifiersTypeFromMappedType
+
+In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, seems always to be able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because homomorphic mapped types respect that form, they preserve the modifiers.
