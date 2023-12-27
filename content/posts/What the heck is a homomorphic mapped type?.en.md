@@ -141,3 +141,9 @@ Once again, we have `!(target as MappedType).declaration.nameType`, which preven
 ### resolveMappedTypeMembers and getModifiersTypeFromMappedType
 
 In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, seems always to be able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because homomorphic mapped types respect that form, they preserve the modifiers.
+
+&nbsp;
+
+## Conclusion
+
+In conclusion, homomorphic mapped types are those that take the form `{ [K in keyof T (as ...)]: ... }`, where `T` is a type parameter, and the parentheses indicate that the `as` clause is optional. Homomorphic mapped types without the `as` clause are the cream of the crop, boasting special properties; those with the `as` clause aren't that bad, but they come with a few less features.
