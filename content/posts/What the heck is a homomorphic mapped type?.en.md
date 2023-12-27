@@ -169,8 +169,7 @@ In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` m
 ```ts
 type HMT<T> = { [P in keyof T]: F<T[P]> }
 
-HMT<{
-  readonly a: A, b?: B, readonly c?: C}> = { readonly a: F<A>, b?: F<B>, readonly c?: F<C> }
+HMT<{ readonly a: A, b?: B, readonly c?: C}> = { readonly a: F<A>, b?: F<B>, readonly c?: F<C> }
 ```
 
 &nbsp;
