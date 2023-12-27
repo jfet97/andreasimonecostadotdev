@@ -56,7 +56,7 @@ function getHomomorphicTypeVariable(type: MappedType) {
 }
 ```
 
-A mapped type `{ [K in C]: ... }` is homomorphic if its constraint `C` is a `keyof T`, where `T` must be a type variable. This is indicated by the `TypeFlags.Index` and `TypeFlags.TypeParameter` flags, respectively. Where does the type variable come from? It could be declared as input or inferred using the `infer` keyword. So, the examples from the old handbook are all good, except for `Pick`, which it seems TypeScript no longer considers homomorphic.
+A mapped type `{ [P in C]: ... }` is homomorphic if its constraint `C` is a `keyof T`, where `T` must be a type variable. This is indicated by the `TypeFlags.Index` and `TypeFlags.TypeParameter` flags, respectively. Where does the type variable come from? It could be declared as input or inferred using the `infer` keyword. So, the examples from the old handbook are all good, except for `Pick`, which it seems TypeScript no longer considers homomorphic.
 
 So, what properties do homomorphic mapped type have? Oh, and the `as` clause? It allows us to rename or even remove keys, theoretically altering the object's structure.
 
