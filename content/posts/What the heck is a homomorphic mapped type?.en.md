@@ -62,14 +62,14 @@ So, what properties do homomorphic mapped type have? Oh, and the `as` clause? It
 
 ### instantiateMappedType
 
-This function comes into play when it's necessary to instantiate a generic mapped type. Here's the catch:  homomorphic mapped types are handled in a special way, and you can observe this by examining the first if statement. Comments help us understand some of their special properties:
+This function comes into play when it's necessary to instantiate a mapped type. Here's the catch:  homomorphic mapped types are handled in a special way, and you can observe this by examining the first if statement. Comments help us understand some of their special properties:
 
 1. if the homomorphic mapped type is applied to a primitive type, the result is the primitive type itself
 1. if the homomorphic mapped type is applied to a union type, the result is the union of the mapped types applied to each member of the union
 1. if the homomorphic mapped type is applied to an array, the result is still an array where the element type has been transformed by the logic of the mapped type
 1. if the homomorphic mapped type is applied to a tuple, the result is still a tuple where the element types have been transformed by the logic of the mapped type
 
-Basically, an homomorphic mapped type is going to iterate only over the numeric ``(number | `${number}`)`` keys of the object, leaving the rest untouched. The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. Now, I haven't quite nailed down the meaning of this `nameType` within the codebase, but I can assure you that if you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename the keys, as we would likely lose the specific numeric keys associated with these types.
+Basically, an homomorphic mapped type is going to iterate only over the numeric (``number | `${number}`\``) keys of the object, leaving the rest untouched. The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. Now, I haven't quite nailed down the meaning of this `nameType` within the codebase, but I can assure you that if you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename the keys, as we would likely lose the specific numeric keys associated with these types.
 
 ```ts
 function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol?: Symbol, aliasTypeArguments?: readonly Type[]): Type {
