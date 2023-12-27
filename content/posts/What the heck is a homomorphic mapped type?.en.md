@@ -120,7 +120,8 @@ function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol
             if (!type.declaration.nameType) {
               let constraint;
               if (
-                  isArrayType(t) || t.flags & TypeFlags.Any && findResolutionCycleStartIndex(typeVariable, TypeSystemPropertyName.ImmediateBaseConstraint) < 0 && (constraint = getConstraintOfTypeParameter(typeVariable)) && everyType(constraint, isArrayOrTupleType)
+                  isArrayType(t) || t.flags & TypeFlags.Any && findResolutionCycleStartIndex(typeVariable, TypeSystemPropertyName.ImmediateBaseConstraint) < 0
+                  && (constraint = getConstraintOfTypeParameter(typeVariable)) && everyType(constraint, isArrayOrTupleType)
               ) {
                 return instantiateMappedArrayType(t, type, prependTypeMapping(typeVariable, t, mapper));
               }
