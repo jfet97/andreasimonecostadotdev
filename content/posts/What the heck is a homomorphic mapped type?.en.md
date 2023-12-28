@@ -210,3 +210,5 @@ Once again, we have `!(target as MappedType).declaration.nameType`, which preven
 ## Conclusion
 
 In conclusion, homomorphic mapped types are those that take the form `{ [K in keyof T (as ...)]: ... }`, where `T` is a type parameter, and the parentheses indicate that the `as` clause is optional. Homomorphic mapped types without the `as` clause are the cream of the crop, boasting special properties; those with the `as` clause aren't that bad, but they come with a few less features. If a mapped type isn't homomorphic, it might still have some properties, like preserving modifiers, having symlinks to the original type, and the possibility of being reverted.
+
+When crafting a mapped type, aim for homomorphism.
