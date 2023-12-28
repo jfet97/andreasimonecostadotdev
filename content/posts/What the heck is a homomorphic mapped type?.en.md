@@ -113,7 +113,7 @@ function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol
 }
 ```
 
-Here's the catch:  homomorphic mapped types are handled in a special way, and you can observe this by examining the first if statement. Comments help us understand some of their special properties:
+Here's the catch: homomorphic mapped types are handled in a special way, and you can observe this by examining the first if statement. Comments help us understand some of their special properties:
 
 1. if the homomorphic mapped type is applied to a primitive type, the result is the primitive type itself:
 
@@ -144,9 +144,9 @@ Here's the catch:  homomorphic mapped types are handled in a special way, and yo
     HMT<[A, B, C]> = [F<A>, F<B>, F<C>]
     ```
 
-Basically, an homomorphic mapped type is going to iterate only over the numeric (`` number | `${number}` ``) keys of the array (tuple) type, leaving the other keys untouched. Therefore the mapped type logic is applied only on element types.
+Basically, an homomorphic mapped type - that doesn't make use of an `as` clause - is going to iterate only over the numeric (`` number | `${number}` ``) keys of the array (tuple) type, leaving the other keys untouched. Therefore the mapped type logic is applied only on element types.
 
-The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. If you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename or filter the keys, as we would likely lose some or all the numeric keys. With an `as` clause, even a homomorphic mapped type currently iterates through all the keys, but [this could change soon](https://github.com/microsoft/TypeScript/pull/55774).
+The preservation of tuple and array types happens only if `!type.declaration.nameType`. If you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename or filter out some keys, as we would likely lose some or all the numeric keys. With an `as` clause, even a homomorphic mapped type currently iterates through all the keys of the array (tuple) type, but [this could change soon](https://github.com/microsoft/TypeScript/pull/55774).
 
 Therefore, using the `as` clause doesn't disqualify a mapped type from being homomorphic; it simply has fewer properties.
 
