@@ -157,7 +157,7 @@ In short words, __any__ mapped type of the form `{ [P in keyof T]: ... }`, where
 ```ts
 type HMT<T> = { [P in keyof T]: F<T[P]> }
 
-HMT<{ readonly a: A, b?: B}> = { readonly a: F<A>, b?: F<B> }
+HMT<{ readonly a: A, b?: B }> = { readonly a: F<A>, b?: F<B> }
 ```
 
 If a mapped type has the form `{ [P in C]: ... }` where `C` is a type parameter and the costraint of `C` is `keyof T`, then the modifiers type is `T`. This let utility types like `Pick` preserve the modifiers of the original type, even though they are not homomorphic:
@@ -165,7 +165,7 @@ If a mapped type has the form `{ [P in C]: ... }` where `C` is a type parameter 
 ```ts
 type Pick<T, K extends keyof T> = { [P in K]: T[P]; }
 
-Pick<{ readonly a: A, b?: B}, "a"> = { readonly a: A }
+Pick<{ readonly a: A, b?: B }, "a"> = { readonly a: A }
 ```
 
 Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties as well. Symlinks enable symbol navigation in the IDE (things like _"go to definition"_). Even this property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
