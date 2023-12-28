@@ -203,7 +203,9 @@ if (getObjectFlags(target) & ObjectFlags.Mapped && !(target as MappedType).decla
 }
 ```
 
-Once again, we have `!(target as MappedType).declaration.nameType`, which prevents the inversion in the case of using the `as` clause. While being homomorphic isn't an absolute requirement for inversion, because even some non-homomorphic mapped types can be inverted, it does serve as a good indicator that TypeScript might pull off the inversion if there is no `as` clause.
+Once again, we have `!(target as MappedType).declaration.nameType`, which prevents the inversion in the case of using the `as` clause. While being homomorphic isn't an absolute requirement for inversion, because even some non-homomorphic mapped types can be reverted, it does serve as a good indicator that TypeScript might pull off the inversion if there is no `as` clause.
+
+**Achtung**: this might be enhanced soon, thanks to [this PR](https://github.com/microsoft/TypeScript/pull/52972). __Filtering__ mapped types are easier to revert than __renaming__ mapped types, so the `as` clause might not a big concert anymore if you use it just for filter out some keys.
 
 ## Conclusion
 
