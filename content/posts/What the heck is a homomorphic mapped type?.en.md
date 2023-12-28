@@ -146,7 +146,7 @@ Here's the catch:  homomorphic mapped types are handled in a special way, and yo
 
 Basically, an homomorphic mapped type is going to iterate only over the numeric (`` number | `${number}` ``) keys of the array (tuple) type, leaving the other keys untouched. Therefore the mapped type logic is applied only on element types.
 
-The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. If you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename or filter the keys, as we would likely lose some or all the numeric keys. In the presence of an `as` clause the mapped type iterates through all the keys, but this [might change soon](https://github.com/microsoft/TypeScript/pull/55774).
+The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. If you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename or filter the keys, as we would likely lose some or all the numeric keys. In the presence of an `as` clause the mapped type iterates through all the keys, but [this might change soon](https://github.com/microsoft/TypeScript/pull/55774).
 
 Therefore, using the `as` clause doesn't disqualify a mapped type from being homomorphic; it simply has fewer properties.
 
