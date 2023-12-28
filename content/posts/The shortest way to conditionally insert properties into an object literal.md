@@ -184,7 +184,7 @@ I hope I was able to explain everything in the best possible way 😃
 
 English is not my mother tongue, so errors are just around the corner.
 Feel free to comment with corrections!
-I hope to see you there again 🙂 and on [twitter](https://twitter.com/JFieldEffectT)!
+I hope to see you there again 🙂 and on [twitter](https://twitter.com/jfet97)!
 
 &nbsp;
 

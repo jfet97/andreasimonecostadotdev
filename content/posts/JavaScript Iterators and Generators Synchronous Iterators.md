@@ -601,7 +601,7 @@ We also have analyzed in detail how to define custom iterables for both a custom
 
 Next article will focus on __Generators__, a nice ES6 feature that could be used to create iterators and to do a lot of interesting stuff!
 
-I hope to see you there again 🙂 and on [twitter](https://twitter.com/JFieldEffectT)!
+I hope to see you there again 🙂 and on [twitter](https://twitter.com/jfet97)!
 
 &nbsp;
 

@@ -385,6 +385,6 @@ I'd like to say that Vue 3 refs admit a monad instance, but for now I cannot sta
 
 In any case it is possible to let monads and the monadic binding influence how we compose functions that return refs, allowing us to abstract away the composition logic that does not depend from the ref itself. All that opens up amazing possibilities!
 
-Oh, if you want to yell at me because [fill the blanket], then you can do it also on twitter: [@JFieldEffectT](https://twitter.com/JFieldEffectT)
+Oh, if you want to yell at me because [fill the blanket], then you can do it also on twitter: [@jfet97](https://twitter.com/jfet97)
 
 \* <sub><sup>I've faced some problems using Vue 3 with CodeSandbox, so if it is all freezed after the compilation try to play around || refresh the browser || refresh the codesandbox inner browser until it works. Or you can download it and run the example on your local machine.</sup></sub>

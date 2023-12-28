@@ -873,7 +873,7 @@ We have learnt all the nitty-gritty details about JavaScript generators: from th
 
 Next article will focus on __Asynchronous Iterators__, a recent feature brought to us by ES2018. Why we need them? What are the differences between them and sync iterators? We will answer all these questions.
 
-I hope to see you there again 🙂 and on [twitter](https://twitter.com/JFieldEffectT)!
+I hope to see you there again 🙂 and on [twitter](https://twitter.com/jfet97)!
 
 &nbsp;
 

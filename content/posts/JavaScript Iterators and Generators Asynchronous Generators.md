@@ -333,7 +333,7 @@ We have learnt why we need __Asynchronous Generators__, how they work and how th
 We have also learnt about both sync and async __generators piping__, a powerful pattern that I'm sure will expand your horizons.
 
 If you've enjoyed this journey through __JavaScript Iterators and Generators__, please help me share it to as many JS developers as possible 💪🏻😃.
-And, as usual, I hope to see you again 🙂 and on [twitter](https://twitter.com/JFieldEffectT)!
+And, as usual, I hope to see you again 🙂 and on [twitter](https://twitter.com/jfet97)!
 
 &nbsp;
 

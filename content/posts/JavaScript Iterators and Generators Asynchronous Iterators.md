@@ -323,7 +323,7 @@ We have learnt why the ability to resolve the `done` flag asynchronously could b
 
 Then we have seen an example of a simple async iterator, how the `for-await-of` loop behaves and why Node.js Readable Streams do support async iteration. We also have spent some words on a rarely considered but important problem that is very well resolved by the next, last big topic: __Asynchronous Generators__
 
-I hope to see you there again 🙂 and on [twitter](https://twitter.com/JFieldEffectT)!
+I hope to see you there again 🙂 and on [twitter](https://twitter.com/jfet97)!
 
 &nbsp;
 
