@@ -148,7 +148,7 @@ function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol
 
 ### resolveMappedTypeMembers and getModifiersTypeFromMappedType
 
-In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, seems always to be able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because homomorphic mapped types respect that form, they preserve the modifiers:
+In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, seems always to be able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because all homomorphic mapped types respect that form, they preserve the modifiers:
 
 ```ts
 type HMT<T> = { [P in keyof T]: F<T[P]> }
