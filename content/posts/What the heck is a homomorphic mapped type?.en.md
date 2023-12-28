@@ -156,13 +156,15 @@ type HMT<T> = { [P in keyof T]: F<T[P]> }
 HMT<{ readonly a: A, b?: B}> = { readonly a: F<A>, b?: F<B> }
 ```
 
-If the mapped type has the form `{ [P in C]: ... }` where `C` is a type parameter and the costraint of `C` is `keyof T`, then the modifiers type is `T`. This let utility types like `Pick` preserve the modifiers of the original type:
+If the mapped type has the form `{ [P in C]: ... }` where `C` is a type parameter and the costraint of `C` is `keyof T`, then the modifiers type is `T`. This let utility types like `Pick` preserve the modifiers of the original type, even though they are not homomorphic:
 
 ```ts
 type Pick<T, K extends keyof T> = { [P in K]: T[P]; }
+
+Pick<{ readonly a: A, b?: B}, "a"> = { readonly a: A }
 ```
 
-Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties as well. Symlinks enable symbol navigation in the IDE (things like "go to definition"). "Even this property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
+Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties as well. Symlinks enable symbol navigation in the IDE (things like "go to definition"). Even this property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
 
 The following code snippet is taken from `resolveMappedTypeMembers`:
 
