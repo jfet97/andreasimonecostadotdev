@@ -148,7 +148,7 @@ function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol
 
 ### resolveMappedTypeMembers and getModifiersTypeFromMappedType
 
-In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, seems always to be able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because all homomorphic mapped types respect that form, they preserve the modifiers:
+In short words, __any__ mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, is able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because all homomorphic mapped types respect that form, they preserve the modifiers:
 
 ```ts
 type HMT<T> = { [P in keyof T]: F<T[P]> }
@@ -156,7 +156,13 @@ type HMT<T> = { [P in keyof T]: F<T[P]> }
 HMT<{ readonly a: A, b?: B}> = { readonly a: F<A>, b?: F<B> }
 ```
 
-Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties as well. Symlinks enable symbol navigation in the IDE (things like "go to definition"). This property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
+If the mapped type has the form `{ [P in C]: ... }` where `C` is a type parameter and the costraint of `C` is `keyof T`, then the modifiers type is `T`. This let utility types like `Pick` preserve the modifiers of the original type:
+
+```ts
+type Pick<T, K extends keyof T> = { [P in K]: T[P]; }
+```
+
+Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties as well. Symlinks enable symbol navigation in the IDE (things like "go to definition"). "Even this property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
 
 The following code snippet is taken from `resolveMappedTypeMembers`:
 
