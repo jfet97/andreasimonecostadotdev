@@ -146,23 +146,6 @@ function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol
 }
 ```
 
-### inferFromObjectTypes
-
-Have you ever heard about reverse mapped types? If not, check this awesome talk by [Mateusz Burzyński](https://twitter.com/AndaristRake) at TypeScript Congress 2023: [Infer multiple things at once with reverse mapped types](https://portal.gitnation.org/contents/infer-multiple-things-at-once-with-reverse-mapped-types).
-
-I refrain from posting the entire function, because it's extensive. When it comes to the possibility of reversing the action of a mapped type, however, the essence lies in the following lines:
-
-```ts
-if (getObjectFlags(target) & ObjectFlags.Mapped && !(target as MappedType).declaration.nameType) {
-  const constraintType = getConstraintTypeFromMappedType(target as MappedType);
-  if (inferToMappedType(source, target as MappedType, constraintType)) {
-    return;
-  }
-}
-```
-
-Once again, we have `!(target as MappedType).declaration.nameType`, which prevents the inversion in the case of using the `as` clause. While being homomorphic isn't an absolute requirement for inversion, because even some non-homomorphic mapped types can be inverted, it does serve as a good indicator that TypeScript might pull off the inversion if there is no `as` clause.
-
 ### resolveMappedTypeMembers and getModifiersTypeFromMappedType
 
 In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, seems always to be able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because homomorphic mapped types respect that form, they preserve the modifiers:
@@ -197,7 +180,22 @@ if (modifiersProp) { // <-- here is the point
 
 So, everything revolves around the value of `shouldLinkPropDeclarations`. This flag is `false` only if we are using an `as` clause for key remapping. In that case, the links are lost. If an `as` clause is employed for key filtering or no `as` clause is used at all, then the links are preserved, provided that `modifiersProp` is not falsy.
 
-&nbsp;
+### inferFromObjectTypes
+
+Have you ever heard about reverse mapped types? If not, check this awesome talk by [Mateusz Burzyński](https://twitter.com/AndaristRake) at TypeScript Congress 2023: [Infer multiple things at once with reverse mapped types](https://portal.gitnation.org/contents/infer-multiple-things-at-once-with-reverse-mapped-types).
+
+I refrain from posting the entire function, because it's extensive. When it comes to the possibility of reversing the action of a mapped type, however, the essence lies in the following lines:
+
+```ts
+if (getObjectFlags(target) & ObjectFlags.Mapped && !(target as MappedType).declaration.nameType) {
+  const constraintType = getConstraintTypeFromMappedType(target as MappedType);
+  if (inferToMappedType(source, target as MappedType, constraintType)) {
+    return;
+  }
+}
+```
+
+Once again, we have `!(target as MappedType).declaration.nameType`, which prevents the inversion in the case of using the `as` clause. While being homomorphic isn't an absolute requirement for inversion, because even some non-homomorphic mapped types can be inverted, it does serve as a good indicator that TypeScript might pull off the inversion if there is no `as` clause.
 
 ## Conclusion
 
