@@ -168,7 +168,7 @@ type Pick<T, K extends keyof T> = { [P in K]: T[P]; }
 Pick<{ readonly a: A, b?: B}, "a"> = { readonly a: A }
 ```
 
-Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties as well. Symlinks enable symbol navigation in the IDE (things like "go to definition"). Even this property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
+Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties as well. Symlinks enable symbol navigation in the IDE (things like _"go to definition"_). Even this property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
 
 The following code snippet is taken from `resolveMappedTypeMembers`:
 
