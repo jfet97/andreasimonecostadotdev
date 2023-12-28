@@ -190,7 +190,7 @@ if (modifiersProp) {
 }
 ```
 
-So, everything revolves around the value of `shouldLinkPropDeclarations`. This flag is `false` only if we are using an `as` clause for key remapping. In that case, the links are lost. If an `as` clause is employed for key filtering or no `as` clause is used at all, then the links are preserved, provided that `modifiersProp` is not falsy.
+So, everything revolves around the value of `shouldLinkPropDeclarations`. This flag is `false` only if we are using an `as` clause for key remapping. In that case, the links are lost. If an `as` clause is employed just for key filtering or no `as` clause is used at all, then the links are preserved, provided that `modifiersProp` is not falsy.
 
 ### inferFromObjectTypes
 
