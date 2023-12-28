@@ -33,7 +33,11 @@ Immediately afterward, it claimed that even `Pick<T, K extends keyof T> = { [P i
 
 > `Readonly`, `Partial` and `Pick` are homomorphic whereas `Record` is not. One clue that `Record` is not homomorphic is that it doesn’t take an input type to copy properties from. Non-homomorphic types are essentially creating new properties, [...].
 
-The term _homomorphic_ is a bit of a stretch from its math roots, but it's basically saying that the mapped type keeps the original type's structure intact. Looking back, after getting cozy with the type system, the handbook's explanation makes more sense now. But hey, it is not an updated definition. In fact, there is no updated definition. The new handbook doesn't even mention the term _homomorphic_, but it does appear in the source code.
+The term _homomorphic_ is a bit of a stretch from its math roots, but it's basically saying that this kind of mapped type keeps the original type's structure intact. In fact, the [TypeScript wiki](https://github.com/microsoft/TypeScript/wiki/FAQ#faqs) states:
+
+> Mapped types declared as `{ [ K in keyof T ]: U }` where `T` is a type parameter are known as homomorphic mapped types, which means that the mapped type is a structure preserving function of `T`.
+
+Looking back, after getting cozy with the type system, the handbook's explanation makes more sense now. But hey, there's currently no up-to-date and complete definition. The new handbook doesn't even mention the term _homomorphic_, but it does appear in the source code.
 
 I got tired of not understanding, so I opened up the compiler and tried to figure out once and for all what the heck a homomorphic mapped type is.
 
