@@ -184,7 +184,7 @@ const modifiersProp = something_something(modifiersType, ...); // skipping other
 
 // way more stuff...
 
-if (modifiersProp) { // <-- here is the point
+if (modifiersProp) {
   prop.links.syntheticOrigin = modifiersProp;
   prop.declarations = shouldLinkPropDeclarations ? modifiersProp.declarations : undefined;
 }
