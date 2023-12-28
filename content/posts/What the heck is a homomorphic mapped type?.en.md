@@ -156,7 +156,7 @@ type HMT<T> = { [P in keyof T]: F<T[P]> }
 HMT<{ readonly a: A, b?: B}> = { readonly a: F<A>, b?: F<B> }
 ```
 
-Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties. Symlinks enable symbol navigation in the IDE (things like "go to definition"). This property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
+Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties as well. Symlinks enable symbol navigation in the IDE (things like "go to definition"). This property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
 
 The following code snippet is taken from `resolveMappedTypeMembers`:
 
