@@ -203,10 +203,10 @@ if (getObjectFlags(target) & ObjectFlags.Mapped && !(target as MappedType).decla
 }
 ```
 
-Once again, we have `!(target as MappedType).declaration.nameType`, which prevents the inversion in the case of using the `as` clause. While being homomorphic isn't an absolute requirement for inversion, because even some non-homomorphic mapped types can be reverted, it does serve as a good indicator that TypeScript might pull off the inversion if there is no `as` clause.
+Once again, we have `!(target as MappedType).declaration.nameType`, which prevents the reversion in the case of using the `as` clause. While being homomorphic isn't an absolute requirement for reversion, because even some non-homomorphic mapped types can be reverted, it does serve as a good indicator that TypeScript might pull off the reversion if there is no `as` clause.
 
 **Achtung**: this might be enhanced soon, thanks to [this PR](https://github.com/microsoft/TypeScript/pull/52972). __Filtering__ mapped types are easier to revert than __renaming__ mapped types, so the `as` clause might not a big concert anymore if you use it just for filter out some keys.
 
 ## Conclusion
 
-In conclusion, homomorphic mapped types are those that take the form `{ [K in keyof T (as ...)]: ... }`, where `T` is a type parameter, and the parentheses indicate that the `as` clause is optional. Homomorphic mapped types without the `as` clause are the cream of the crop, boasting special properties; those with the `as` clause aren't that bad, but they come with a few less features.
+In conclusion, homomorphic mapped types are those that take the form `{ [K in keyof T (as ...)]: ... }`, where `T` is a type parameter, and the parentheses indicate that the `as` clause is optional. Homomorphic mapped types without the `as` clause are the cream of the crop, boasting special properties; those with the `as` clause aren't that bad, but they come with a few less features. If a mapped type isn't homomorphic, it might still have some properties, like preserving modifiers, having symlinks to the original type, and the possibility of being reverted.
