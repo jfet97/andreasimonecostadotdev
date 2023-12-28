@@ -37,7 +37,7 @@ The term _homomorphic_ is a bit of a stretch from its math roots, but it's basic
 
 I got tired of not understanding, so I opened up the compiler and tried to figure out once and for all what the heck a homomorphic mapped type is.
 
-## Into the compiler
+## Under the hood
 
 ### getHomomorphicTypeVariable
 
