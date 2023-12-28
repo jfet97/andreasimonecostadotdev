@@ -17,6 +17,8 @@ const myself = {
   interests: ["functional programming", "computer science"],
   occupation: "Software Craftsman",
   email: "andrysimo1997@gmail.com",
+  github: "github.com/jfet97",
+  twitter: "twitter.com/jfet97",
 }
 ```
 
