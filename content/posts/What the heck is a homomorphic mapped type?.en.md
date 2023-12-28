@@ -62,6 +62,8 @@ So, what properties do homomorphic mapped types have? Oh, and what about the `as
 
 ### instantiateMappedType
 
+This function comes into play when it's necessary to instantiate a mapped type:
+
 ```ts
 function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol?: Symbol, aliasTypeArguments?: readonly Type[]): Type {
   // For a homomorphic mapped type { [P in keyof T]: X }, where T is some type variable, the mapping
@@ -111,7 +113,7 @@ function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol
 }
 ```
 
-This function comes into play when it's necessary to instantiate a mapped type. Here's the catch:  homomorphic mapped types are handled in a special way, and you can observe this by examining the first if statement. Comments help us understand some of their special properties:
+Here's the catch:  homomorphic mapped types are handled in a special way, and you can observe this by examining the first if statement. Comments help us understand some of their special properties:
 
 1. if the homomorphic mapped type is applied to a primitive type, the result is the primitive type itself:
 
