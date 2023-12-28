@@ -71,7 +71,7 @@ This function comes into play when it's necessary to instantiate a mapped type. 
     HMT<string> = string
     ```
 
-1. if the homomorphic mapped type is applied to a union type, the result is the union of the mapped type applied to each member of the union:
+1. if the homomorphic mapped type is applied to a union type, the result is the union of the mapped type applied to each member of the union (therefore, TS often calls homomorphic mapped type __distributive__):
 
     ```ts
     HMT<A | B> = HTM<A> | HTM<B>
