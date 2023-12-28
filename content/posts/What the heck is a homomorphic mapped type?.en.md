@@ -148,7 +148,7 @@ function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol
 
 ### resolveMappedTypeMembers and getModifiersTypeFromMappedType
 
-In short words, __any__ mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, is able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because all homomorphic mapped types respect that form, they preserve the modifiers:
+In short words, __any__ mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, is able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because all homomorphic mapped types respect that form, they do preserve the modifiers:
 
 ```ts
 type HMT<T> = { [P in keyof T]: F<T[P]> }
@@ -156,7 +156,7 @@ type HMT<T> = { [P in keyof T]: F<T[P]> }
 HMT<{ readonly a: A, b?: B}> = { readonly a: F<A>, b?: F<B> }
 ```
 
-If the mapped type has the form `{ [P in C]: ... }` where `C` is a type parameter and the costraint of `C` is `keyof T`, then the modifiers type is `T`. This let utility types like `Pick` preserve the modifiers of the original type, even though they are not homomorphic:
+If a mapped type has the form `{ [P in C]: ... }` where `C` is a type parameter and the costraint of `C` is `keyof T`, then the modifiers type is `T`. This let utility types like `Pick` preserve the modifiers of the original type, even though they are not homomorphic:
 
 ```ts
 type Pick<T, K extends keyof T> = { [P in K]: T[P]; }
