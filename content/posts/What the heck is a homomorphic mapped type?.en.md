@@ -163,7 +163,7 @@ The following code snippet is taken from `resolveMappedTypeMembers`:
 ```ts
 // stuff...
 
-const shouldLinkPropDeclarations = ... // some magic happens here
+const shouldLinkPropDeclarations = getMappedTypeNameTypeKind(mappedType) !== MappedTypeNameTypeKind.Remapping;
 const modifiersType = getModifiersTypeFromMappedType(type); // skipping some details
 
 // other stuff...
