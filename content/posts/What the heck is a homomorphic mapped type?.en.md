@@ -165,13 +165,37 @@ Once again, we have `!(target as MappedType).declaration.nameType`, which preven
 
 ### resolveMappedTypeMembers and getModifiersTypeFromMappedType
 
-In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, seems always to be able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because homomorphic mapped types respect that form, they preserve the modifiers.
+In short words, a mapped type of the form `{ [P in keyof T]: ... }`, where `T` may be a type variable or not, seems always to be able to preserve the modifiers of the original type `T`, that is called the _modifiers type_. Because homomorphic mapped types respect that form, they preserve the modifiers:
 
 ```ts
 type HMT<T> = { [P in keyof T]: F<T[P]> }
 
 HMT<{ readonly a: A, b?: B}> = { readonly a: F<A>, b?: F<B> }
 ```
+
+Furthermore, homomorphic mapped types could preserve the symlinks between original and derived properties. Symlinks enable symbol navigation in the IDE (things like "go to definition"). This property is not exclusive to homomorphic mapped types: if modifiers can be preserved, then the possibility of maintaining the links is also being considered.
+
+The following code snippet is taken from `resolveMappedTypeMembers`:
+
+```ts
+// stuff...
+
+const shouldLinkPropDeclarations = ... // some magic happens here
+const modifiersType = getModifiersTypeFromMappedType(type); // skipping some details
+
+// other stuff...
+
+const modifiersProp = something_something(modifiersType, ...); // skipping other details
+
+// way more stuff...
+
+if (modifiersProp) { // <-- here is the point
+  prop.links.syntheticOrigin = modifiersProp;
+  prop.declarations = shouldLinkPropDeclarations ? modifiersProp.declarations : undefined;
+}
+```
+
+So, everything revolves around the value of `shouldLinkPropDeclarations`. This flag is `false` only if we are using an `as` clause for key remapping. In that case, the links are lost. If an `as` clause is employed for key filtering or no `as` clause is used at all, then the links are preserved, provided that `modifiersProp` is not falsy.
 
 &nbsp;
 
