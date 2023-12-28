@@ -62,41 +62,6 @@ So, what properties do homomorphic mapped types have? Oh, and what about the `as
 
 ### instantiateMappedType
 
-This function comes into play when it's necessary to instantiate a mapped type. Here's the catch:  homomorphic mapped types are handled in a special way, and you can observe this by examining the first if statement. Comments help us understand some of their special properties:
-
-1. if the homomorphic mapped type is applied to a primitive type, the result is the primitive type itself:
-
-    ```ts
-    HMT<1> = 1
-    HMT<string> = string
-    ```
-
-1. if the homomorphic mapped type is applied to a union type, the result is the union of the mapped type applied to each member of the union (therefore, TS often calls homomorphic mapped type __distributive__):
-
-    ```ts
-    HMT<A | B> = HTM<A> | HTM<B>
-    ```
-
-1. if the homomorphic mapped type is applied to an array, the result is still an array where the element type has been transformed by the logic of the mapped type:
-
-    ```ts
-    type HMT<T> = { [P in keyof T]: F<T[P]> }
-
-    HMT<A[]> = F<A>[]
-    ```
-
-1. if the homomorphic mapped type is applied to a tuple, the result is still a tuple where the element types have been transformed by the logic of the mapped type:
-
-    ```ts
-    type HMT<T> = { [P in keyof T]: F<T[P]> }
-
-    HMT<[A, B, C]> = [F<A>, F<B>, F<C>]
-    ```
-
-Basically, an homomorphic mapped type is going to iterate only over the numeric (`` number | `${number}` ``) keys of the array (tuple) type, leaving the other keys untouched. Therefore the mapped type logic is applied only on element types. The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. If you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename the keys, as we would likely lose the specific numeric keys associated with these types.
-
-Therefore, using the `as` clause doesn't disqualify a mapped type from being homomorphic; it simply has fewer properties.
-
 ```ts
 function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol?: Symbol, aliasTypeArguments?: readonly Type[]): Type {
   // For a homomorphic mapped type { [P in keyof T]: X }, where T is some type variable, the mapping
@@ -145,6 +110,41 @@ function instantiateMappedType(type: MappedType, mapper: TypeMapper, aliasSymbol
   return instantiateType(getConstraintTypeFromMappedType(type), mapper) === wildcardType ? wildcardType : instantiateAnonymousType(type, mapper, aliasSymbol, aliasTypeArguments);
 }
 ```
+
+This function comes into play when it's necessary to instantiate a mapped type. Here's the catch:  homomorphic mapped types are handled in a special way, and you can observe this by examining the first if statement. Comments help us understand some of their special properties:
+
+1. if the homomorphic mapped type is applied to a primitive type, the result is the primitive type itself:
+
+    ```ts
+    HMT<1> = 1
+    HMT<string> = string
+    ```
+
+1. if the homomorphic mapped type is applied to a union type, the result is the union of the mapped type applied to each member of the union (therefore, TS often calls homomorphic mapped type __distributive__):
+
+    ```ts
+    HMT<A | B> = HTM<A> | HTM<B>
+    ```
+
+1. if the homomorphic mapped type is applied to an array, the result is still an array where the element type has been transformed by the logic of the mapped type:
+
+    ```ts
+    type HMT<T> = { [P in keyof T]: F<T[P]> }
+
+    HMT<A[]> = F<A>[]
+    ```
+
+1. if the homomorphic mapped type is applied to a tuple, the result is still a tuple where the element types have been transformed by the logic of the mapped type:
+
+    ```ts
+    type HMT<T> = { [P in keyof T]: F<T[P]> }
+
+    HMT<[A, B, C]> = [F<A>, F<B>, F<C>]
+    ```
+
+Basically, an homomorphic mapped type is going to iterate only over the numeric (`` number | `${number}` ``) keys of the array (tuple) type, leaving the other keys untouched. Therefore the mapped type logic is applied only on element types. The preservation of tuple and array types, however, happens only if `!type.declaration.nameType`. If you use the `as` clause, then `type.declaration.nameType` contains whatever follows the clause, like a template literal or a conditional. It makes sense to lose tuple and array types if we rename the keys, as we would likely lose the specific numeric keys associated with these types.
+
+Therefore, using the `as` clause doesn't disqualify a mapped type from being homomorphic; it simply has fewer properties.
 
 ### resolveMappedTypeMembers and getModifiersTypeFromMappedType
 
