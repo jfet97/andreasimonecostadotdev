@@ -39,7 +39,7 @@ The term _homomorphic_ is a bit of a stretch from its math roots, but it's basic
 
 Looking back, after getting cozy with the type system, the handbook's explanation makes more sense now. But hey, there's currently no up-to-date and complete definition. The new handbook doesn't even mention the term _homomorphic_, but it does appear in the source code.
 
-I got tired of not understanding, so I opened up the compiler and tried to figure out once and for all what the heck a homomorphic mapped type is.
+I was just tired of not having the full picture, so I opened up the compiler and tried to figure out once and for all what the heck a homomorphic mapped type is.
 
 ## Under the hood
 
