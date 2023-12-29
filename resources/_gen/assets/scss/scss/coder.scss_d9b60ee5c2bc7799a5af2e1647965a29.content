@@ -64,7 +64,8 @@ pre {
    * Remove the gray background on active links in IE 10.
    */
 a {
-  background-color: transparent; }
+  background-color: transparent;
+  word-wrap: break-word; }
 
 /**
    * 1. Remove the bottom border in Chrome 57-
@@ -305,7 +306,7 @@ template {
   display: none; }
 
 /*!
-Fork Awesome 1.1.7
+Fork Awesome 1.2.0
 License - https://forkaweso.me/Fork-Awesome/license
 
 Copyright 2018 Dave Gandy & Fork Awesome
@@ -319,9 +320,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /* FONT PATH
  * -------------------------- */
 @font-face {
-  font-family: 'ForkAwesome';
-  src: url("../fonts/forkawesome-webfont.eot?v=1.1.7");
-  src: url("../fonts/forkawesome-webfont.eot?#iefix&v=1.1.7") format("embedded-opentype"), url("../fonts/forkawesome-webfont.woff2?v=1.1.7") format("woff2"), url("../fonts/forkawesome-webfont.woff?v=1.1.7") format("woff"), url("../fonts/forkawesome-webfont.ttf?v=1.1.7") format("truetype"), url("../fonts/forkawesome-webfont.svg?v=1.1.7#forkawesomeregular") format("svg");
+  font-family: "ForkAwesome";
+  src: url("../fonts/forkawesome-webfont.eot?v=1.2.0");
+  src: url("../fonts/forkawesome-webfont.eot?#iefix&v=1.2.0") format("embedded-opentype"), url("../fonts/forkawesome-webfont.woff2?v=1.2.0") format("woff2"), url("../fonts/forkawesome-webfont.woff?v=1.2.0") format("woff"), url("../fonts/forkawesome-webfont.ttf?v=1.2.0") format("truetype"), url("../fonts/forkawesome-webfont.svg?v=1.2.0#forkawesomeregular") format("svg");
   font-weight: normal;
   font-style: normal;
   font-display: block; }
@@ -360,9 +361,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   padding-left: 0;
   margin-left: 2.14285714em;
   list-style-type: none; }
-
-.fa-ul > li {
-  position: relative; }
+  .fa-ul > li {
+    position: relative; }
 
 .fa-li {
   position: absolute;
@@ -370,9 +370,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   width: 2.14285714em;
   top: 0.14285714em;
   text-align: center; }
-
-.fa-li.fa-lg {
-  left: -1.85714286em; }
+  .fa-li.fa-lg {
+    left: -1.85714286em; }
 
 .fa-border {
   padding: .2em .25em .15em;
@@ -473,8 +472,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   line-height: 2em;
   vertical-align: middle; }
 
-.fa-stack-1x,
-.fa-stack-2x {
+.fa-stack-1x, .fa-stack-2x {
   position: absolute;
   left: 0;
   width: 100%;
@@ -489,7 +487,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 .fa-inverse {
   color: #fff; }
 
-/* Fork Awesome uses the Unicode Private Use Area (PUA) to ensure screen
+/* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
    readers do not read off random characters that represent icons */
 .fa-glass:before {
   content: "\f000"; }
@@ -2855,6 +2853,165 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 .fa-biometric:before {
   content: "\f32b"; }
 
+.fa-wire:before {
+  content: "\f32c"; }
+
+.fa-tor-onion:before {
+  content: "\f32e"; }
+
+.fa-volume-mute:before {
+  content: "\f32f"; }
+
+.fa-bell-ringing:before {
+  content: "\f32d"; }
+
+.fa-bell-ringing-o:before {
+  content: "\f330"; }
+
+.fa-hal:before {
+  content: "\f333"; }
+
+.fa-jupyter:before {
+  content: "\f335"; }
+
+.fa-julia:before {
+  content: "\f334"; }
+
+.fa-classicpress:before {
+  content: "\f331"; }
+
+.fa-classicpress-circle:before {
+  content: "\f332"; }
+
+.fa-open-collective:before {
+  content: "\f336"; }
+
+.fa-orcid:before {
+  content: "\f337"; }
+
+.fa-researchgate:before {
+  content: "\f338"; }
+
+.fa-funkwhale:before {
+  content: "\f339"; }
+
+.fa-askfm:before {
+  content: "\f33a"; }
+
+.fa-blockstack:before {
+  content: "\f33b"; }
+
+.fa-boardgamegeek:before {
+  content: "\f33c"; }
+
+.fa-bunny:before {
+  content: "\f35f"; }
+
+.fa-buymeacoffee:before {
+  content: "\f33d"; }
+
+.fa-cc-by:before {
+  content: "\f33e"; }
+
+.fa-creative-commons-alt:before,
+.fa-cc-cc:before {
+  content: "\f33f"; }
+
+.fa-cc-nc-eu:before {
+  content: "\f341"; }
+
+.fa-cc-nc-jp:before {
+  content: "\f342"; }
+
+.fa-cc-nc:before {
+  content: "\f340"; }
+
+.fa-cc-nd:before {
+  content: "\f343"; }
+
+.fa-cc-pd:before {
+  content: "\f344"; }
+
+.fa-cc-remix:before {
+  content: "\f345"; }
+
+.fa-cc-sa:before {
+  content: "\f346"; }
+
+.fa-cc-share:before {
+  content: "\f347"; }
+
+.fa-cc-zero:before {
+  content: "\f348"; }
+
+.fa-conway-hacker:before,
+.fa-conway-glider:before {
+  content: "\f349"; }
+
+.fa-csharp:before {
+  content: "\f34a"; }
+
+.fa-email-bulk:before {
+  content: "\f34b"; }
+
+.fa-email-bulk-o:before {
+  content: "\f34c"; }
+
+.fa-gnu:before {
+  content: "\f34d"; }
+
+.fa-google-play:before {
+  content: "\f34e"; }
+
+.fa-heroku:before {
+  content: "\f34f"; }
+
+.fa-hassio:before,
+.fa-home-assistant:before {
+  content: "\f350"; }
+
+.fa-java:before {
+  content: "\f351"; }
+
+.fa-mariadb:before {
+  content: "\f352"; }
+
+.fa-markdown:before {
+  content: "\f353"; }
+
+.fa-mysql:before {
+  content: "\f354"; }
+
+.fa-nordcast:before {
+  content: "\f355"; }
+
+.fa-plume:before {
+  content: "\f356"; }
+
+.fa-postgresql:before {
+  content: "\f357"; }
+
+.fa-sass-alt:before {
+  content: "\f359"; }
+
+.fa-sass:before {
+  content: "\f358"; }
+
+.fa-skate:before {
+  content: "\f35a"; }
+
+.fa-sketchfab:before {
+  content: "\f35b"; }
+
+.fa-tex:before {
+  content: "\f35c"; }
+
+.fa-textpattern:before {
+  content: "\f35d"; }
+
+.fa-unity:before {
+  content: "\f35e"; }
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -2865,8 +3022,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   clip: rect(0, 0, 0, 0);
   border: 0; }
 
-.sr-only-focusable:active,
-.sr-only-focusable:focus {
+.sr-only-focusable:active, .sr-only-focusable:focus {
   position: static;
   width: auto;
   height: auto;
@@ -2886,7 +3042,7 @@ html {
 body {
   color: #212121;
   background-color: #fafafa;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "游ゴシック", "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif;
   font-size: 1.8em;
   font-weight: 400;
   line-height: 1.8em; }
@@ -2894,6 +3050,9 @@ body {
     body {
       font-size: 1.6em;
       line-height: 1.6em; } }
+iframe[src*=disqus] {
+  color-scheme: light; }
+
 a {
   font-weight: 500;
   color: #1565c0;
@@ -2911,7 +3070,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "游ゴシック", "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif;
   font-weight: 600;
   color: #000;
   margin: 4rem 0 2.5rem 0; }
@@ -2989,9 +3148,9 @@ b,
 strong {
   font-weight: 700; }
 
-.highlight > div,
-.highlight > pre {
-  margin: 0 0 2rem;
+.highlight div,
+.highlight pre {
+  margin: 2rem 0 2rem;
   padding: 1rem;
   border-radius: 1rem; }
 
@@ -3002,7 +3161,9 @@ pre {
   font-weight: 400;
   line-height: 2.6rem;
   overflow-x: auto;
-  margin: 0; }
+  margin: 2rem 0 2rem;
+  padding: 1rem;
+  border-radius: 1rem; }
   pre code {
     display: inline-block;
     background-color: inherit;
@@ -3012,7 +3173,9 @@ code {
   font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
   font-size: 1.6rem;
   font-weight: 400;
-  background-color: #e0e0e0;
+  border-radius: 0.6rem;
+  padding: 0.3rem 0.6rem;
+  background-color: #ccc;
   color: #212121; }
 
 blockquote {
@@ -3053,6 +3216,9 @@ img {
 figure {
   text-align: center; }
 
+.footnotes ol li p {
+  margin: 0; }
+
 .preload-transitions * {
   -webkit-transition: none !important;
   -moz-transition: none !important;
@@ -3067,7 +3233,7 @@ figure {
   width: 100%; }
 
 .container {
-  margin: 0 auto;
+  margin: 1rem auto;
   max-width: 90rem;
   width: 100%;
   padding-left: 2rem;
@@ -3091,30 +3257,34 @@ figure {
 .fas {
   font-weight: 900; }
 
-img.emoji {
-  height: 1em;
-  width: 1em;
-  margin: 0 0.05em 0 0.1em;
-  vertical-align: -0.1em; }
-
 .content {
   flex: 1;
   display: flex;
   margin-top: 1.6rem;
   margin-bottom: 3.2rem; }
-  .content article details summary {
-    cursor: pointer; }
-  .content article header {
+  .content header {
     margin-top: 6.4rem;
     margin-bottom: 3.2rem; }
-    .content article header h1 {
+    .content header h1 {
       font-size: 4.2rem;
       line-height: 4.6rem;
       margin: 0; }
       @media only screen and (max-width: 768px) {
-        .content article header h1 {
+        .content header h1 {
           font-size: 4rem;
           line-height: 4.4rem; } }
+  .content article a:where(.external-link)::after {
+    display: inline-block;
+    font: normal normal normal 14px/1 ForkAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f08e";
+    padding-left: 0.5em;
+    font-size: 0.75em; }
+  .content article details summary {
+    cursor: pointer; }
   .content article footer {
     margin-top: 4rem; }
     .content article footer .see-also {
@@ -3135,6 +3305,16 @@ img.emoji {
   .content .post .post-meta .date .posted-on {
     margin-left: 0;
     margin-right: 1.5rem; }
+  .content .post .post-meta .tags .tag {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    background-color: #e0e0e0;
+    border-radius: 0.6rem;
+    line-height: 1.4em; }
+    .content .post .post-meta .tags .tag a {
+      color: #212121; }
+    .content .post .post-meta .tags .tag a:active {
+      color: #212121; }
   .content figure {
     margin: 0;
     padding: 0; }
@@ -3174,7 +3354,7 @@ img.emoji {
       font-size: 1.8rem;
       flex: 2;
       color: #212121;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "游ゴシック", "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif;
       font-weight: 700; }
       .list ul li .title:hover, .list ul li .title:focus {
         color: #1565c0; }
@@ -3217,8 +3397,6 @@ img.emoji {
           @media only screen and (max-width: 768px) {
             .centered .about ul li a {
               font-size: 1.4rem; } }
-          .centered .about ul li a i {
-            font-size: 3.2rem; }
   .centered .error {
     text-align: center; }
     .centered .error h1 {
@@ -3312,9 +3490,8 @@ img.emoji {
   .navigation span {
     display: inline;
     font-size: 1.7rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "游ゴシック", "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif;
     font-weight: 600;
-    line-height: 6rem;
     color: #212121; }
   .navigation a:hover, .navigation a:focus {
     color: #1565c0; }
@@ -3328,8 +3505,8 @@ img.emoji {
     margin-top: 0; }
     @media only screen and (max-width: 768px) {
       .navigation .navigation-list {
-        position: absolute;
-        top: 6rem;
+        position: relative;
+        top: 2rem;
         right: 0;
         z-index: 5;
         visibility: hidden;
@@ -3376,18 +3553,24 @@ img.emoji {
   .navigation #menu-toggle {
     display: none; }
     @media only screen and (max-width: 768px) {
-      .navigation #menu-toggle:checked + label > i {
-        color: #e0e0e0; }
-      .navigation #menu-toggle:checked + label + ul {
-        visibility: visible;
-        opacity: 1;
-        max-height: 100rem; } }
+      .navigation #menu-toggle {
+        display: initial;
+        position: relative;
+        visibility: hidden; }
+        .navigation #menu-toggle:checked + label > i {
+          color: #e0e0e0; }
+        .navigation #menu-toggle:checked + label + ul {
+          visibility: visible;
+          opacity: 1;
+          max-height: 100rem; }
+        .navigation #menu-toggle:focus-visible + label {
+          outline-style: auto; } }
   .navigation .menu-button {
     display: none; }
     @media only screen and (max-width: 768px) {
       .navigation .menu-button {
+        position: relative;
         display: block;
-        margin: 1.8rem 0;
         font-size: 2.4rem;
         font-weight: 400; } }
     .navigation .menu-button i:hover, .navigation .menu-button i:focus {
@@ -3399,23 +3582,83 @@ img.emoji {
       color: #1565c0; }
 
 .pagination {
+  display: flex;
+  justify-content: center;
   margin-top: 6rem;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif; }
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, "游ゴシック", "PingFang SC", STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Heiti, "黑体", sans-serif; }
   .pagination li {
     display: inline;
     text-align: center;
-    font-weight: 700; }
-    .pagination li span {
-      margin: 0;
-      text-align: center;
-      width: 3.2rem; }
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+    width: 2.2rem; }
     .pagination li a {
       font-weight: 300; }
-      .pagination li a span {
-        margin: 0;
-        text-align: center;
-        width: 3.2rem; }
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 2rem 0 2rem 0;
+  position: relative; }
+  .tabs.tabs-left {
+    justify-content: flex-start; }
+    .tabs.tabs-left label.tab-label {
+      margin-right: 0.5rem; }
+    .tabs.tabs-left .tab-content {
+      border-radius: 0px 4px 4px 4px; }
+  .tabs.tabs-right {
+    justify-content: flex-end; }
+    .tabs.tabs-right label.tab-label {
+      margin-left: 0.5rem; }
+    .tabs.tabs-right .tab-content {
+      border-radius: 4px 0px 4px 4px; }
+  .tabs input.tab-input {
+    display: none; }
+  .tabs label.tab-label {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+    border-radius: 4px 4px 0px 0px;
+    border-style: solid;
+    border-bottom-style: hidden;
+    border-width: 1px;
+    cursor: pointer;
+    display: inline-block;
+    order: 1;
+    padding: 0.3rem 0.6rem;
+    position: relative;
+    top: 1px;
+    user-select: none; }
+  .tabs input.tab-input:checked + label.tab-label {
+    background-color: #fafafa; }
+  .tabs .tab-content {
+    background-color: #fafafa;
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px;
+    display: none;
+    order: 2;
+    padding: 1rem;
+    width: 100%; }
+  .tabs.tabs-code .tab-content {
+    padding: 0.5rem; }
+    .tabs.tabs-code .tab-content pre {
+      margin: 0; }
+
+.taxonomy li {
+  display: inline-block;
+  margin: 0.9rem; }
+
+.taxonomy .taxonomy-element {
+  display: block;
+  padding: 0.3rem 0.9rem;
+  background-color: #e0e0e0;
+  border-radius: 0.6rem; }
+  .taxonomy .taxonomy-element a {
+    color: #212121; }
+  .taxonomy .taxonomy-element a:active {
+    color: #212121; }
 
 .footer {
   width: 100%;
@@ -3441,19 +3684,374 @@ img.emoji {
     color: #000;
     background-color: #e0e0e0;
     border-radius: 0.2rem;
-    opacity: 50%;
+    opacity: 0.5;
     transition: all 0.25s ease-in; }
     .float-container a:hover, .float-container a:focus {
       color: #1565c0;
-      opacity: 100%; }
+      opacity: 1; }
       @media only screen and (max-width: 768px) {
         .float-container a:hover, .float-container a:focus {
           color: #000;
-          opacity: 50%; } }
+          opacity: 0.5; } }
     .float-container a i {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%); }
+
+/* Background */
+.bg {
+  background-color: #ffffff; }
+
+/* PreWrapper */
+.chroma {
+  background-color: #ffffff; }
+
+/* Other */
+/* Error */
+.chroma .err {
+  color: #a61717;
+  background-color: #e3d2d2; }
+
+/* CodeLine */
+/* LineLink */
+.chroma .lnlinks {
+  outline: none;
+  text-decoration: none;
+  color: inherit; }
+
+/* LineTableTD */
+.chroma .lntd {
+  vertical-align: top;
+  padding: 0;
+  margin: 0;
+  border: 0; }
+
+/* LineTable */
+.chroma .lntable {
+  border-spacing: 0;
+  padding: 0;
+  margin: 0;
+  border: 0; }
+
+/* LineHighlight */
+.chroma .hl {
+  background-color: #ffffcc; }
+
+/* LineNumbersTable */
+.chroma .lnt {
+  white-space: pre;
+  user-select: none;
+  margin-right: 0.4em;
+  padding: 0 0.4em 0 0.4em;
+  color: #7f7f7f; }
+
+/* LineNumbers */
+.chroma .ln {
+  white-space: pre;
+  user-select: none;
+  margin-right: 0.4em;
+  padding: 0 0.4em 0 0.4em;
+  color: #7f7f7f; }
+
+/* Line */
+.chroma .line {
+  display: flex; }
+
+/* Keyword */
+.chroma .k {
+  color: #000000;
+  font-weight: bold; }
+
+/* KeywordConstant */
+.chroma .kc {
+  color: #000000;
+  font-weight: bold; }
+
+/* KeywordDeclaration */
+.chroma .kd {
+  color: #000000;
+  font-weight: bold; }
+
+/* KeywordNamespace */
+.chroma .kn {
+  color: #000000;
+  font-weight: bold; }
+
+/* KeywordPseudo */
+.chroma .kp {
+  color: #000000;
+  font-weight: bold; }
+
+/* KeywordReserved */
+.chroma .kr {
+  color: #000000;
+  font-weight: bold; }
+
+/* KeywordType */
+.chroma .kt {
+  color: #445588;
+  font-weight: bold; }
+
+/* Name */
+/* NameAttribute */
+.chroma .na {
+  color: #008080; }
+
+/* NameBuiltin */
+.chroma .nb {
+  color: #0086b3; }
+
+/* NameBuiltinPseudo */
+.chroma .bp {
+  color: #999999; }
+
+/* NameClass */
+.chroma .nc {
+  color: #445588;
+  font-weight: bold; }
+
+/* NameConstant */
+.chroma .no {
+  color: #008080; }
+
+/* NameDecorator */
+.chroma .nd {
+  color: #3c5d5d;
+  font-weight: bold; }
+
+/* NameEntity */
+.chroma .ni {
+  color: #800080; }
+
+/* NameException */
+.chroma .ne {
+  color: #990000;
+  font-weight: bold; }
+
+/* NameFunction */
+.chroma .nf {
+  color: #990000;
+  font-weight: bold; }
+
+/* NameFunctionMagic */
+/* NameLabel */
+.chroma .nl {
+  color: #990000;
+  font-weight: bold; }
+
+/* NameNamespace */
+.chroma .nn {
+  color: #555555; }
+
+/* NameOther */
+/* NameProperty */
+/* NameTag */
+.chroma .nt {
+  color: #000080; }
+
+/* NameVariable */
+.chroma .nv {
+  color: #008080; }
+
+/* NameVariableClass */
+.chroma .vc {
+  color: #008080; }
+
+/* NameVariableGlobal */
+.chroma .vg {
+  color: #008080; }
+
+/* NameVariableInstance */
+.chroma .vi {
+  color: #008080; }
+
+/* NameVariableMagic */
+/* Literal */
+/* LiteralDate */
+/* LiteralString */
+.chroma .s {
+  color: #dd1144; }
+
+/* LiteralStringAffix */
+.chroma .sa {
+  color: #dd1144; }
+
+/* LiteralStringBacktick */
+.chroma .sb {
+  color: #dd1144; }
+
+/* LiteralStringChar */
+.chroma .sc {
+  color: #dd1144; }
+
+/* LiteralStringDelimiter */
+.chroma .dl {
+  color: #dd1144; }
+
+/* LiteralStringDoc */
+.chroma .sd {
+  color: #dd1144; }
+
+/* LiteralStringDouble */
+.chroma .s2 {
+  color: #dd1144; }
+
+/* LiteralStringEscape */
+.chroma .se {
+  color: #dd1144; }
+
+/* LiteralStringHeredoc */
+.chroma .sh {
+  color: #dd1144; }
+
+/* LiteralStringInterpol */
+.chroma .si {
+  color: #dd1144; }
+
+/* LiteralStringOther */
+.chroma .sx {
+  color: #dd1144; }
+
+/* LiteralStringRegex */
+.chroma .sr {
+  color: #009926; }
+
+/* LiteralStringSingle */
+.chroma .s1 {
+  color: #dd1144; }
+
+/* LiteralStringSymbol */
+.chroma .ss {
+  color: #990073; }
+
+/* LiteralNumber */
+.chroma .m {
+  color: #009999; }
+
+/* LiteralNumberBin */
+.chroma .mb {
+  color: #009999; }
+
+/* LiteralNumberFloat */
+.chroma .mf {
+  color: #009999; }
+
+/* LiteralNumberHex */
+.chroma .mh {
+  color: #009999; }
+
+/* LiteralNumberInteger */
+.chroma .mi {
+  color: #009999; }
+
+/* LiteralNumberIntegerLong */
+.chroma .il {
+  color: #009999; }
+
+/* LiteralNumberOct */
+.chroma .mo {
+  color: #009999; }
+
+/* Operator */
+.chroma .o {
+  color: #000000;
+  font-weight: bold; }
+
+/* OperatorWord */
+.chroma .ow {
+  color: #000000;
+  font-weight: bold; }
+
+/* Punctuation */
+/* Comment */
+.chroma .c {
+  color: #999988;
+  font-style: italic; }
+
+/* CommentHashbang */
+.chroma .ch {
+  color: #999988;
+  font-style: italic; }
+
+/* CommentMultiline */
+.chroma .cm {
+  color: #999988;
+  font-style: italic; }
+
+/* CommentSingle */
+.chroma .c1 {
+  color: #999988;
+  font-style: italic; }
+
+/* CommentSpecial */
+.chroma .cs {
+  color: #999999;
+  font-weight: bold;
+  font-style: italic; }
+
+/* CommentPreproc */
+.chroma .cp {
+  color: #999999;
+  font-weight: bold;
+  font-style: italic; }
+
+/* CommentPreprocFile */
+.chroma .cpf {
+  color: #999999;
+  font-weight: bold;
+  font-style: italic; }
+
+/* Generic */
+/* GenericDeleted */
+.chroma .gd {
+  color: #000000;
+  background-color: #ffdddd; }
+
+/* GenericEmph */
+.chroma .ge {
+  color: #000000;
+  font-style: italic; }
+
+/* GenericError */
+.chroma .gr {
+  color: #aa0000; }
+
+/* GenericHeading */
+.chroma .gh {
+  color: #999999; }
+
+/* GenericInserted */
+.chroma .gi {
+  color: #000000;
+  background-color: #ddffdd; }
+
+/* GenericOutput */
+.chroma .go {
+  color: #888888; }
+
+/* GenericPrompt */
+.chroma .gp {
+  color: #555555; }
+
+/* GenericStrong */
+.chroma .gs {
+  font-weight: bold; }
+
+/* GenericSubheading */
+.chroma .gu {
+  color: #aaaaaa; }
+
+/* GenericTraceback */
+.chroma .gt {
+  color: #aa0000; }
+
+/* GenericUnderline */
+.chroma .gl {
+  text-decoration: underline; }
+
+/* TextWhitespace */
+.chroma .w {
+  color: #bbbbbb; }
 
 /*# sourceMappingURL=coder.css.map */
