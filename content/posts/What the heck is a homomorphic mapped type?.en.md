@@ -2,7 +2,7 @@
 author = "Andrea Simone Costa"
 title = "What the heck is a homomorphic mapped type?"
 date = "2023-12-28"
-description = "Let's try to understand what the TypeScript guys mean when they talk about homomorphic mapped type"
+description = "Let's try to understand what the TypeScript guys mean when they talk about homomorphic mapped types"
 categories = ["typescript"]
 series = ["TypeScript"]
 published = true
