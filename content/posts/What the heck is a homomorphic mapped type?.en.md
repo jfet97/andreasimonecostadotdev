@@ -126,7 +126,7 @@ Here's the catch: homomorphic mapped types are handled in a special way, and you
     HMT<string> = string
     ```
 
-1. if the homomorphic mapped type is applied to a union type, the result is the union of the mapped type applied to each member of the union (therefore, TS often calls homomorphic mapped type __distributive__)
+1. if the homomorphic mapped type is applied to a union type, the result is the union of the mapped type applied to each member of the union (therefore, TS often calls homomorphic mapped types __distributive__)
 
     ```ts
     HMT<A | B> = HTM<A> | HTM<B>
