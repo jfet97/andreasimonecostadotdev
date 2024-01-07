@@ -151,3 +151,37 @@ function processRecord<K extends keyof TypeMap>(record: UnionRecordMap[K]) {
 The keys of the mapped type `UnionRecordMap` are indeed the keys of the type map, and the indexing `UnionRecordMap[K]` occurs with a parametric index type `K` whose upper bound is `keyof TypeMap` as before.
 
 However, there is a significant difference compared to the previous cases: with this solution, TypeScript is unable to infer the actual types of `K` during the invocation of `processRecord`. It will always be `keyof TypeMap`, as shown in [this playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3&ssl=17&ssc=49&pln=17&pc=55#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoAVQIdhBAEoQAxsJoATZKgw5+AbQAKULlADWEEMIBmseKYC6JC-3wOXEYk1nz+eABuJHCQpjZeYeGuJAAUUR6xKPEAlOgAfFARwhxGjHgysgpK8GoaWroGxui1mjr6hiZZTi7uMYgoXlWupAR6wK1QYDTCehBMTA0dADwA0lAQAB7AEARGTI7Obhn9YHkpNO3GJOqti8ZxK165fngXjUYAdK7nl58R2QoKtgpjM5gtfilMI4giQAEQEWF0QokACMAAYkckoGkSAQKNQaLk0AUDAQmOIIB8xMJuGkoAAqKDo7IybLYAD07KgAD0APxAA). Both of the previous solutions do not suffer from this issue.
+
+### Extracting the functions
+
+To showcase the power of this pattern, let's pull out the functions `f` into another structure. You'll see that we can still correlate all of this thanks to our type map:
+
+```ts
+type TypeMap = {
+    n: number,
+    s: string,
+    b: boolean
+};
+
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = { 
+    [P in K]: {
+        kind: P,
+        v: TypeMap[P]
+    }
+}[K];
+
+type FuncRecord = { 
+    [P in keyof TypeMap]: (x: TypeMap[P]) => void
+};
+
+function processRecord<K extends keyof TypeMap>(
+    recv: ValueRecord<K>,
+    recfs: FuncRecord
+) {
+    return recfs[recv.kind](recv.v);
+}
+```
+
+We have both `ValueRecord` and `FuncRecord` defined in terms of the type map. `ValueRecord` is based on the "verbose" version, allowing the type parameter `K` to be precisely inferred during the invocation of `processRecord`. On the other hand, the definition of `FuncRecord` can be kept as simple as possible: a non-parametric mapped type whose keys are the same as the type map.
+
+Inside `processRecord`, the kind of `recv` is used to index the corresponding function within the `FuncRecord` structure, and that function is then invoked on the value `v` of `recv`. [TypeScript doesn't break a sweat](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWFCMeADaAApQXFBmALokOPz8TlxGJLF8GXgAbiRBiChxyVFQMrLRKQpK8FAAYqQEeroGxuGYkfxxCQTOrh5ewSipUAAUViXe5bHJAJToYYXCHEayDe5tesAcwkNgNMJ6EExMnYamFta29o7+o6WhU1U0+sVqGlrXxuYQvk8J89O4WC09v8tit0vhPsBSDQhqDwdFQYUAHRZezJKYYzGFJYKGrYE5nC5XfQ3d4AelpUAAegB+Kpwgo4nJQABEBG5wIy3wAjAAGKoyAW9Kr8YjTImrKAGAhMcQQTFiYTcKaFKAAKigoqWdD6BSgEO1KzQYSVKok6s12sxn0gSGAUwATEsjSaCoI5ZbrUdbWqNVrlBBRjq0NGeSJVVJuUtxdgk0A).
