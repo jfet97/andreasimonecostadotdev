@@ -185,3 +185,147 @@ function processRecord<K extends keyof TypeMap>(
 We have both `ValueRecord` and `FuncRecord` defined in terms of the type map. `ValueRecord` is based on the "verbose" version, allowing the type parameter `K` to be precisely inferred during the invocation of `processRecord`. On the other hand, the definition of `FuncRecord` can be kept as simple as possible: a non-parametric mapped type whose keys are the same as the type map.
 
 Inside `processRecord`, the kind of `recv` is used to index the corresponding function within the `FuncRecord` structure, and that function is then invoked on the value `v` of `recv`. [TypeScript doesn't break a sweat](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWFCMeADaAApQXFBmALokOPz8TlxGJLF8GXgAbiRBiChxyVFQMrLRKQpK8FAAYqQEeroGxuGYkfxxCQTOrh5ewSipUAAUViXe5bHJAJToYYXCHEayDe5tesAcwkNgNMJ6EExMnYamFta29o7+o6WhU1U0+sVqGlrXxuYQvk8J89O4WC09v8tit0vhPsBSDQhqDwdFQYUAHRZezJKYYzGFJYKGrYE5nC5XfQ3d4AelpUAAegB+Kpwgo4nJQABEBG5wIy3wAjAAGKoyAW9Kr8YjTImrKAGAhMcQQTFiYTcKaFKAAKigoqWdD6BSgEO1KzQYSVKok6s12sxn0gSGAUwATEsjSaCoI5ZbrUdbWqNVrlBBRjq0NGeSJVVJuUtxdgk0A).
+
+&nbsp;
+
+## Another problem
+
+Let's go back to the initial definition of records, which now only contain data. Suppose we now want to invoke a specific function on each value `v`. Each function might have its own return value, potentially different from the others. The goal is to define a matching function that, given a `UnionRecord`, calls the corresponding function on its `v` property and returns the returned value with the correct type.
+
+```ts
+type NumberRecord = { kind: "n", v: number };
+type StringRecord = { kind: "s", v: string };
+type BooleanRecord = { kind: "b", v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => b ? 1 : 0;
+
+function match(record: UnionRecord): ?? {
+    // ??
+}
+```
+
+### Attempt #1: overloads
+
+One initial solution to the problem involves combining a `switch` statement with the necessary overloads for the `match` function. The issue with this approach, whether or not the return type is specified in the implementation, is the presence of implicit type assertions: there's no guarantee that the implementation adheres to the indications of the signatures for the various overloads. [Seeing is believing](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRXBoDKHwcOCQbVQAKGh4+NABKYgA+KBooACooACYxUvLDBHqtfXT5NqJOrQA6UbqWoaiRnHj6pEY-PPsZzqQoAH4oAEYoRgAGYShRUQAzOBosYEjuhFtgLAALOtQspp4vwkvgWk0EqhHs9Xu8oJ9vn8AYVGDI5BlQeCoAZ0fJoS83lF4V9fv9AYxcgECk4sbxIfjYUSEaTkU5GOF3pjJrioKk6fwyKIoMKoADgHBUN0mFgqLYcExRIIgA).
+
+```ts
+type NumberRecord = { kind: "n", v: number };
+type StringRecord = { kind: "s", v: string };
+type BooleanRecord = { kind: "b", v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => b ? 1 : 0; 
+
+function match(record: NumberRecord): number
+function match(record: StringRecord): string
+function match(record: BooleanRecord): number
+function match(record: UnionRecord): string | number {
+    switch(record.kind) {
+        case 'n': return double(record.v)
+        case 's': return trim(record.v)
+        case 'b': return toNum(record.v)
+    }
+}
+```
+
+### Attempt #2: messing with the return type
+
+The solution, I would say, speaks for itself. What's worse is that it stands only thanks to explicit type assertions, with all the risks that come with them. Type assertions are necessary because TypeScript doesn't yet support control flow analysis to refine a parametric type: the type of the `record` is refined within the cases of the `switch`, but the same doesn't happen to the type parameter `R`:
+
+```ts
+type NumberRecord = { kind: "n"; v: number };
+type StringRecord = { kind: "s"; v: string };
+type BooleanRecord = { kind: "b"; v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => (b ? 1 : 0);
+
+type MatchRet<R extends UnionRecord> = R["kind"] extends "n"
+  ? number
+  : R["kind"] extends "s"
+  ? string
+  : R["kind"] extends "b"
+  ? number
+  : never;
+
+function match<R extends UnionRecord>(record: R): MatchRet<R> {
+  switch (record.kind) {
+    case "n":
+      return double(record.v) as MatchRet<R>;
+    case "s":
+      return trim(record.v) as MatchRet<R>;
+    case "b":
+      return toNum(record.v) as MatchRet<R>;
+  }
+}
+```
+
+### Attempt #3: another type map as return type
+
+Sometimes, preferring objects over the `switch` construct helps resolve the situation, but not this time:
+
+```ts
+type NumberRecord = { kind: "n"; v: number };
+type StringRecord = { kind: "s"; v: string };
+type BooleanRecord = { kind: "b"; v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => (b ? 1 : 0);
+
+function match<
+    R extends UnionRecord
+>(record: R): { n: number, s: string, b: number }[R["kind"]] {
+    return {
+        n: double(record.v), // 'string | number | boolean' not assignable to 'number'
+        s: trim(record.v), // 'string | number | boolean' not assignable to 'string'
+        b: toNum(record.v) // 'string | number | boolean' not assignable to 'boolean'
+    }[record.kind];
+           // ^? "n" | "s" | "b" instead of something like R["kind"]
+}
+```
+
+Firstly, the construction of the indexed object occurs before indexing. This construction is, in fact, impossible since we only have one record available, and its `v` is certainly not usable as a parameter for all three functions. Moreover, to properly align the return parameter a more precise inference of the `kind` field would be necessary, whose type is instead immediately expanded to the upper bound `"n" | "s" | "b"`.
+
+The best compromise I know of is the following, where I use a couple of tricks to solve these problems. Unfortunately, though, we don't have any refinement on the `record`, so we have to resort once again to type assertions:
+
+```ts
+type NumberRecord = { kind: "n"; v: number };
+type StringRecord = { kind: "s"; v: string };
+type BooleanRecord = { kind: "b"; v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => (b ? 1 : 0);
+
+function match<
+    R extends Extract<UnionRecord, { kind: K }>,
+    K extends UnionRecord["kind"] = R["kind"]
+>(record: R): { n: number; s: string; b: number }[K] {
+    return {
+        get n() {
+            return double(record.v as number);
+        },
+        get s() {
+            return trim(record.v as string);
+        },
+        get b() {
+            return toNum(record.v as boolean);
+        },
+    }[record.kind];
+}
+```
+
+### Final attempt: the pattern
+
+
+It's necessary to resort once again to the pattern discussed in this article. The solution is nothing more than an extension of the case of extracting functions, where now each function has its own return type.
