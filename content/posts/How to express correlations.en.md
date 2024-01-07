@@ -327,5 +327,44 @@ function match<
 
 ### Final attempt: the pattern
 
+It's necessary to resort once again to the pattern discussed in this article. The solution is nothing more than an extension of the [extracting functions case](#extracting-the-functions), where now each function has its own return type:
 
-It's necessary to resort once again to the pattern discussed in this article. The solution is nothing more than an extension of the case of extracting functions, where now each function has its own return type.
+```ts
+type TypeMap = { n: number; s: string; b: boolean };
+
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
+    [P in K]: {
+        kind: P;
+        v: TypeMap[P];
+    };
+}[K];
+
+const recfs = {
+    n: (n: number) => n * 2,
+    s: (s: string) => s.trim(),
+    b: (b: boolean): number => (b ? 1 : 0)
+}
+
+type OutputMap = {
+    [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
+};
+
+type FuncRecord = {
+    [P in keyof TypeMap]: (v: TypeMap[P]) => OutputMap[P];
+};
+
+function match<K extends keyof TypeMap>(
+    recv: ValueRecord<K>,
+    recfs: FuncRecord
+): OutputMap[K] {
+    return recfs[recv.kind](recv.v);
+}
+```
+
+`ValueRecord` is defined in the same wordy way as before, while `OutputMap` and `FuncRecord` are nothing more than mapped types based on the keys of the type map `TypeMap`. In `FuncRecord`, the type of each parameter must necessarily be the type of the corresponding `v` field; otherwise, we couldn't invoke such functions. The return type is arbitrarily determined by the functions in `recfs`. Inside the match function, the kind of `recv` is again used to index the corresponding function within `recfs`, and this function is then invoked on the `v` value of recv. The type returned by match is expressed in terms of `OutputMap`.
+
+[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgNxQDOBtwFAljgOY2kGkD2PANhCQ4oAXyoAoCaEhQAakn6EIAJQgBjHhQAmAHgDSUCAA9gEHNtpQA1hBA8AZrHjJUGW-adxIrgHzosCSgoAG0ABShWKH0AXQJMIOCbVm0CMMkkqAA3Am9EFHCYjLFJURDYyQlNHEYoCg0HKwwEzPwoAAo2nBJyCgBKdH8RACooACYAGkTg+g7ZxhZ2AbR-WgA6JmZidr6pzK4Og94BIRw+gm6ySkHDqAB+KABGKAIABj6JUSkZaAB5QmAYABrgCLVChiiHkczh8KDiUDUwEIFBweV07R+0Pq6kafXKMV8n0qPygADFCDh1GpNDpQYlwpERFCvC44QR2jkYfkwIVlv5-oDgQUwkUiVIHBT1MBmDwRMQkMB1AALAxGUzmSw2OzQvJ+dqJbGchRKVQaLR6fS+PZ1BqzcmU6nmiTnKACoHAVz4wLBepIlE2nG0EKGtbWFIxdohrJ9UpSeWKpXtbBhiwEABEODTE2yBAALGMxNnsbiJAB6UtQAB6dwk8eVSeSqagadoWZzzfUzCQPDThYDJfLVZrdcTyZS6dIbc5DkUtGgoiLto+g+rQA).
+
+&nbsp;
+
+## What on earth...
