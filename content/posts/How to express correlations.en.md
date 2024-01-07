@@ -94,7 +94,9 @@ function processRecord<K extends keyof TypeMap>(record: RecordType<K>) {
 
 It's worth noting that the parameter type isn't `UnionRecord`, nor is it a type parameter with an upper bound of `UnionRecord`. Instead, it's a `RecordType<K>`, where `K` is a type parameter with an upper bound of `TypeMap`. Within the function, the type of `record.f` is `(v: TypeMap[K]) => void`, while the type of `record.v` is `TypeMap[K]`. Everything is good and dandy.
 
-By defining everyting in terms of the `TypeMap` type, TypeScript is finally able to see the correlation. [Here](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAEoQAxjwoATOJAA8AaSgQAHsAg41tKAGsIIHgDNY8ZGAB86LFElRLrNQR01PKAA3Ak1EFABtHQBdAK9bAgAKEIdIJyjogEp0VyCeZjUPCWlZaABVHGYeHEUVdTda1Q14LQByHFbXAB8FZSawttpOqB7G9QHW0k6pSVtCHCVgKpEwCh4lCFpaMbVdfSMTM0trO1Twl0SKPvUCHYGdZ2zMQK8rurUAOltL68+gzPEXgA9ECoAB5CySUSSIA) you can find a playground with the whole code.
+By defining everyting in terms of the `TypeMap` type, TypeScript is finally able to see the correlation.
+
+[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgDRQDOBtwFAljgOY2kGkD2PANhCQ4oAXwDcAKEmhIUAEoQAxjwoATOJAA8AaSgQAHsAg41tKAGsIIHgDNY8ZGAB86LFElRLrNQR01PKAA3Ak1EFABtHQBdAK9bAgAKEIdIJyjogEp0VyCeZjUPCWlZaABVHGYeHEUVdTda1Q14LQByHFbXAB8FZSawttpOqB7G9QHW0k6pSVtCHCVgKpEwCh4lCFpaMbVdfSMTM0trO1Twl0SKPvUCHYGdZ2zMQK8rurUAOltL68+gzPEXgA9ECoAB5CySUSSIA).
 
 ### Code obfuscation
 
@@ -330,7 +332,11 @@ function match<
 It's necessary to resort once again to the pattern discussed in this article. The solution is nothing more than an extension of the [extracting functions case](#extracting-the-functions), where now each function has its own return type:
 
 ```ts
-type TypeMap = { n: number; s: string; b: boolean };
+type TypeMap = {
+    n: number,
+    s: string,
+    b: boolean
+};
 
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
     [P in K]: {
@@ -363,8 +369,57 @@ function match<K extends keyof TypeMap>(
 
 `ValueRecord` is defined in the same wordy way as before, while `OutputMap` and `FuncRecord` are nothing more than mapped types based on the keys of the type map `TypeMap`. In `FuncRecord`, the type of each parameter must necessarily be the type of the corresponding `v` field; otherwise, we couldn't invoke such functions. The return type is arbitrarily determined by the functions in `recfs`. Inside the match function, the kind of `recv` is again used to index the corresponding function within `recfs`, and this function is then invoked on the `v` value of recv. The type returned by match is expressed in terms of `OutputMap`.
 
-[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8oDsBcuArgLYBGEATgNxQDOBtwFAljgOY2kGkD2PANhCQ4oAXyoAoCaEhQAakn6EIAJQgBjHhQAmAHgDSUCAA9gEHNtpQA1hBA8AZrHjJUGW-adxIrgHzosCSgoAG0ABShWKH0AXQJMIOCbVm0CMMkkqAA3Am9EFHCYjLFJURDYyQlNHEYoCg0HKwwEzPwoAAo2nBJyCgBKdH8RACooACYAGkTg+g7ZxhZ2AbR-WgA6JmZidr6pzK4Og94BIRw+gm6ySkHDqAB+KABGKAIABj6JUSkZaAB5QmAYABrgCLVChiiHkczh8KDiUDUwEIFBweV07R+0Pq6kafXKMV8n0qPygADFCDh1GpNDpQYlwpERFCvC44QR2jkYfkwIVlv5-oDgQUwkUiVIHBT1MBmDwRMQkMB1AALAxGUzmSw2OzQvJ+dqJbGchRKVQaLR6fS+PZ1BqzcmU6nmiTnKACoHAVz4wLBepIlE2nG0EKGtbWFIxdohrJ9UpSeWKpXtbBhiwEABEODTE2yBAALGMxNnsbiJAB6UtQAB6dwk8eVSeSqagadoWZzzfUzCQPDThYDJfLVZrdcTyZS6dIbc5DkUtGgoiLto+g+rQA).
+[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCtgGBGxQNPrujhip+MRQABSdBBTUNACU6GEEUABUUABMfMwkXSxQbJw8w2hhTAB07BzkXYOzeILdxyLikgSDJH1UtCMnUAD8UACMUCQADIOyisrQAPKkYBgIE+cLtKpxMb+DxeYIoZJQXTAUg0AiFExdP6wpp6FqDKqJEKyGp-KAAMVIBD0ugMxnBUVi8RhgW8CPm+ThRTAJTWYUBwNBxWipRJincVL0wA4wjG5CQwD0AAtzJYbHYHM5XLDCqEuoxcZz1JodPpDKYzCFZriWiRKdTaebsFcoAKQcAfISIngmii0Y1mkxIobNul7IkuiHcoMFDJFPLFUquphnBkSAAiAjpuhQTkAFim5RzNqY3wA9GWoAA9R7YBPK5Op+wZpjZ3MZvQcJDCdNFgN40vYCvV2v1pMpsOZKDpyhtznuDRMaAyYuB8uVmtAA).
 
 &nbsp;
 
 ## What on earth...
+
+Plase, let's take a moment to chew on how much we've messed up the simplicity and neatness of our code to get this pattern in place:
+
+```ts
+// from this:
+type NumberRecord = { kind: "n"; v: number };
+type StringRecord = { kind: "s"; v: string };
+type BooleanRecord = { kind: "b"; v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+const double = (n: number) => n * 2;
+const trim = (s: string) => s.trim();
+const toNum = (b: boolean) => (b ? 1 : 0);
+
+
+// to this:
+type TypeMap = {
+    n: number,
+    s: string,
+    b: boolean
+};
+
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
+    [P in K]: {
+        kind: P;
+        v: TypeMap[P];
+    };
+}[K];
+
+const recfs = {
+    n: (n: number) => n * 2,
+    s: (s: string) => s.trim(),
+    b: (b: boolean): number => (b ? 1 : 0)
+}
+
+type OutputMap = {
+    [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
+};
+
+type FuncRecord = {
+    [P in keyof TypeMap]: (v: TypeMap[P]) => OutputMap[P];
+};
+```
+
+What are we talking about? It's mind-boggling. Mind-boggling. It is usually more idiomatic to first define the components of a (discriminated) union and then create the union using the `|` operator, rather than encapsulating everything in the a complex type function, as done with `ValueRecord`. It's worth noting that it's not always feasible to straightforwardly apply this latter approach, which can be quite awkward in certain cases. Sometimes, we're just forced to overuse the type map, and believe me, things quickly go south.
+
+### An alternative
+
+I'll be upfront, don't expect the ultimate revelation. I'm going to present a strategy to possibly mitigate the situation, that still doesn't improve all that much. My efforts have focused on keeping the definitions of `UnionRecord` components separate, as is idiomatic. The rest remains almost unchanged: I wasn't able to get rid of either the type map or the remaining definitions built around it.
