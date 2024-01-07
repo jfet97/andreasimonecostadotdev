@@ -418,8 +418,62 @@ type FuncRecord = {
 };
 ```
 
-What are we talking about? It's mind-boggling. Mind-boggling. It is usually more idiomatic to first define the components of a (discriminated) union and then create the union using the `|` operator, rather than encapsulating everything in the a complex type function, as done with `ValueRecord`. It's worth noting that it's not always feasible to straightforwardly apply this latter approach, which can be quite awkward in certain cases. Sometimes, we're just forced to overuse the type map, and believe me, things quickly go south.
+What are we talking about? It's mind-boggling. Mind-boggling. It is usually more idiomatic to first define the components of a (discriminated) union and then create the union using the `|` operator, rather than encapsulating everything in a complex type function, as done with `ValueRecord`. It's worth noting that it's not always feasible to straightforwardly apply this latter approach, which can be quite awkward in certain cases. Sometimes, we're just forced to overuse the type map, and believe me, things quickly go south.
 
 ### An alternative
 
-I'll be upfront, don't expect the ultimate revelation. I'm going to present a strategy to possibly mitigate the situation, that still doesn't improve all that much. My efforts have focused on keeping the definitions of `UnionRecord` components separate, as is idiomatic. The rest remains almost unchanged: I wasn't able to get rid of either the type map or the remaining definitions built around it.
+I'll be upfront, don't expect the ultimate revelation. I'm going to present a strategy to possibly mitigate the situation, that still doesn't improve all that much. In fact, perhaps it even gets worse. My efforts have focused on keeping the definitions of `UnionRecord` components separate, as is idiomatic. The rest remains almost unchanged: I wasn't able to get rid of either the type map or the remaining definitions built around it.
+
+So, let's start by defining the types of the records:
+
+```ts
+type NumberRecord = { kind: "n", v: number };
+type StringRecord = { kind: "s", v: string };
+type BooleanRecord = { kind: "b", v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+```
+
+The type map iterates over `UnionRecord` and associates each kind with the corresponding record:
+  
+```ts
+// { n: NumberRecord; s: StringRecord; b: BooleanRecord; }
+type TypeMap = {
+    [K in UnionRecord["kind"]]: Extract<UnionRecord, { kind: K }>;
+};
+```
+
+The definition of `ValueRecord` gets a bit complicated. We are forced to manually define the types of the `kind` and `v` fields, always based on the type map, because these two fields are the ones directly accessed by the match function. The type `{ kind: P, v: TypeMap[P]["v"] } & Omit<TypeMap[P], "kind" | "v">` is conceptually identical to `TypeMap[P]`, but TypeScript gets lost within `match` if we use the latter. Note that in this specific example, the intersection with `Omit<TypeMap[P], "kind" | "v">` could be omitted since records don't have any other properties besides `kind` and `v`.
+
+``` ts
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
+    [P in K]: { kind: P, v: TypeMap[P]["v"] } & Omit<TypeMap[P], "kind" | "v">
+}[K];
+```
+
+The definitions of the functions and the other two maps are almost identical to before; we just need to align the parameter type in `FuncRecord`:
+
+```ts
+const recfs = {
+    n: (n: number) => n * 2,
+    s: (s: string) => s.trim(),
+    b: (b: boolean): number => (b ? 1 : 0)
+};
+
+type OutputMap = {
+    [P in keyof TypeMap]: ReturnType<(typeof recfs)[P]>
+};
+
+type FuncRecord = {
+    [P in keyof TypeMap]: (x: TypeMap[P]["v"]) => OutputMap[P];
+};
+```
+
+The definition of the `match` function remains unchanged.
+
+[Here](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRAHoStRpGeP4koqgtRhk5DNrhX0ZcgIKnNsFgyQAVEIBZWzBVUlEoaagAbQBpKFoocMjuglmmN3wmAF1dxgBRAA9ZWyxgAB5VqNqOVw1GRcEAPjERUX7oADVbKzgILVLosIKcIHQtJQICAcAAzKBDSCjcYkCjQuEIkZjF4TKYzWYABSWNCg8wOam2jAJHB8iIgyMJu02nD2QigADIoAB5BBUK50hkE3YcLYaJhQVJMFkvUSCBa7Yq4GgGKCobCwyEuPHTSpQAAUut4CVQAEpiDiSQAqKAAJjY2vqjD1DXq6XkZqIOK0ADpDAg9Sb7TN2vqkIw-Hl7CaeHw0ObQ1AAPxQACMUEYAAYTbLiqZuXBgGAC8jccHCcSoTD4QKxuTMMA4KgaHTLnrTBi1VgNSbGTKPl8oAAxOA0LC1Uv4onLNFVzFI2tO46MGtgRnMvYenFcgtF4CChU5z6wkcXNZQBC2YBYAAWwKgoOA4PwkJnGJXLz1Ds7Pl+-0BWXwYEXiDGZOw1Rhh1HWpRGjfNC2LMZ5TIL8IAbJtVXVLRZm-b1tl2PUcM4E13iAA) you can find playground with the whole code.
+
+&nbsp;
+
+## Conclusion
+
+Expressing correlations has never been this challenging. No need to thank me.
