@@ -474,7 +474,7 @@ The definition of the `match` function remains unchanged.
 
 ### An alternative to the alternative
 
-To be fair, experimenting with TypeScript and type parameters, you might arrive at a somewhat less safe solution that doesn't employ the pattern:
+To be fair, experimenting with TypeScript and type parameters, I was able to get a somewhat less safe solution that doesn't employ the pattern:
 
 ```ts
 type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
