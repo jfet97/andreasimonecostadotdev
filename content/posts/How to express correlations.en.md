@@ -570,4 +570,4 @@ As always, [a playground to play with](https://www.typescriptlang.org/play?jsx=0
 
 ## Conclusion
 
-Expressing correlations has never been this challenging. No need to thank me. But if you really insist, feel free to insult me [on Xitter](https://twitter.com/jfet97).
+Expressing correlations has never been this challenging. No need to thank me, but if you really insist, feel free to insult me [on Xitter](https://twitter.com/jfet97).
