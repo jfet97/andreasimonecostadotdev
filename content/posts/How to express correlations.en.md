@@ -5,7 +5,7 @@ date = "2024-01-08"
 description = "Expressing correlations between different entities has never been so difficult"
 categories = ["typescript"]
 series = ["TypeScript"]
-published = false
+published = true
 tags = [
     "correlations",
 ]
@@ -565,6 +565,8 @@ processRecord({
 ```
 
 As always, [a playground to play with](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6oDnQll1EoV6g60rHaKHn8LRa9mNJtNZj8oAB+KDLHy9A7EJboKCMZYAOjRtlQ8i0jHsIDhRCWuNEIlEogAZnAaFhgDUoGBUDgsBAtFoNsMXlBQuMpjM-lAAKJTVC2anDNa1AgcVwaPYcGFCBZsDlAnmg36VEihBpNVpK153YG8yrdPoDIajJ5dHr9QYjUqK0QLZaoLKaUJw0gc14u4BwVA0KDDR7LMk0bFQS7XUq3B4LA6MREEqChrR1F2FFFNFrO10ozgHYRQYmkgD0JagcC0tnkEFEuDDwCg6bJGrIXqgNGRnY7fDQ+KWAYAVFAAEx6t7h5bhgxyDL9qBaFGGBDLA7j15IZGb3z+fLxnsJARJ5ZICFQACMSKgAAYDsTivTGczWa7lqRBFBbJV4vwNgcc1gLYFlAZYHvwoiPkyLIbG+H5fmks6ZIU-7NlowGgTOCgQQyUEvoUsGfpUuQBBK+AodgQGFqBvCHqW5Y0DgjYDFYOAAO4QIQuIIHgtaQc+MGem86juFAACytjAAAFiiwp0DgK5wks14ogArGeTA6FeLDsO2PjiVJMn2Pg8mrlASmqepWBULYOBMFe54jgAzMSBxAA).
+
+&nbsp;
 
 ## Conclusion
 
