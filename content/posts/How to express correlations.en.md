@@ -524,7 +524,7 @@ processRecord({
 
 ### A safer alternative to the alternative of the alternative
 
-At this point I'm trolling, and no, I have no intention of explaining why this stuff works. I'm afraid I might not even know. Or maybe I do. Who knows.
+At this point I'm just trolling, and no, I have no intention of explaining why this stuff works. I'm afraid I might not even know. Or maybe I do. Who knows.
 
 ```ts
 type NumberRecord = { kind: "n", v: number };
