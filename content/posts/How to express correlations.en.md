@@ -1,7 +1,7 @@
 +++
 author = "Andrea Simone Costa"
 title = "How to express correlations"
-date = "2024-01-07"
+date = "2024-01-08"
 description = "Expressing correlations between different entities has never been so difficult"
 categories = ["typescript"]
 series = ["TypeScript"]
