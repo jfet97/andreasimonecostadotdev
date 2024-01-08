@@ -472,6 +472,56 @@ The definition of the `match` function remains unchanged.
 
 [Here](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRAHoStRpGeP4koqgtRhk5DNrhX0ZcgIKnNsFgyQAVEIBZWzBVUlEoaagAbQBpKFoocMjuglmmN3wmAF1dxgBRAA9ZWyxgAB5VqNqOVw1GRcEAPjERUX7oADVbKzgILVLosIKcIHQtJQICAcAAzKBDSCjcYkCjQuEIkZjF4TKYzWYABSWNCg8wOam2jAJHB8iIgyMJu02nD2QigADIoAB5BBUK50hkE3YcLYaJhQVJMFkvUSCBa7Yq4GgGKCobCwyEuPHTSpQAAUut4CVQAEpiDiSQAqKAAJjY2vqjD1DXq6XkZqIOK0ADpDAg9Sb7TN2vqkIw-Hl7CaeHw0ObQ1AAPxQACMUEYAAYTbLiqZuXBgGAC8jccHCcSoTD4QKxuTMMA4KgaHTLnrTBi1VgNSbGTKPl8oAAxOA0LC1Uv4onLNFVzFI2tO46MGtgRnMvYenFcgtF4CChU5z6wkcXNZQBC2YBYAAWwKgoOA4PwkJnGJXLz1Ds7Pl+-0BWXwYEXiDGZOw1Rhh1HWpRGjfNC2LMZ5TIL8IAbJtVXVLRZm-b1tl2PUcM4E13iAA) you can find playground with the whole code.
 
+### An alternative to the alternative
+
+To be fair, experimenting with TypeScript and type parameters, you might arrive at a somewhat less safe solution that doesn't employ the pattern:
+
+```ts
+type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
+type StringRecord = { kind: "s", v: string, f: (v: string) => void };
+type BooleanRecord = { kind: "b", v: boolean, f: (v: boolean) => void };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+type Kinds = UnionRecord["kind"];
+type GetValue<K extends Kinds> = (UnionRecord & { kind: K })["v"];
+type RecFs<K, V , R> = {
+    [KK in Kinds]: KK extends K ? (v: V) => R : (...args: any) => any
+};
+
+function processRecord<
+  K extends Kinds,
+  V extends GetValue<K>
+>(record: { kind: K; v: V }) {
+    return <R>(fns: RecFs<K, V, R>): R => fns[record.kind](record.v); 
+}
+
+
+// usage
+const recfs = {
+    n: (n: number) => n * 2,
+    s: (s: string) => s.trim(),
+    b: (b: boolean): number => (b ? 1 : 0)
+}
+
+processRecord({} as NumberRecord)(recfs) // number
+processRecord({} as StringRecord)(recfs) // string
+processRecord({} as BooleanRecord)(recfs) // number
+```
+
+Here, we have expanded the structure of a `record` in the type `{ kind: K; v: V }`, where `K` is the type parameter used to infer the `kind`, and as such, it must be assignable to `"n" | "s" | "b"`. Meanwhile, `V` is the type parameter used to infer the type of the value `v` corresponding to the kind `K`. The type of the structure containing the functions enforces the presence of a function for each `kind`. However, it enforces the correct type of the `v` argument and infers the return type `R` only in the callback corresponding to the `kind` `K`.
+
+I describe this solution as less safe because, despite the upper bounds on the type parameters, we lack certainty that the `record` passed to `processRecord` is indeed a `UnionRecord`:
+
+```ts
+// allowed
+processRecord({
+    kind: Math.random() > 0.5 ? "s" : "n",
+    v: Math.random() > 0.5 ? "ciao" : 123
+})
+```
+
+[Here is a playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqHAGaMAFNyi9kaAJTEAfFxxVCAXwDcAKFCQoAZWCpaAc0y4CxMpVoNmAZ3ZdGtg8aGjxzwzSOyiCzkqqmtrQAEI4OAA2EACGNKZ4hCTk1HSMTEgO4kgR0XFuUGKMOVGxNL7+gVDqWuDQAKo0VDjx2IkW8FIYbeYAPnou3gl9UOGlccP4mrU6ANLWthaNza1m+ADaTKn4TAC6wXVQAOIQwABqMZFwEAA8s1AQAB7AEHSL828KJCLLLZNQADJLNtGPcVNJNpw9gcdKYAGK2O4cM5QDjoL5kDRQbFQdaze60KAffC2Xag+5PF5vIlQAD8hXEZwqUHQUFEADpOTFUEZbIw4iBmQKNDUNII4DQsMAVlAwKgcFgILZbJMbliaZTXiSiQs2OqUZrqSdzpdrnc5Bo5CJUD0bClrKC1I4oCjwZicVAbcA4KgaFAbuiRIIaHyWdgEUiXWi5NJGKy-FBg7Z1ja1uztrtrbb2ZxpE6RRpCwB6ItQOC2GJGCAaXAh4Ce7CCRbJdXYmiidsSPgyeQSKAAKigACY9R7QyJQ55jMzbOyXAgRNJRzikKJV1ASnlyjxu6heyIkHSoABGNlQAAM0gLGjlCqVKttIlIKigMUWnX4k2kWawTdkJa7Lob3lRVlUmJ8XzfAYvBMW1v1TP8oAAqdvGAu8wMfZ9X0WMYty-H9EIAyR+ELW9QIfNYn1bKw0igABZGJgAAC3ZVA4nwHAF1kBRz3ZABWI8mHsM8WHYajxAY5jWPYzjFygHj+MErAqBiHAmDPY8hwAZhFaQgA).
+
 &nbsp;
 
 ## Conclusion
