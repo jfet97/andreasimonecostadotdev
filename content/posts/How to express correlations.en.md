@@ -5,7 +5,7 @@ date = "2024-01-08"
 description = "Expressing correlations has never been so difficult"
 categories = ["typescript"]
 series = ["TypeScript"]
-published = false
+published = true
 tags = [
     "correlations",
 ]
