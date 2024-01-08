@@ -477,9 +477,9 @@ The definition of the `match` function remains unchanged.
 To be fair, experimenting with TypeScript and type parameters, I was able to get a somewhat less safe solution that doesn't employ the pattern:
 
 ```ts
-type NumberRecord = { kind: "n", v: number, f: (v: number) => void };
-type StringRecord = { kind: "s", v: string, f: (v: string) => void };
-type BooleanRecord = { kind: "b", v: boolean, f: (v: boolean) => void };
+type NumberRecord = { kind: "n", v: number };
+type StringRecord = { kind: "s", v: string };
+type BooleanRecord = { kind: "b", v: boolean };
 type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
 
 type Kinds = UnionRecord["kind"];
@@ -501,11 +501,11 @@ const recfs = {
     n: (n: number) => n * 2,
     s: (s: string) => s.trim(),
     b: (b: boolean): number => (b ? 1 : 0)
-}
+};
 
-processRecord({} as NumberRecord)(recfs) // number
-processRecord({} as StringRecord)(recfs) // string
-processRecord({} as BooleanRecord)(recfs) // number
+processRecord({} as NumberRecord)(recfs); // number
+processRecord({} as StringRecord)(recfs); // string
+processRecord({} as BooleanRecord)(recfs); // number
 ```
 
 Here, we have expanded the structure of a `record` in the type `{ kind: K; v: V }`, where `K` is the type parameter used to infer the `kind`, and as such, it must be assignable to `"n" | "s" | "b"`. Meanwhile, `V` is the type parameter used to infer the type of the value `v` corresponding to the kind `K`. The type of the structure containing the functions enforces the presence of a function for each `kind`. However, it enforces the correct type of the `v` argument and infers the return type `R` only in the callback corresponding to the `kind` `K`.
@@ -517,12 +517,56 @@ I describe this solution as less safe because, despite the upper bounds on the t
 processRecord({
     kind: Math.random() > 0.5 ? "s" : "n",
     v: Math.random() > 0.5 ? "ciao" : 123
+});
+```
+
+[Here is a playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6oDnQll1EoV6g60rHaKHn8LRa9mNJtNZj8oAB+KDLHy9A7EJboKCMZYAOjRtlQ8i0jHsIDhRCWuNEIlEogAZnAaFhgDUoGBUDgsBAtFoNsMXmDgTM-j8KmwOXcuaDun0BkNRgtRAtlqgsppXBo9sI9FA7ocyBzXrLgHBUDQoMNHssyTRsVBLtdSrcHgsDoxEQSoCatHVZYUUU0WjK5SjOAdlcTSaIAPTBqBwLS2eQQUS4U3AKBusmVZ5vKA0ZEZ9N8ND4pb6gBUUAATPy02blmaDHIMnmoFoUYYEMsDmW3khkR3fP58nbswkBI7lkgIVAAIxIqAABgOxOK9MZzNZcuWpEEUFslXi-A2B29WGT-qgof7-FEC6ZLI2q-Xm7SNcyhT3Sa0R5P1YU54Zl+XhRvG8qXIAlqAhn2wQ9lRPXgB1JC8l2vUhNXUdwoAAWVsYAAAsUVQex8BwZs4SWKcUQAVlHJgdEnFh2CQnx0KwnC8IIlsoGIsiKKwKhbBwJhJzHYsAGZiQOIA).
+
+&nbsp;
+
+### A safer alternative to the alternative of the alternative
+
+At this point, I'm trolling, and no, I have no intention of explaining why this stuff works. I'm afraid I might not even know. Or maybe I do. Who knows.
+
+```ts
+type NumberRecord = { kind: "n", v: number };
+type StringRecord = { kind: "s", v: string };
+type BooleanRecord = { kind: "b", v: boolean };
+type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
+
+type Kinds = UnionRecord["kind"];
+type GetValue<K extends Kinds> = (UnionRecord & { kind: K })["v"];
+type RecFs<K, V , R> = {
+    [KK in Kinds]: KK extends K ? (v: V) => R : (...args: any) => any
+};
+
+function processRecord<
+  U extends Extract<UnionRecord, { kind: K, v: V }>,
+  K extends Kinds = U["kind"],
+  V extends GetValue<K> = GetValue<K>,
+>(record: U) {
+    return <R>(fns: RecFs<K, V, R>): R => fns[record.kind](record.v); 
+}
+
+// usage
+const recfs = {
+    n: (n: number) => n * 2,
+    s: (s: string) => s.trim(),
+    b: (b: boolean): number => (b ? 1 : 0)
+};
+
+processRecord({} as NumberRecord)(recfs); // number
+processRecord({} as StringRecord)(recfs); // string
+processRecord({} as BooleanRecord)(recfs); // number
+
+// not allowed anymore
+processRecord({
+    kind: Math.random() > 0.5 ? "s" : "n",
+    v: Math.random() > 0.5 ? "ciao" : 123
 })
 ```
 
-[Here is a playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqHAGaMAFNyi9kaAJTEAfFxxVCAXwDcAKFCQoAZWCpaAc0y4CxMpVoNmAZ3ZdGtg8aGjxzwzSOyiCzkqqmtrQAEI4OAA2EACGNKZ4hCTk1HSMTEgO4kgR0XFuUGKMOVGxNL7+gVDqWuDQAKo0VDjx2IkW8FIYbeYAPnou3gl9UOGlccP4mrU6ANLWthaNza1m+ADaTKn4TAC6wXVQAOIQwABqMZFwEAA8s1AQAB7AEHSL828KJCLLLZNQADJLNtGPcVNJNpw9gcdKYAGK2O4cM5QDjoL5kDRQbFQdaze60KAffC2Xag+5PF5vIlQAD8hXEZwqUHQUFEADpOTFUEZbIw4iBmQKNDUNII4DQsMAVlAwKgcFgILZbJMbliaZTXiSiQs2OqUZrqSdzpdrnc5Bo5CJUD0bClrKC1I4oCjwZicVAbcA4KgaFAbuiRIIaHyWdgEUiXWi5NJGKy-FBg7Z1ja1uztrtrbb2ZxpE6RRpCwB6ItQOC2GJGCAaXAh4Ce7CCRbJdXYmiidsSPgyeQSKAAKigACY9R7QyJQ55jMzbOyXAgRNJRzikKJV1ASnlyjxu6heyIkHSoABGNlQAAM0gLGjlCqVKttIlIKigMUWnX4k2kWawTdkJa7Lob3lRVlUmJ8XzfAYvBMW1v1TP8oAAqdvGAu8wMfZ9X0WMYty-H9EIAyR+ELW9QIfNYn1bKw0igABZGJgAAC3ZVA4nwHAF1kBRz3ZABWI8mHsM8WHYajxAY5jWPYzjFygHj+MErAqBiHAmDPY8hwAZhFaQgA).
-
-&nbsp;
+As always, [a playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&ssl=34&ssc=3&pln=1&pc=1&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6oDnQll1EoV6g60rHaKHn8LRa9mNJtNZj8oAB+KDLHy9A7EJboKCMZYAOjRtlQ8i0jHsIDhRCWuNEIlEogAZnAaFhgDUoGBUDgsBAtFoNsMXlBQuMpjM-lAAKJTVC2anDNa1AgcVwaPYcGFCBZsDlAnmg36VEihBpNVpK153YG8yrdPoDIajJ5dHr9QYjUqK0QLZaoLKaUJw0gc14u4BwVA0KDDR7LMk0bFQS7XUq3B4LA6MREEqChrR1F2FFFNFrO10ozgHYRQYmkgD0JagcC0tnkEFEuDDwCg6bJGrIXqgNGRnY7fDQ+KWAYAVFAAEx6t7h5bhgxyDL9qBaFGGBDLA7j15IZGb3z+fLxnsJARJ5ZICFQACMSKgAAYDsTivTGczWa7lqRBFBbJV4vwNgcc1gLYFlAZYHvwoiPkyLIbG+H5fmks6ZIU-7NlowGgTOCgQQyUEvoUsGfpUuQBBK+AodgQGFqBvCHqSkHPjBnpvOo7hQAAsrYwAABYosKdA4CucJLNeKIAKxnkwOhXiw7Dtj4HHcbx9j4AJq5QMJYkSVgVC2DgTBXueI4AMzEgcQA) to play with.
 
 ## Conclusion
 
