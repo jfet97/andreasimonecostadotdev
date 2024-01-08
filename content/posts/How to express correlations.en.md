@@ -19,7 +19,7 @@ In this article, I delve into the details of a semi-obscure and sufficiently com
 
 I have a love-hate relationship with this pattern. The love stems from its ability to express correlations that would otherwise require risky type assertions, explicit or implicit. The hate is based on the fact that one is compelled to define the types involved in a rather unusual, I dare say non-idiomatic, and especially not easy-to-read manner.
 
-We'll examine an instance of the problem it solves and how to exploit it in a masterful way in the specific case. Regardless of my opinion, it remains an invaluable tool to include in your toolbox, and often the only one to tackle certain situations. I will then explain what I dislike and propose a solution to mitigate these difficulties.
+We'll examine an instance of the problem it solves and how to exploit it in a masterful way in the specific case. Regardless of my opinion, it remains an invaluable tool to include in your toolbox, and sometimes the only one to tackle certain situations. I will then explain what I dislike and propose a solution to mitigate these difficulties.
 
 &nbsp;
 
@@ -37,7 +37,7 @@ function processRecord(record: UnionRecord) {
 }
 ```
 
-By design, the code above is certainly correct, but TypeScript is unable to see the correlation between `record.v` and `record.f`. The meaning of the error is quickly explained: TypeScript knows that `record.f` is a function, but it cannot determine which of the three functions it is. Therefore, for safety, TypeScript requires that the parameter be acceptable in every case. It must be both a `number` and a `string` and a `boolean`, but there are no values that satisfy this requirement. The intersection of `number`, `string`, and `boolean` is precisely the `never` type, which has no inhabitants.
+By design, the code above is certainly correct, but TypeScript is unable to see the correlation between `record.v` and `record.f`. The meaning of the error is quickly explained: TypeScript knows that `record.f` is a function, but it cannot determine which of the three functions it is. Therefore, for safety, TypeScript requires that the parameter be acceptable in every case. It must be both a `number` and a `string` and a `boolean`, but there are no values that satisfy this requirement! The intersection of `number`, `string`, and `boolean` is precisely the `never` type, which has no inhabitants.
 
 &nbsp;
 
@@ -297,7 +297,7 @@ function match<
 
 Firstly, the construction of the indexed object occurs before indexing. This construction is, in fact, impossible since we only have one record available, and its `v` is certainly not usable as a parameter for all three functions. Moreover, to properly align the return parameter a more precise inference of the `kind` field would be necessary, whose type is instead immediately expanded to the upper bound `"n" | "s" | "b"`.
 
-The best compromise I know of is the following, where I use a couple of tricks to solve these problems. Unfortunately, though, we don't have any refinement on the `record`, so we have to resort once again to type assertions:
+The best compromise I know of is the following, where I use a couple of tricks to solve these problems. Unfortunately, though, we don't have any refinement on `record.v`, so we have to resort once again to type assertions:
 
 ```ts
 type NumberRecord = { kind: "n"; v: number };
