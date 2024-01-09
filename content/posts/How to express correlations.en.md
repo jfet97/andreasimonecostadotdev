@@ -468,7 +468,7 @@ type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
 
 type Kinds = UnionRecord["kind"];
 type GetValue<K extends Kinds> = (UnionRecord & { kind: K })["v"];
-type RecFs<K, V , R> = {
+type RecFs<K, V, R> = {
     [KK in Kinds]: KK extends K ? (v: V) => R : (...args: any) => any
 };
 
@@ -504,7 +504,7 @@ processRecord({
 });
 ```
 
-[Here is a playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6oDnQll1EoV6g60rHaKHn8LRa9mNJtNZj8oAB+KDLHy9A7EJboKCMZYAOjRtlQ8i0jHsIDhRCWuNEIlEogAZnAaFhgDUoGBUDgsBAtFoNsMXmDgTM-j8KmwOXcuaDun0BkNRgtRAtlqgsppXBo9sI9FA7ocyBzXrLgHBUDQoMNHssyTRsVBLtdSrcHgsDoxEQSoCatHVZYUUU0WjK5SjOAdlcTSaIAPTBqBwLS2eQQUS4U3AKBusmVZ5vKA0ZEZ9N8ND4pb6gBUUAATPy02blmaDHIMnmoFoUYYEMsDmW3khkR3fP58nbswkBI7lkgIVAAIxIqAABgOxOK9MZzNZcuWpEEUFslXi-A2B29WGT-qgof7-FEC6ZLI2q-Xm7SNcyhT3Sa0R5P1YU54Zl+XhRvG8qXIAlqAhn2wQ9lRPXgB1JC8l2vUhNXUdwoAAWVsYAAAsUVQex8BwZs4SWKcUQAVlHJgdEnFh2CQnx0KwnC8IIlsoGIsiKKwKhbBwJhJzHYsAGZiQOIA).
+[Here is a playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAwKgcFgIFotBths9QUCZr9vhU2OzeuMplzKt0+gMhqMFqIFstUFlNK4NHthHooALDmR2S85cA4KgaFBhg9lqSaFioJdrqVbvcFgdGAj8VBTVo6nLCsimi1ZfLkZwDiqiSTRAB6ENQOBaWzyCCiXBm4BQd2kypPV5QGhIzMZvhoPFLA0AKigACY+enzctzQY5Bl81AtMjDAhlgdy68kEjO75-Pl7TmEgIncskOCoABGRFQAAMByJxTpDKZLPly1Igigtkq8X4GwOPqwKYDUDDA-4okXjOZGzXG63aVrmUK++TWmPp5rCgv9KvK8Kt83SpcgCWoCBfbAjxVU9eEHElL2XG9SC1dR3CgABZWxgAAC2RVB7HwHAW1hJZp2RABWMcmB0KcWHYZCfAw7DcPwwjWygEjyMorAqFsHAmCnccSwAZiJA4gA).
 
 ### A safer alternative to the alternative of the alternative
 
@@ -518,7 +518,7 @@ type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
 
 type Kinds = UnionRecord["kind"];
 type GetValue<K extends Kinds> = (UnionRecord & { kind: K })["v"];
-type RecFs<K, V , R> = {
+type RecFs<K, V, R> = {
     [KK in Kinds]: KK extends K ? (v: V) => R : (...args: any) => any
 };
 
@@ -548,7 +548,7 @@ processRecord({
 })
 ```
 
-As always, [a playground to play with](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6oDnQll1EoV6g60rHaKHn8LRa9mNJtNZj8oAB+KDLHy9A7EJboKCMZYAOjRtlQ8i0jHsIDhRCWuNEIlEogAZnAaFhgDUoGBUDgsBAtFoNsMXlBQuMpjM-lAAKJTVC2anDNa1AgcVwaPYcGFCBZsDlAnmg36VEihBpNVpK153YG8yrdPoDIajJ5dHr9QYjUqK0QLZaoLKaUJw0gc14u4BwVA0KDDR7LMk0bFQS7XUq3B4LA6MREEqChrR1F2FFFNFrO10ozgHYRQYmkgD0JagcC0tnkEFEuDDwCg6bJGrIXqgNGRnY7fDQ+KWAYAVFAAEx6t7h5bhgxyDL9qBaFGGBDLA7j15IZGb3z+fLxnsJARJ5ZICFQACMSKgAAYDsTivTGczWa7lqRBFBbJV4vwNgcc1gLYFlAZYHvwoiPkyLIbG+H5fmks6ZIU-7NlowGgTOCgQQyUEvoUsGfpUuQBBK+AodgQGFqBvCHqW5Y0DgjYDFYOAAO4QIQuIIHgtaQc+MGem86juFAACytjAAAFiiwp0DgK5wks14ogArGeTA6FeLDsO2PjiVJMn2Pg8mrlASmqepWBULYOBMFe54jgAzMSBxAA).
+As always, [a playground to play with](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAwKgcFgIFotBths8oKFxlMZr8oABRKaoWxU4ZrWoEDiuDR7DjQoQLNjswHckE-SokUINJqtRUvXpc4G87p9AZDUaPLo9fqDEalBWiBbLVBZTShWGkdkvZ3AOCoGhQYYPZakmhYqCXa6lW73BYHRgI-FQENaOrOwrIpotJ0u5GcA7CKBEkkAemLUDgWls8ggolwoeAUDTpPVZE9UBoSI77b4aDxS39ACooAAmXWvMPLMMGOQZPtQLTIwwIZYHMcvJBIje+fz5OPdhICRPLJDgqAARkRUAADAcicU6QymSyXctSIIoLZKvF+BsDtmsM2+ZQKW+78KID6MsyGyvu+n5pDOmSFH+TZaEBIHTgo4H0pBz6FDBH6VLkATivgyHYIBBYgbwB4lmWNA4A2AxWDgADuECEDiCB4DWEFPtBHqvOo7hQAAsrYwAABbIkKdA4MusJLFeyIAKynkwOiXiw7Btj4YmSdJ9j4HJK5QIpKlqVgVC2DgTCXmew4AMxEgcQA).
 
 &nbsp;
 
