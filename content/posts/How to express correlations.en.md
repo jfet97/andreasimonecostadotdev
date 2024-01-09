@@ -351,9 +351,7 @@ const recfs = {
     b: (b: boolean): number => (b ? 1 : 0)
 }
 
-type OutputMap = {
-    [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
-};
+type OutputMap<K extends keyof TypeMap> = ReturnType<(typeof recfs)[K]>;
 
 type FuncRecord = {
     [P in keyof TypeMap]: (v: TypeMap[P]) => OutputMap[P];
@@ -367,9 +365,9 @@ function match<K extends keyof TypeMap>(
 }
 ```
 
-`ValueRecord` is defined in the same wordy way as before, while `OutputMap` and `FuncRecord` are nothing more than mapped types based on the keys of the type map `TypeMap`. In `FuncRecord`, the type of each parameter must necessarily be the type of the corresponding `v` field; otherwise, we couldn't invoke such functions. The return type is arbitrarily determined by the functions in `recfs`. Inside the match function, the kind of `recv` is again used to index the corresponding function within `recfs`, and this function is then invoked on the `v` value of recv. The type returned by match is expressed in terms of `OutputMap`.
+`ValueRecord` is defined in the same wordy way as before, `OutputMap` is just an utility type to extract the right return type and `FuncRecord` is nothing more than a mapped types base on the keys of the type map `TypeMap`. In `FuncRecord`, the type of each parameter must necessarily be the type of the corresponding `v` field; otherwise, we couldn't invoke such functions. The return type is arbitrarily determined by the functions in `recfs`. Inside the match function, the kind of `recv` is again used to index the corresponding function within `recfs`, and this function is then invoked on the `v` value of recv. The type returned by match is expressed in terms of `OutputMap`.
 
-[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCtgGBGxQNPrujhip+MRQABSdBBTUNACU6GEEUABUUABMfMwkXSxQbJw8w2hhTAB07BzkXYOzeILdxyLikgSDJH1UtCMnUAD8UACMUCQADIOyisrQAPKkYBgIE+cLtKpxMb+DxeYIoZJQXTAUg0AiFExdP6wpp6FqDKqJEKyGp-KAAMVIBD0ugMxnBUVi8RhgW8CPm+ThRTAJTWYUBwNBxWipRJincVL0wA4wjG5CQwD0AAtzJYbHYHM5XLDCqEuoxcZz1JodPpDKYzCFZriWiRKdTaebsFcoAKQcAfISIngmii0Y1mkxIobNul7IkuiHcoMFDJFPLFUquphnBkSAAiAjpuhQTkAFim5RzNqY3wA9GWoAA9R7YBPK5Op+wZpjZ3MZvQcJDCdNFgN40vYCvV2v1pMpsOZKDpyhtznuDRMaAyYuB8uVmtAA).
+[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCtgGBGxQNPrujhip+MRQABSdBBTUNACU6GEEUABUUABMfMwkXSxQbJw8w2hhTAB07BzkXYOzeILdxyLikgSDJH1UtCMnUAD8UACMUCQADIOyisrQAPKkYBgIE+cyWGx2BzOVweLzBFBhDC6YCkGgEQomLp-OFNPQtQZVRIhGp-KAAMVIBD0ugMxnC7RicTG-jhhR8yW6+XhRTAJTWYUBwNBKBM0RJshq7ipemAHGEY3ISGAegAFuDrLZ7I5WYFvIiuow8dz1JodPpDKYzCFZniWiRKdTaZbsFcoEKQcAwdaIngmqj0Y1mkxIsbNul7IkumHcoMFDJFEqVaquphnBkSAAiAiZuhQbkAFim5TzdqY3wA9BWoAA9R7YJNq1Pp+xZpi5-NZvQcJDCTMloP48vYKu1+uNlNpiOZKCZygd7nuDRMaAyUvByvVutAA).
 
 &nbsp;
 
@@ -399,9 +397,7 @@ type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
     };
 }[K];
 
-type OutputMap = {
-    [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
-};
+type OutputMap<K extends keyof TypeMap> = ReturnType<(typeof recfs)[K]>;
 
 type FuncRecord = {
     [P in keyof TypeMap]: (v: TypeMap[P]) => OutputMap[P];
@@ -449,9 +445,7 @@ const recfs = {
     b: (b: boolean): number => (b ? 1 : 0)
 };
 
-type OutputMap = {
-    [P in keyof TypeMap]: ReturnType<(typeof recfs)[P]>
-};
+type OutputMap<K extends keyof TypeMap> = ReturnType<(typeof recfs)[K]>;
 
 type FuncRecord = {
     [P in keyof TypeMap]: (x: TypeMap[P]["v"]) => OutputMap[P];
@@ -460,7 +454,7 @@ type FuncRecord = {
 
 The definition of the `match` function remains unchanged.
 
-[Here](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRAHoStRpGeP4koqgtRhk5DNrhX0ZcgIKnNsFgyQAVEIBZWzBVUlEoaagAbQBpKFoocMjuglmmN3wmAF1dxgBRAA9ZWyxgAB5VqNqOVw1GRcEAPjERUX7oADVbKzgILVLosIKcIHQtJQICAcAAzKBDSCjcYkCjQuEIkZjF4TKYzWYABSWNCg8wOam2jAJHB8iIgyMJu02nD2QigADIoAB5BBUK50hkE3YcLYaJhQVJMFkvUSCBa7Yq4GgGKCobCwyEuPHTSpQAAUut4CVQAEpiDiSQAqKAAJjY2vqjD1DXq6XkZqIOK0ADpDAg9Sb7TN2vqkIw-Hl7CaeHw0ObQ1AAPxQACMUEYAAYTbLiqZuXBgGAC8jccHCcSoTD4QKxuTMMA4KgaHTLnrTBi1VgNSbGTKPl8oAAxOA0LC1Uv4onLNFVzFI2tO46MGtgRnMvYenFcgtF4CChU5z6wkcXNZQBC2YBYAAWwKgoOA4PwkJnGJXLz1Ds7Pl+-0BWXwYEXiDGZOw1Rhh1HWpRGjfNC2LMZ5TIL8IAbJtVXVLRZm-b1tl2PUcM4E13iAA) you can find playground with the whole code.
+[Here](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRAHoStRpGeP4koqgtRhk5DNrhX0ZcgIKnNsFgyQAVEIBZWzBVUlEoaagAbQBpKFoocMjuglmmN3wmAF1dxgBRAA9ZWyxgAB5VqNqOVw1GRcEAPjERUX7oADVbKzgILVLosIKcIHQtJQICAcAAzKBDSCjcYkCjQuEIkZjF4TKYzWYABSWNCg8wOam2jAJHB8iIgyMJu02nD2QigADIoAB5BBUK50hkE3YcLYaJhQVJMFkvUSCBa7Yq4GgGKCobCwyEuPHTSpQAAUut4CVQAEpiDiSQAqKAAJjY2vqjD1DXq6XkZqIOK0ADpDAg9Sb7TN2vqkIw-Hl7CaeHw0ObQ1AAPxQACMUEYAAYTbLiqZuXBgGAC8jgVBQcBwfhIWiYfCBdjVJhgHBUDQ6Zc9aYMWqsBqTfK3p88wAxOA0LC1XHBwnEqG1zFIsbkvXHRj1sCM5l7D04rkFovAEsEwcfUSwscXNZQBC2YBYAAWpfLler6LrWLALz1Dp7Pl+-0BLJ8GBF4gxmHsNUYUdx1qURo3zQtizGECyB-CBm1bVV1S0WZf29bZdj1PDOBNd4gA) you can find playground with the whole code.
 
 ### An alternative to the alternative
 
