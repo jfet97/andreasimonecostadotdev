@@ -384,10 +384,6 @@ type StringRecord = { kind: "s"; v: string };
 type BooleanRecord = { kind: "b"; v: boolean };
 type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
 
-const double = (n: number) => n * 2;
-const trim = (s: string) => s.trim();
-const toNum = (b: boolean) => (b ? 1 : 0);
-
 
 // to this:
 type TypeMap = {
@@ -402,12 +398,6 @@ type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
         v: TypeMap[P];
     };
 }[K];
-
-const recfs = {
-    n: (n: number) => n * 2,
-    s: (s: string) => s.trim(),
-    b: (b: boolean): number => (b ? 1 : 0)
-}
 
 type OutputMap = {
     [K in keyof TypeMap]: ReturnType<(typeof recfs)[K]>
