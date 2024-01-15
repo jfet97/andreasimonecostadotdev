@@ -190,7 +190,7 @@ Inside `processRecord`, the kind of `recv` is used to index the corresponding ca
 
 &nbsp;
 
-## Another problem
+## A more complex problem
 
 Let's go back to the initial definition of records, which now only contains data. Suppose we now want to invoke a specific function on each value `v`. Each function might have its own return value, potentially different from the others. The goal is to define a matching function that, given a `UnionRecord`, calls the corresponding callback on its `v` property and returns the returned value with the correct type.
 
@@ -305,9 +305,9 @@ Unfortunately, however, we encounter an error: the type of `fs[recv.kind]` has b
 
 ### Final final attempt
 
-The problem is in the type of `fs`, that is the type parameter `FS`. We declared that type parameter to infer the return type of the matching callbacks, so that the `match` function can be more flexible. It is true that the upper bound of `FS`, namely `FuncRecord`, specifies the input types as a direct dependency of the type map, but it seems like this connection gets lost with `FS`, a generic subtype of it. This could make sense, as variance rules allow passing callbacks whose input type is a supertype compared to what is declared by `FuncRecord`.
+The problem is in the type of `fs`, that is the type parameter `FS`. We declared that type parameter to infer the return type of the matching callbacks, so that the `match` function can be more flexible. It is true that the upper bound of `FS`, namely `FuncRecord`, specifies the input types as a direct dependency of the type map, but it seems like this connection gets lost with `FS`, a generic subtype of it. This loss could be related to variance, as variance rules allow passing callbacks whose input type is a supertype compared to what is declared by `FuncRecord`. Also, it happens again that accessing with a specific index in `fs` breaks all ties with the type parameters: the inferred return type is once again `unknown`.
 
-The solution I propose to overcome this issue is based on a [recently merger PR](https://github.com/microsoft/TypeScript/pull/55811) and will work from version `5.4` of the language. However, I'm open to suggestions and alternative ideas.
+The solution I propose to overcome these issues is based on a [recently merger PR](https://github.com/microsoft/TypeScript/pull/55811) and will work from version `5.4` of the language. However, I'm open to suggestions and alternative ideas.
 
 ```ts
 type TypeMap = {
@@ -337,13 +337,13 @@ function match<K extends keyof TypeMap, FS extends FuncRecord>(
 
 We need both the ability to infer the current type of the matching callbacks and to maintain the relationship with the type map in the inferred types. We use a reverse mapped type to get both things done. The upper bound of `FS` ensures that `fs` will have __all__ the keys specified in `FuncRecord`, while the intersection in the reverse mapped type with `keyof FuncRecord` ensures that `fs` will have __only__ the keys specified in `FuncRecord`.
 
-The key we specify in the reverse mapped type is kinda special: we need that `FS[K]` to make sure there's a candidate for each key `K` from which the reverse mapped type can figure out the value of `FS[K]`. Then, by intersecting it with `(v: TypeMap[K]) => ReturnType<FS[K]>`, we ensure the connection with the type map for the input type, without really imposing anything on the return type of the matching callbacks. Moreover, we need to make sure TypeScript knows that for each key `K`, the corresponding callback in `fs` actually returns `ReturnType<FS[K]>`, since that's the return type of the `match` function.
+The key we specify in the reverse mapped type is kinda special: we need that `FS[K]` to make sure there's a candidate for each key `K` from which the reverse mapped type can figure out the value of `FS[K]`. Then, by intersecting it with `(v: TypeMap[K]) => ReturnType<FS[K]>`, we ensure the connection with the type map for the input type, without really imposing anything on the return type of the matching callbacks. Moreover, we need to make sure TypeScript knows that for each key `K`, the corresponding callback in `fs` actually returns `ReturnType<FS[K]>`, since that is the return type of the `match` function.
 
 [Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.4.0-dev.20240115&ssl=20&ssc=73&pln=20&pc=90#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCkrwUABipAR6ugbG4alQMXEEzq4eXsEoyVAAFPmDRWAlAJToYU1OBMIA7gQKFdjuTXrAHMK95EjAegAW5pY2dg59AZM+dA0Aype29o6Nza2GRiGjjDR9BN1JodPofuYQnwoO4WFguhZ4v4BvUXgAyW4onbfYwjVFVRJQDGjcYFbzFJJzNBhXTAUg0AiFEz4pIhOYybAzEi0+mM+DMp4EsKdQF0hkwpiRQF6XIAOnS9kSo2lctyMw2igMBDYUGlsI6jDwxDGxoIFGoNCpYV6ACooAAmaF4OGjOFsTg8K1QJiy9gccijGZOgQkUaCASiCRSLlkKi0eZjShQAD8UAAjFASAAGGayRRHE6nUaYZwZEgAIgI5ceEwALPbyo89UxcwB6VtQAB6yewBbOxdL9grTGrUAm5b0HCQwnLjd1+lhbY73d7x37JYVmSg5coo4m7g0TGgMibC5b2HbXeTQA).
 
 &nbsp;
 
-## What I don't like...
+## What I don't like
 
 It is usually more idiomatic to first define the components of a (discriminated) union and then create the union using the `|` operator, rather than encapsulating everything in a complex and obscure type function, as done with `ValueRecord`:
 
