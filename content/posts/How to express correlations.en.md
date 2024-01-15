@@ -293,7 +293,7 @@ function match<K extends keyof TypeMap, FS extends FuncRecord>(
     recv: ValueRecord<K>,
     fs: FS
 ): ReturnType<FS[K]> {
-  return fs[recv.kind](recv.v);
+    return fs[recv.kind](recv.v);
 }
 ```
 
