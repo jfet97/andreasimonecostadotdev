@@ -1,11 +1,11 @@
 +++
 author = "Andrea Simone Costa"
 title = "How to express correlations"
-date = "2024-01-08"
+date = "2024-01-15"
 description = "Expressing correlations has never been so difficult"
 categories = ["typescript"]
 series = ["TypeScript"]
-published = true
+published = false
 tags = [
     "correlations",
 ]
@@ -329,7 +329,7 @@ function match<
 
 ### Final attempt: the pattern
 
-It's necessary to resort once again to the pattern discussed in this article. The solution is nothing more than an extension of the [extracting functions case](#extracting-the-functions), where now each function has its own return type:
+It's necessary to resort once again to the pattern discussed in this article. The solution is a generalization of the [extracting functions case](#extracting-the-functions), where now each function has its own return type. Let's first analyze an initial attempt, which, however, will turn out to be wrong:
 
 ```ts
 type TypeMap = {
@@ -339,35 +339,81 @@ type TypeMap = {
 };
 
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
-    [P in K]: {
-        kind: P;
-        v: TypeMap[P];
-    };
+  [P in K]: {
+    kind: P;
+    v: TypeMap[P];
+  };
 }[K];
+
+type FuncRecord = {
+  [P in keyof TypeMap]: (v: TypeMap[P]) => unknown;
+};
+
+function match<K extends keyof TypeMap, FS extends FuncRecord>(
+  recv: ValueRecord<K>,
+  fs: FS
+): ReturnType<FS[K]> {
+  return fs[recv.kind](recv.v);
+}
 
 const recfs = {
     n: (n: number) => n * 2,
     s: (s: string) => s.trim(),
     b: (b: boolean): number => (b ? 1 : 0)
 }
+```
 
-type OutputMap<K extends keyof TypeMap> = ReturnType<(typeof recfs)[K]>;
+`ValueRecord` is defined in the same wordy way as before, whereas `FuncRecord` is nothing more than a mapped type based on the keys of the type map. In `FuncRecord`, the type of each parameter must necessarily be the type of the corresponding `v` field, otherwise we couldn't invoke such functions. The return type will be arbitrarily determined by the caller of `match`, therefore we set `unknown` here. We plan, in fact, to use `FuncRecord` as an upper bound and to infer the types of matching callbacks (`FS`).
 
-type FuncRecord = {
-    [P in keyof TypeMap]: (v: TypeMap[P]) => OutputMap[P];
+Inside the match function, the kind of `recv` is again used to index the corresponding function within `fs`, and this function is then invoked on the `v` value of `recv`. The type returned by match is expressed in terms of `FS`.
+
+[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCkrwUABipAR6ugbG4alQMXEEzq4eXsEoyVAAFPmDRWAlAJToYU1OBMIA7gQKFdjuTXrAHMK95EjAegAW5pY2dg59AZM+dA0Aype29o6Nza2GRiGjjDR9BN1JodPofuYQnwoO4WM9sDMSLpgKQaARCiZ6k8qokwp1ASi0TCmJFAXpcgA6dL2RKjMmU3IzDaKAwENhQMmwjqMPDEMZ8ggUag0OZoMK9ABUUAATNC8HDRnC2JweKKwkwKewOORRjM5QISKNBAJRBIpIiyFRaPMxpQoAB+KAARigJAADDNZIojidTqNMM4MiQAEQEYOPCYAFml5UenKYnoA9ImoAA9e3YH1nf2B+whpjhqATYN6DhIYTB2Mc-SwpMp9OZ47ZgPUzJQYOUQsTdwaJjQGRxmsJ7DJtP2oA).
+
+Unfortunately, however, we encounter an error: the type of `fs[recv.kind]` has been inferred as `never`, and `'string | number | boolean'` is not assignable to parameter of type `'never'`. What a drag. What's the problem now?
+
+### Final final attempt
+
+The problem is in the type of `fs`, that is the type parameter `FS`. We declared that type parameter to infer the return type of the matching callbacks, so that the `match` function can be more flexible. It is true that the upper bound of `FS`, namely `FuncRecord`, specifies the input types as a direct dependency of the type map, butit seems like this connection gets lost with `FS`, a generic subtype of it. This could make sense, as variance rules allow passing callbacks whose input type is a supertype compared to what is declared by `FuncRecord`.
+
+The solution I propose to overcome this issue is based on a [recently merger PR](https://github.com/microsoft/TypeScript/pull/55811) and will work from version `5.4` of the language. However, I'm open to suggestions and alternative ideas.
+
+```ts
+type TypeMap = {
+    n: number,
+    s: string,
+    b: boolean
 };
 
-function match<K extends keyof TypeMap>(
-    recv: ValueRecord<K>,
-    recfs: FuncRecord
-): OutputMap[K] {
-    return recfs[recv.kind](recv.v);
+type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
+  [P in K]: {
+    kind: P;
+    v: TypeMap[P];
+  };
+}[K];
+
+type FuncRecord = {
+  [P in keyof TypeMap]: (v: TypeMap[P]) => unknown;
+};
+
+function match<K extends keyof TypeMap, FS extends FuncRecord>(
+  recv: ValueRecord<K>,
+  fs: { [K in keyof FS & keyof FuncRecord]: FS[K] & ((v: TypeMap[K]) => ReturnType<FS[K]>) }
+): ReturnType<FS[K]> {
+  return fs[recv.kind](recv.v);
+}
+
+const recfs = {
+    n: (n: number) => n * 2,
+    s: (s: string) => s.trim(),
+    b: (b: boolean): number => (b ? 1 : 0)
 }
 ```
 
-`ValueRecord` is defined in the same wordy way as before, `OutputMap` is just an utility type to extract the right return type and `FuncRecord` is nothing more than a mapped type based on the keys of the type map. In `FuncRecord`, the type of each parameter must necessarily be the type of the corresponding `v` field; otherwise, we couldn't invoke such functions. The return type is arbitrarily determined by the functions in `recfs`. Inside the match function, the kind of `recv` is again used to index the corresponding function within `recfs`, and this function is then invoked on the `v` value of recv. The type returned by match is expressed in terms of `OutputMap`.
+We need both the ability to infer the current type of the matching callbacks and to maintain the relationship with the type map in the inferred types. We use a reverse mapped type to get both things done. The upper bound of `FS` ensures that `fs` will have __all__ the keys specified in `FuncRecord`, while the intersection in the reverse mapped type with `keyof FuncRecord` ensures that `fs` will have __only__ the keys specified in `FuncRecord`.
 
-[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCtgGBGxQNPrujhip+MRQABSdBBTUNACU6GEEUABUUABMfMwkXSxQbJw8w2hhTAB07BzkXYOzeILdxyLikgSDJH1UtCMnUAD8UACMUCQADIOyisrQAPKkYBgIE+cyWGx2BzOVweLzBFBhDC6YCkGgEQomLp-OFNPQtQZVRIhGp-KAAMVIBD0ugMxnC7RicTG-jhhR8yW6+XhRTAJTWYUBwNBKBM0RJshq7ipemAHGEY3ISGAegAFuDrLZ7I5WYFvIiuow8dz1JodPpDKYzCFZniWiRKdTaZbsFcoEKQcAwdaIngmqj0Y1mkxIsbNul7IkumHcoMFDJFEqVaquphnBkSAAiAiZuhQbkAFim5TzdqY3wA9BWoAA9R7YJNq1Pp+xZpi5-NZvQcJDCTMloP48vYKu1+uNlNpiOZKCZygd7nuDRMaAyUvByvVutAA).
+The key we specify in the reverse mapped type is kinda special: we need that `FS[K]` to make sure there's a candidate for each key `K` from which the reverse mapped type can figure out the value of `FS[K]`. Then, by intersecting it with `(v: TypeMap[K]) => ReturnType<FS[K]>`, we ensure the connection with the type map for the input type, without really imposing anything on the return type of the matching callbacks. Moreover, we need to make sure TypeScript knows that for each key `K`, the corresponding callback in `fs` actually returns `ReturnType<FS[K]>`, since that's the return type of the `match` function.
+
+[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.4.0-dev.20240115&ssl=20&ssc=73&pln=20&pc=90#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCkrwUABipAR6ugbG4alQMXEEzq4eXsEoyVAAFPmDRWAlAJToYU1OBMIA7gQKFdjuTXrAHMK95EjAegAW5pY2dg59AZM+dA0Aype29o6Nza2GRiGjjDR9BN1JodPofuYQnwoO4WFguhZ4v4BvUXgAyW4onbfYwjVFVRJQDGjcYFbzFJJzNBhXTAUg0AiFEz4pIhOYybAzEi0+mM+DMp4EsKdQF0hkwpiRQF6XIAOnS9kSo2lctyMw2igMBDYUGlsI6jDwxDGxoIFGoNCpYV6ACooAAmaF4OGjOFsTg8K1QJiy9gccijGZOgQkUaCASiCRSLlkKi0eZjShQAD8UAAjFASAAGGayRRHE6nUaYZwZEgAIgI5ceEwALPbyo89UxcwB6VtQAB6yewBbOxdL9grTGrUAm5b0HCQwnLjd1+lhbY73d7x37JYVmSg5coo4m7g0TGgMibC5b2HbXeTQA).
 
 &nbsp;
 
@@ -391,16 +437,14 @@ type TypeMap = {
 };
 
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
-    [P in K]: {
-        kind: P;
-        v: TypeMap[P];
-    };
+  [P in K]: {
+    kind: P;
+    v: TypeMap[P];
+  };
 }[K];
 
-type OutputMap<K extends keyof TypeMap> = ReturnType<(typeof recfs)[K]>;
-
 type FuncRecord = {
-    [P in keyof TypeMap]: (v: TypeMap[P]) => OutputMap[P];
+  [P in keyof TypeMap]: (v: TypeMap[P]) => unknown;
 };
 ```
 
