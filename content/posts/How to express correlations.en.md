@@ -5,7 +5,7 @@ date = "2024-01-15"
 description = "Expressing correlations has never been so difficult"
 categories = ["typescript"]
 series = ["TypeScript"]
-published = false
+published = true
 tags = [
     "correlations",
 ]
@@ -256,14 +256,14 @@ type FuncRecord = {
 }
 
 function match<R extends UnionRecord, FS extends FuncRecord>(record: R, fs: FS): ReturnType<FS[R["kind"]]> {
-  switch (record.kind) {
-    case "n":
-      return fs["n"](record.v) as ReturnType<FS[R["kind"]]>;
-    case "s":
-      return fs["s"](record.v) as ReturnType<FS[R["kind"]]>;
-    case "b":
-      return fs["b"](record.v) as ReturnType<FS[R["kind"]]>;
-  }
+    switch (record.kind) {
+        case "n":
+          return fs["n"](record.v) as ReturnType<FS[R["kind"]]>;
+        case "s":
+          return fs["s"](record.v) as ReturnType<FS[R["kind"]]>;
+        case "b":
+          return fs["b"](record.v) as ReturnType<FS[R["kind"]]>;
+    }
 }
 ```
 
@@ -279,19 +279,19 @@ type TypeMap = {
 };
 
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
-  [P in K]: {
-    kind: P;
-    v: TypeMap[P];
-  };
+    [P in K]: {
+        kind: P;
+        v: TypeMap[P];
+    };
 }[K];
 
 type FuncRecord = {
-  [P in keyof TypeMap]: (v: TypeMap[P]) => unknown;
+    [P in keyof TypeMap]: (v: TypeMap[P]) => unknown;
 };
 
 function match<K extends keyof TypeMap, FS extends FuncRecord>(
-  recv: ValueRecord<K>,
-  fs: FS
+    recv: ValueRecord<K>,
+    fs: FS
 ): ReturnType<FS[K]> {
   return fs[recv.kind](recv.v);
 }
@@ -317,21 +317,21 @@ type TypeMap = {
 };
 
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
-  [P in K]: {
-    kind: P;
-    v: TypeMap[P];
-  };
+    [P in K]: {
+        kind: P;
+        v: TypeMap[P];
+    };
 }[K];
 
 type FuncRecord = {
-  [P in keyof TypeMap]: (v: TypeMap[P]) => unknown;
+    [P in keyof TypeMap]: (v: TypeMap[P]) => unknown;
 };
 
 function match<K extends keyof TypeMap, FS extends FuncRecord>(
-  recv: ValueRecord<K>,
-  fs: { [K in keyof FS & keyof FuncRecord]: FS[K] & ((v: TypeMap[K]) => ReturnType<FS[K]>) }
+    recv: ValueRecord<K>,
+    fs: { [K in keyof FS & keyof FuncRecord]: FS[K] & ((v: TypeMap[K]) => ReturnType<FS[K]>) }
 ): ReturnType<FS[K]> {
-  return fs[recv.kind](recv.v);
+    return fs[recv.kind](recv.v);
 }
 ```
 
@@ -343,19 +343,19 @@ The key we specify in the reverse mapped type is kinda special: we need that `FS
 
 &nbsp;
 
-## What on earth...
+## What I don't like...
 
-Plase, let's take a moment to chew on how much we've messed up the simplicity and neatness of our code to get this pattern in place:
+It is usually more idiomatic to first define the components of a (discriminated) union and then create the union using the `|` operator, rather than encapsulating everything in a complex and obscure type function, as done with `ValueRecord`:
 
 ```ts
-// from this:
+// before:
 type NumberRecord = { kind: "n"; v: number };
 type StringRecord = { kind: "s"; v: string };
 type BooleanRecord = { kind: "b"; v: boolean };
 type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
 
 
-// to this:
+// now:
 type TypeMap = {
     n: number,
     s: string,
@@ -368,17 +368,13 @@ type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
     v: TypeMap[P];
   };
 }[K];
-
-type FuncRecord = {
-  [P in keyof TypeMap]: (v: TypeMap[P]) => unknown;
-};
 ```
 
-What are we talking about? It's mind-boggling. Mind-boggling. It is usually more idiomatic to first define the components of a (discriminated) union and then create the union using the `|` operator, rather than encapsulating everything in a complex type function, as done with `ValueRecord`. It's worth noting that it's not always feasible to straightforwardly apply this latter approach, which can be quite awkward in certain cases. Sometimes, we're just forced to overuse the type map, and believe me, things quickly go south.
+It's worth noting that it's not always feasible to straightforwardly apply this latter approach, especially when the union's components have different structures. We are forced to abuse the typemap, and things quickly go south.
 
 ### An alternative
 
-I'll be upfront, don't expect the ultimate revelation. I'm going to present a strategy to possibly mitigate the situation, that still doesn't improve all that much. In fact, perhaps it even gets worse. My efforts have focused on keeping the definitions of `UnionRecord` components separate, as is idiomatic. The rest remains almost unchanged: I wasn't able to get rid of either the type map or the remaining definitions built around it.
+My efforts have focused on keeping the definitions of `UnionRecord` components separate, as is idiomatic. The rest remains almost unchanged.
 
 So, let's start by defining the types of the records:
 
@@ -406,25 +402,22 @@ type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
 }[K];
 ```
 
-The definitions of the functions and the other two maps are almost identical to before; we just need to align the parameter type in `FuncRecord`:
+After that, we just need to align the parameter type both in `FuncRecord` and in the `match` function:
 
 ```ts
-const recfs = {
-    n: (n: number) => n * 2,
-    s: (s: string) => s.trim(),
-    b: (b: boolean): number => (b ? 1 : 0)
-};
-
-type OutputMap<K extends keyof TypeMap> = ReturnType<(typeof recfs)[K]>;
-
 type FuncRecord = {
-    [P in keyof TypeMap]: (x: TypeMap[P]["v"]) => OutputMap[P];
+    [P in keyof TypeMap]: (x: TypeMap[P]["v"]) => unknown;
 };
+
+function match<K extends keyof TypeMap, FS extends FuncRecord>(
+    recv: ValueRecord<K>,
+    fs: { [K in keyof FS & keyof FuncRecord]: FS[K] & ((v: TypeMap[K]["v"]) => ReturnType<FS[K]>) }
+): ReturnType<FS[K]> {
+    return fs[recv.kind](recv.v);
+}
 ```
 
-The definition of the `match` function remains unchanged.
-
-[Here](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRAHoStRpGeP4koqgtRhk5DNrhX0ZcgIKnNsFgyQAVEIBZWzBVUlEoaagAbQBpKFoocMjuglmmN3wmAF1dxgBRAA9ZWyxgAB5VqNqOVw1GRcEAPjERUX7oADVbKzgILVLosIKcIHQtJQICAcAAzKBDSCjcYkCjQuEIkZjF4TKYzWYABSWNCg8wOam2jAJHB8iIgyMJu02nD2QigADIoAB5BBUK50hkE3YcLYaJhQVJMFkvUSCBa7Yq4GgGKCobCwyEuPHTSpQAAUut4CVQAEpiDiSQAqKAAJjY2vqjD1DXq6XkZqIOK0ADpDAg9Sb7TN2vqkIw-Hl7CaeHw0ObQ1AAPxQACMUEYAAYTbLiqZuXBgGAC8jgVBQcBwfhIWiYfCBdjVJhgHBUDQ6Zc9aYMWqsBqTfK3p88wAxOA0LC1XHBwnEqG1zFIsbkvXHRj1sCM5l7D04rkFovAEsEwcfUSwscXNZQBC2YBYAAWpfLler6LrWLALz1Dp7Pl+-0BLJ8GBF4gxmHsNUYUdx1qURo3zQtizGECyB-CBm1bVV1S0WZf29bZdj1PDOBNd4gA) you can find playground with the whole code.
+[Here](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.4.0-dev.20240115#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRAHoStRpGeP4koqgtRhk5DNrhX0ZcgIKnNsFgyQAVEIBZWzBVUlEoaagAbQBpKFoocMjuglmmN3wmAF1dxgBRAA9ZWyxgAB5VqNqOVw1GRcEAPjERUX7oADVbKzgILVLosIKcIHQtJQICAcAAzKBDSCjcYkCjQuEIkZjF4TKYzWYABSWNCg8wOam2jAJHB8iIgyMJu02nD2QigADIoAB5BBUK50hkE3YcLYaJhQVJMFkvUSCBa7YqmKAAMTgNCwtVxMzmROWaJh8IFY3JAApjowjWBGcy9gBKYg4tUUGg4ADuNHexVhaouaygCFswCwAAtgVBQcBwfhIfqMZaOMqpOGwRCVT7ai8TXjUNgfL9-oCsvhgS82HjYQ01AtiVCDSqk5zY-DVerauTE-KOVATSbaVirWSbbt7UQcZhgHBUDQ6ZcO2SXva+rbGOPJ9OQrOpPKcZNpjmJ1OoBXZjmsJwAHTbXYm08Xzi296fUrlOBaWzyCCiXA0AxQU8VrUZkqbtgN4BJUBHHESQAKigAAmMttUrE1KwMZp5Eg+pz0MBATVtRCZiQRgTSI3x-HyZcoDA-gHW7JAoAAfigABGKBGAABltWVigDINgxNUhBCgWxIWqRIiw4f8tC4sooAAPQY0ReJDAShJEtJ0LuP9sArGTygUpTAxUwThMhTp8i0qS9PkhigA) you can find playground with the whole code.
 
 ### An alternative to the alternative
 
@@ -442,39 +435,27 @@ type RecFs<K, V, R> = {
     [KK in Kinds]: KK extends K ? (v: V) => R : (...args: any) => any
 };
 
-function processRecord<
+function match<
   K extends Kinds,
   V extends GetValue<K>
 >(record: { kind: K; v: V }) {
-    return <R>(fns: RecFs<K, V, R>): R => fns[record.kind](record.v); 
+    return <R>(fs: RecFs<K, V, R>): R => fs[record.kind](record.v); 
 }
-
-
-// usage
-const recfs = {
-    n: (n: number) => n * 2,
-    s: (s: string) => s.trim(),
-    b: (b: boolean): number => (b ? 1 : 0)
-};
-
-processRecord({} as NumberRecord)(recfs); // number
-processRecord({} as StringRecord)(recfs); // string
-processRecord({} as BooleanRecord)(recfs); // number
 ```
 
 Here, we have expanded the structure of a `record` in the type `{ kind: K; v: V }`, where `K` is the type parameter used to infer the `kind`, and as such, it must be assignable to `"n" | "s" | "b"`. Meanwhile, `V` is the type parameter used to infer the type of the value `v` corresponding to the kind `K`. The type of the structure containing the functions enforces the presence of a function for each `kind`. However, it enforces the correct type of the `v` argument and infers the return type `R` only in the callback corresponding to the `kind` `K`.
 
-I describe this solution as less safe because, despite the upper bounds on the type parameters, we lack certainty that the `record` passed to `processRecord` is indeed a `UnionRecord`:
+I describe this solution as less safe because, despite the upper bounds on the type parameters, we lack certainty that the `record` passed to `match` is indeed a `UnionRecord`:
 
 ```ts
 // allowed
-processRecord({
+match({
     kind: Math.random() > 0.5 ? "s" : "n",
     v: Math.random() > 0.5 ? "ciao" : 123
 });
 ```
 
-[Here is a playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAwKgcFgIFotBths9QUCZr9vhU2OzeuMplzKt0+gMhqMFqIFstUFlNK4NHthHooALDmR2S85cA4KgaFBhg9lqSaFioJdrqVbvcFgdGAj8VBTVo6nLCsimi1ZfLkZwDiqiSTRAB6ENQOBaWzyCCiXBm4BQd2kypPV5QGhIzMZvhoPFLA0AKigACY+enzctzQY5Bl81AtMjDAhlgdy68kEjO75-Pl7TmEgIncskOCoABGRFQAAMByJxTpDKZLPly1Igigtkq8X4GwOPqwKYDUDDA-4okXjOZGzXG63aVrmUK++TWmPp5rCgv9KvK8Kt83SpcgCWoCBfbAjxVU9eEHElL2XG9SC1dR3CgABZWxgAAC2RVB7HwHAW1hJZp2RABWMcmB0KcWHYZCfAw7DcPwwjWygEjyMorAqFsHAmCnccSwAZiJA4gA).
+[Here is a playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ6goEzX7fCpsVm9cZTDmVbp9AZDUYLUQLZaoLKaVwaPbCPRQPmHMisl4y4BwVA0KDDB7LUlYqCXa6lW73BYHRgI-FQY11GWFZFNFrS2XIzgHJVEkmiAD0AagcC0tnkEFEuBoBigzuNqlIGqgNCRqZTfDQeKWTCwVFsOHYyZNyxNBjkGWzUC0yMMCGWBx5r18SKQjD8eXsNozCQE9uWSHBUAAjIioAAGA5E4p0hmM5akQRQWyVeL8DYHD1YY0+qBBnv8USzpkLpcrtIVzKFTfxrS7-flhRH+knxfLyq5AK1Ag37A7pX7rwvYkse85Js2uxQAAsvSjLIqg9j4Dg9awks47IgArEOTA6GOLBFs2PgwcAcEIXQyENlAaGYdheYFkwY7DgATAAzESBxAA).
 
 ### A safer alternative to the alternative of the alternative
 
@@ -492,33 +473,22 @@ type RecFs<K, V, R> = {
     [KK in Kinds]: KK extends K ? (v: V) => R : (...args: any) => any
 };
 
-function processRecord<
+function match<
   U extends Extract<UnionRecord, { kind: K, v: V }>,
   K extends Kinds = U["kind"],
   V extends GetValue<K> = GetValue<K>,
 >(record: U) {
-    return <R>(fns: RecFs<K, V, R>): R => fns[record.kind](record.v); 
+    return <R>(fs: RecFs<K, V, R>): R => fs[record.kind](record.v); 
 }
 
-// usage
-const recfs = {
-    n: (n: number) => n * 2,
-    s: (s: string) => s.trim(),
-    b: (b: boolean): number => (b ? 1 : 0)
-};
-
-processRecord({} as NumberRecord)(recfs); // number
-processRecord({} as StringRecord)(recfs); // string
-processRecord({} as BooleanRecord)(recfs); // number
-
 // not allowed anymore
-processRecord({
+match({
     kind: Math.random() > 0.5 ? "s" : "n",
     v: Math.random() > 0.5 ? "ciao" : 123
 })
 ```
 
-As always, [a playground to play with](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAwKgcFgIFotBths8oKFxlMZr8oABRKaoWxU4ZrWoEDiuDR7DjQoQLNjswHckE-SokUINJqtRUvXpc4G87p9AZDUaPLo9fqDEalBWiBbLVBZTShWGkdkvZ3AOCoGhQYYPZakmhYqCXa6lW73BYHRgI-FQENaOrOwrIpotJ0u5GcA7CKBEkkAemLUDgWls8ggolwoeAUDTpPVZE9UBoSI77b4aDxS39ACooAAmXWvMPLMMGOQZPtQLTIwwIZYHMcvJBIje+fz5OPdhICRPLJDgqAARkRUAADAcicU6QymSyXctSIIoLZKvF+BsDtmsM2+ZQKW+78KID6MsyGyvu+n5pDOmSFH+TZaEBIHTgo4H0pBz6FDBH6VLkATivgyHYIBBYgbwB4lmWNA4A2AxWDgADuECEDiCB4DWEFPtBHqvOo7hQAAsrYwAABbIkKdA4MusJLFeyIAKynkwOiXiw7Btj4YmSdJ9j4HJK5QIpKlqVgVC2DgTCXmew4AMxEgcQA).
+As always, [a playground to play with](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ5QULjKYzX5QACiU1QtipwzWtQIHFcGj2HGhQgWbFZgM5IJ+lRIoQaTVa8pevQ5wO53T6AyGo0eXR6-UGI1KctEC2WqCymlCsNIrJejuAcFQNCgwwey1JWKgl2upVu9wWB0YCPxUCDdUdhWRTRaDqdyM4B2EUCJJIA9PmoHAtLZ5BBRLgaAYoEmg6o3a8oDQkS3m3w0Hilr6AFRQABM2teweWwYMcgyXagWmRhgQywOQ5eSCRK98-ny0fbCQEceWSHBUAAjIioAAGA5E4p0hmM5akQRQWyVeL8DYHdNYIPZqCF7f8UQbyZe9H2fNIJ0yQoPzrLQfz-ccFEA+lgIfJ9KlyAJRXwaDsG-HM-14HcCyLGgcGAJ8rCsHAAHcIEIHEEDwCsgLvRtXl2KAAFl6UZZEBToHB51hJYz2RABWQ8mB0U8WHYd09C4ni+PsfBBIXKARPEySsCoWwcCYU8j37ABmIkDiAA).
 
 &nbsp;
 
