@@ -122,7 +122,7 @@ function processRecord<K extends keyof TypeMap>(record: UnionRecord<K>) {
 }
 ```
 
-In short, what used to be `RecordType` is now directly distributed over a subset `K` of keys in `TypeMap`. The default value of the type parameter is not strictly necessary, but it comes in handy when we require the entire union.
+In short, what used to be `RecordType` is now directly distributed over a subset `K` of keys in `TypeMap`. The default value of the type parameter is not strictly necessary, but it comes in handy when the whole union is needed.
 
 ### Partial code deobfuscation
 
