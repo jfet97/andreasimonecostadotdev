@@ -243,7 +243,7 @@ function match<FS extends FuncRecord>(record: UnionRecord, fs: FS) {
 
 ### Attempt #2: messing with the return type
 
-Here again we are dealing with type assertions, this time explicit, with all the risks that come with them. TypeScript doesn't yet support control flow analysis to refine a parametric type: the type of the `record` is refined within the cases of the `switch`, but the same doesn't happen to the type parameter `R`. But even if that were the case, accessing with an index in `fs` breaks all ties with the type parameters. Like, for instance, `fs["n"]` which ends up with a type of `(v: number) => unknown` that is its constraint.
+Here again we are dealing with type assertions, this time explicit, with all the risks that come with them. TypeScript doesn't yet support control flow analysis to refine a parametric type: the type of the `record` is refined within the cases of the `switch`, but the same doesn't happen to the type parameter `R`. But even if that were the case, accessing with a concrete index in `fs` breaks all ties with the type parameters. Like, for instance, `fs["n"]` which ends up with a type of `(v: number) => unknown`, that is its constraint.
 
 ```ts
 type NumberRecord = { kind: "n", v: number };
