@@ -363,10 +363,10 @@ type TypeMap = {
 };
 
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
-  [P in K]: {
-    kind: P;
-    v: TypeMap[P];
-  };
+    [P in K]: {
+        kind: P;
+        v: TypeMap[P];
+    };
 }[K];
 ```
 
