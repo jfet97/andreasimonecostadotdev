@@ -271,7 +271,7 @@ function match<R extends UnionRecord>(record: R): MatchRet<R> {
 
 ### Attempt #3: another type map as return type
 
-Sometimes, preferring objects over the `switch` construct helps resolve the situation, but not this time:
+Sometimes, preferring objects and object indexing over the `switch` construct helps resolve the situation, but not this time:
 
 ```ts
 type NumberRecord = { kind: "n"; v: number };
