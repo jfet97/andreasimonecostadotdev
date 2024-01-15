@@ -269,7 +269,7 @@ function match<R extends UnionRecord, FS extends FuncRecord>(record: R, fs: FS):
 
 ### Final attempt: the pattern
 
-It's necessary to resort once again to the pattern discussed in this article. The solution is a generalization of the [extracting callbacks case](#extracting-the-callbacks), where now each function has its own return type. Let's first analyze an initial attempt, which, however, will turn out to be wrong:
+It's necessary to resort once again to the pattern discussed in this article. The solution is a generalization of the [extracting callbacks case](#extracting-the-callbacks), where now each callback has its own return type. Let's first analyze an initial attempt, which, however, will turn out to be wrong:
 
 ```ts
 type TypeMap = {
