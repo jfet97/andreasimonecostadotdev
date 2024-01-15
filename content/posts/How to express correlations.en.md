@@ -154,9 +154,9 @@ The keys of the mapped type `UnionRecordMap` are indeed the keys of the type map
 
 However, there is a significant difference compared to the previous cases: with this solution, TypeScript is unable to infer the actual types of `K` during the invocation of `processRecord`. It will always be `keyof TypeMap`, as shown in [this playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3&ssl=17&ssc=49&pln=17&pc=55#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoAVQIdhBAEoQAxsJoATZKgw5+AbQAKULlADWEEMIBmseKYC6JC-3wOXEYk1nz+eABuJHCQpjZeYeGuJAAUUR6xKPEAlOgAfFARwhxGjHgysgpK8GoaWroGxui1mjr6hiZZTi7uMYgoXlWupAR6wK1QYDTCehBMTA0dADwA0lAQAB7AEARGTI7Obhn9YHkpNO3GJOqti8ZxK165fngXjUYAdK7nl58R2QoKtgpjM5gtfilMI4giQAEQEWF0QokACMAAYkckoGkSAQKNQaLk0AUDAQmOIIB8xMJuGkoAAqKDo7IybLYAD07KgAD0APxAA). Both of the previous solutions do not suffer from this issue.
 
-### Extracting the functions
+### Extracting the callbacks
 
-To showcase the power of this pattern, let's pull out the functions `f` into another structure. You'll see that we can still correlate all of this thanks to our type map:
+To showcase the power of this pattern, let's pull out the callbacks `f` into another structure. You'll see that we can still correlate all of this thanks to our type map:
 
 ```ts
 type TypeMap = {
@@ -186,7 +186,7 @@ function processRecord<K extends keyof TypeMap>(
 
 We have both `ValueRecord` and `FuncRecord` defined in terms of the type map. `ValueRecord` is based on the "verbose" version, allowing the type parameter `K` to be precisely inferred during the invocation of `processRecord`. On the other hand, the definition of `FuncRecord` can be kept as simple as possible: a non-parametric mapped type whose keys are the same as the type map.
 
-Inside `processRecord`, the kind of `recv` is used to index the corresponding function within the `FuncRecord` structure, and that function is then invoked on the value `v` of `recv`. [TypeScript doesn't break a sweat](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWFCMeADaAApQXFBmALokOPz8TlxGJLF8GXgAbiRBiChxyVFQMrLRKQpK8FAAYqQEeroGxuGYkfxxCQTOrh5ewSipUAAUViXe5bHJAJToYYXCHEayDe5tesAcwkNgNMJ6EExMnYamFta29o7+o6WhU1U0+sVqGlrXxuYQvk8O4WC09v8tit0vhPsBSDQhqDop89IUAHRZezJKaojGFJYKGrYE5nC5XfQ3d4AempUAAegB+KowgpYnJQABEBE5wIy3wAjAAGKoyPm9Kr8YjTAmrKAGAhMcQQdFiYTcKaFKAAKigwqWdD6BSgYM1KzQYQVSokqvVmvRn0gSGAUwATEsDUaCoIZebLUdrSq1RrlBBRlq0JGuSJlVJOUtRdgE0A).
+Inside `processRecord`, the kind of `recv` is used to index the corresponding callback within the `FuncRecord` structure, and that function is then invoked on the value `v` of `recv`. [TypeScript doesn't break a sweat](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWFCMeADaAApQXFBmALokOPz8TlxGJLF8GXgAbiRBiChxyVFQMrLRKQpK8FAAYqQEeroGxuGYkfxxCQTOrh5ewSipUAAUViXe5bHJAJToYYXCHEayDe5tesAcwkNgNMJ6EExMnYamFta29o7+o6WhU1U0+sVqGlrXxuYQvk8O4WC09v8tit0vhPsBSDQhqDop89IUAHRZezJKaojGFJYKGrYE5nC5XfQ3d4AempUAAegB+KowgpYnJQABEBE5wIy3wAjAAGKoyPm9Kr8YjTAmrKAGAhMcQQdFiYTcKaFKAAKigwqWdD6BSgYM1KzQYQVSokqvVmvRn0gSGAUwATEsDUaCoIZebLUdrSq1RrlBBRlq0JGuSJlVJOUtRdgE0A).
 
 &nbsp;
 
@@ -215,7 +215,7 @@ function match(record: UnionRecord, fs: ??): ?? {
 
 One initial solution to the problem involves combining a `switch` statement with the necessary overloads for the `match` function.
 
-In `FuncRecord`, the type of each parameter must be aligned with the corresponding `v` field's type, otherwise we couldn't invoke such callbacks. The return type will be arbitrarily determined by the caller of `match`, therefore we set `unknown` here. We plan, in fact, to use `FuncRecord` as an upper bound and to infer the types of matching callbacks (`FS`).
+In `FuncRecord`, the type of each parameter must be aligned with the corresponding `v` field's type, otherwise we couldn't invoke such callbacks. The return type will be arbitrarily determined by the caller of `match`, therefore we set `unknown` here. We plan, in fact, to use `FuncRecord` as an upper bound and to infer the types of the matching callbacks (`FS`).
 
 The main issue with this approach is the presence of implicit type assertions: there's no guarantee that the implementation adheres to the indications of the signatures for the various overloads. [Seeing is believing](https://www.typescriptlang.org/play?ts=5.3.3#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuALAAoUJCgBlYKloBzTLgLEylWg2YBndl0Y75SoWMnhoAIRw4ANhACGNFXkIly1OoyZJ93KEg29k6mElLQAKo0VDjO2K7q8MhoLmoAPrLGNMrx6VDWdo5xqvhmYRZQAGJwNFipbmQSUM1QANroULRQUTHFCQ46UOitTJ74TAC6E4wAFP4zPbH1UABkGmOMw6Nak0IAlCOck3vEAHxQNRQ0OADuNGaCEhIAZjVYwL1QCA7AWAAWAB5KjIoBAAB7ACB0QbVWr1U4zVC5bRJfj1DjPHSMYF7TYQYBwVA0AAqFiBMhGrAmpxebw+sS+P3+5NBEKh+Bhb3hiORjDkCmy6KgmOxMlxQ3xhJJZOBIz01NptXpNEZv0BwNZkOhVS5yIRSJKjAKwT6BAxWKqYrxBKJpMg5JGvgV4leSs+3zVLPBWo5Orhep5hu60SWyPNopOpCaLSRNpVMhAyDsMyYN2AzyYewkgiAA). Also, the `switch` is a bit redundant, but unfortunately we can't just go with `fs[record.kind](record.v)`, not without resorting to the pattern at least.
 
