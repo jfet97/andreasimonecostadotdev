@@ -213,7 +213,11 @@ function match(record: UnionRecord, fs: ??): ?? {
 
 ### Attempt #1: overloads
 
-One initial solution to the problem involves combining a `switch` statement with the necessary overloads for the `match` function. The main issue with this approach is the presence of implicit type assertions: there's no guarantee that the implementation adheres to the indications of the signatures for the various overloads. [Seeing is believing](https://www.typescriptlang.org/play?ts=5.3.3#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuALAAoUJCgBlYKloBzTLgLEylWg2YBndl0Y75SoWMnhoAIRw4ANhACGNFXkIly1OoyZJ93KEg29k6mElLQAKo0VDjO2K7q8MhoLmoAPrLGNMrx6VDWdo5xqvhmYRZQAGJwNFipbmQSUM1QANroULRQUTHFCQ46UOitTJ74TAC6E4wAFP4zPbH1UABkGmOMw6Nak0IAlCOck3vEAHxQNRQ0OADuNGaCEhIAZjVYwL1QCA7AWAAWAB5KjIoBAAB7ACB0QbVWr1U4zVC5bRJfj1DjPHSMYF7TYQYBwVA0AAqFiBMhGrAmpxebw+sS+P3+5NBEKh+Bhb3hiORjDkCmy6KgmOxMlxQ3xhJJZOBIz01NptXpNEZv0BwNZkOhVS5yIRSJKjAKwT6BAxWKqYrxBKJpMg5JGvgV4leSs+3zVLPBWo5Orhep5hu60SWyPNopOpCaLSRNpVMhAyDsMyYN2AzyYewkgiAA). Also, the `switch` is a bit redundant, but unfortunately we can't just go with `fs[record.kind](record.v)`, not without resorting to the pattern at least.
+One initial solution to the problem involves combining a `switch` statement with the necessary overloads for the `match` function.
+
+In `FuncRecord`, the type of each parameter must be aligned with the corresponding `v` field's type, otherwise we couldn't invoke such callbacks. The return type will be arbitrarily determined by the caller of `match`, therefore we set `unknown` here. We plan, in fact, to use `FuncRecord` as an upper bound and to infer the types of matching callbacks (`FS`).
+
+The main issue with this approach is the presence of implicit type assertions: there's no guarantee that the implementation adheres to the indications of the signatures for the various overloads. [Seeing is believing](https://www.typescriptlang.org/play?ts=5.3.3#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuALAAoUJCgBlYKloBzTLgLEylWg2YBndl0Y75SoWMnhoAIRw4ANhACGNFXkIly1OoyZJ93KEg29k6mElLQAKo0VDjO2K7q8MhoLmoAPrLGNMrx6VDWdo5xqvhmYRZQAGJwNFipbmQSUM1QANroULRQUTHFCQ46UOitTJ74TAC6E4wAFP4zPbH1UABkGmOMw6Nak0IAlCOck3vEAHxQNRQ0OADuNGaCEhIAZjVYwL1QCA7AWAAWAB5KjIoBAAB7ACB0QbVWr1U4zVC5bRJfj1DjPHSMYF7TYQYBwVA0AAqFiBMhGrAmpxebw+sS+P3+5NBEKh+Bhb3hiORjDkCmy6KgmOxMlxQ3xhJJZOBIz01NptXpNEZv0BwNZkOhVS5yIRSJKjAKwT6BAxWKqYrxBKJpMg5JGvgV4leSs+3zVLPBWo5Orhep5hu60SWyPNopOpCaLSRNpVMhAyDsMyYN2AzyYewkgiAA). Also, the `switch` is a bit redundant, but unfortunately we can't just go with `fs[record.kind](record.v)`, not without resorting to the pattern at least.
 
 ```ts
 type NumberRecord = { kind: "n", v: number };
@@ -291,25 +295,17 @@ function match<K extends keyof TypeMap, FS extends FuncRecord>(
 ): ReturnType<FS[K]> {
   return fs[recv.kind](recv.v);
 }
-
-const recfs = {
-    n: (n: number) => n * 2,
-    s: (s: string) => s.trim(),
-    b: (b: boolean): number => (b ? 1 : 0)
-}
 ```
 
-`ValueRecord` is defined in the same wordy way as before, whereas `FuncRecord` is nothing more than a mapped type based on the keys of the type map. In `FuncRecord`, the type of each parameter must necessarily be the type of the corresponding `v` field, otherwise we couldn't invoke such functions. The return type will be arbitrarily determined by the caller of `match`, therefore we set `unknown` here. We plan, in fact, to use `FuncRecord` as an upper bound and to infer the types of matching callbacks (`FS`).
-
-Inside the match function, the kind of `recv` is again used to index the corresponding function within `fs`, and this function is then invoked on the `v` value of `recv`. The type returned by match is expressed in terms of `FS`.
+`ValueRecord` is defined in the same wordy way as before, whereas `FuncRecord` is nothing more than a mapped type based on the keys of the type map. Inside the match function, the kind of `recv` is again used to index the corresponding function within `fs`, and this function is then invoked on the `v` value of `recv`. The type returned by `match` is expressed in terms of `FS`, as it was in the previuous attempts.
 
 [Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCkrwUABipAR6ugbG4alQMXEEzq4eXsEoyVAAFPmDRWAlAJToYU1OBMIA7gQKFdjuTXrAHMK95EjAegAW5pY2dg59AZM+dA0Aype29o6Nza2GRiGjjDR9BN1JodPofuYQnwoO4WM9sDMSLpgKQaARCiZ6k8qokwp1ASi0TCmJFAXpcgA6dL2RKjMmU3IzDaKAwENhQMmwjqMPDEMZ8ggUag0OZoMK9ABUUAATNC8HDRnC2JweKKwkwKewOORRjM5QISKNBAJRBIpIiyFRaPMxpQoAB+KAARigJAADDNZIojidTqNMM4MiQAEQEYOPCYAFml5UenKYnoA9ImoAA9e3YH1nf2B+whpjhqATYN6DhIYTB2Mc-SwpMp9OZ47ZgPUzJQYOUQsTdwaJjQGRxmsJ7DJtP2oA).
 
-Unfortunately, however, we encounter an error: the type of `fs[recv.kind]` has been inferred as `never`, and `'string | number | boolean'` is not assignable to parameter of type `'never'`. What a drag. What's the problem now?
+Unfortunately, however, we encounter an error: the type of `fs[recv.kind]` has been inferred as `never`, and `string | number | boolean` is not assignable to parameter of type `never`. What a drag. What's the problem now?
 
 ### Final final attempt
 
-The problem is in the type of `fs`, that is the type parameter `FS`. We declared that type parameter to infer the return type of the matching callbacks, so that the `match` function can be more flexible. It is true that the upper bound of `FS`, namely `FuncRecord`, specifies the input types as a direct dependency of the type map, butit seems like this connection gets lost with `FS`, a generic subtype of it. This could make sense, as variance rules allow passing callbacks whose input type is a supertype compared to what is declared by `FuncRecord`.
+The problem is in the type of `fs`, that is the type parameter `FS`. We declared that type parameter to infer the return type of the matching callbacks, so that the `match` function can be more flexible. It is true that the upper bound of `FS`, namely `FuncRecord`, specifies the input types as a direct dependency of the type map, but it seems like this connection gets lost with `FS`, a generic subtype of it. This could make sense, as variance rules allow passing callbacks whose input type is a supertype compared to what is declared by `FuncRecord`.
 
 The solution I propose to overcome this issue is based on a [recently merger PR](https://github.com/microsoft/TypeScript/pull/55811) and will work from version `5.4` of the language. However, I'm open to suggestions and alternative ideas.
 
@@ -336,12 +332,6 @@ function match<K extends keyof TypeMap, FS extends FuncRecord>(
   fs: { [K in keyof FS & keyof FuncRecord]: FS[K] & ((v: TypeMap[K]) => ReturnType<FS[K]>) }
 ): ReturnType<FS[K]> {
   return fs[recv.kind](recv.v);
-}
-
-const recfs = {
-    n: (n: number) => n * 2,
-    s: (s: string) => s.trim(),
-    b: (b: boolean): number => (b ? 1 : 0)
 }
 ```
 
