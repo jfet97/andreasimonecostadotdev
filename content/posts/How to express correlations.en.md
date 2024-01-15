@@ -37,7 +37,7 @@ function processRecord(record: UnionRecord) {
 }
 ```
 
-By design, the code above is certainly correct, but TypeScript is unable to see the correlation between `record.v` and `record.f`. The meaning of the error is quickly explained: TypeScript knows that `record.f` is a function, but it cannot determine which of the three functions it is. Therefore, for safety, TypeScript requires that the parameter be acceptable in every case. It must be both a `number` and a `string` and a `boolean`, but there are no values that satisfy this requirement! The intersection of `number`, `string`, and `boolean` is precisely the `never` type, which has no inhabitants.
+By design, the code above is certainly correct, but TypeScript is unable to see the correlation between `record.v` and `record.f`. The meaning of the error is quickly explained: TypeScript knows that `record.f` is a function, but it cannot determine which of the three functions it is. Therefore, for safety reasons, TypeScript requires that the parameter be acceptable in every case. It must be both a `number` and a `string` and a `boolean`, but there are no values that satisfy this requirement! The intersection of `number`, `string`, and `boolean` is precisely the `never` type, which has no inhabitants.
 
 &nbsp;
 
