@@ -178,15 +178,15 @@ type FuncRecord = {
 
 function processRecord<K extends keyof TypeMap>(
     recv: ValueRecord<K>,
-    recfs: FuncRecord
+    fs: FuncRecord
 ) {
-    return recfs[recv.kind](recv.v);
+    return fs[recv.kind](recv.v);
 }
 ```
 
 We have both `ValueRecord` and `FuncRecord` defined in terms of the type map. `ValueRecord` is based on the "verbose" version, allowing the type parameter `K` to be precisely inferred during the invocation of `processRecord`. On the other hand, the definition of `FuncRecord` can be kept as simple as possible: a non-parametric mapped type whose keys are the same as the type map.
 
-Inside `processRecord`, the kind of `recv` is used to index the corresponding function within the `FuncRecord` structure, and that function is then invoked on the value `v` of `recv`. [TypeScript doesn't break a sweat](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWFCMeADaAApQXFBmALokOPz8TlxGJLF8GXgAbiRBiChxyVFQMrLRKQpK8FAAYqQEeroGxuGYkfxxCQTOrh5ewSipUAAUViXe5bHJAJToYYXCHEayDe5tesAcwkNgNMJ6EExMnYamFta29o7+o6WhU1U0+sVqGlrXxuYQvk8J89O4WC09v8tit0vhPsBSDQhqDwdFQYUAHRZezJKYYzGFJYKGrYE5nC5XfQ3d4AelpUAAegB+Kpwgo4nJQABEBG5wIy3wAjAAGKoyAW9Kr8YjTImrKAGAhMcQQTFiYTcKaFKAAKigoqWdD6BSgEO1KzQYSVKok6s12sxn0gSGAUwATEsjSaCoI5ZbrUdbWqNVrlBBRjq0NGeSJVVJuUtxdgk0A).
+Inside `processRecord`, the kind of `recv` is used to index the corresponding function within the `FuncRecord` structure, and that function is then invoked on the value `v` of `recv`. [TypeScript doesn't break a sweat](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWFCMeADaAApQXFBmALokOPz8TlxGJLF8GXgAbiRBiChxyVFQMrLRKQpK8FAAYqQEeroGxuGYkfxxCQTOrh5ewSipUAAUViXe5bHJAJToYYXCHEayDe5tesAcwkNgNMJ6EExMnYamFta29o7+o6WhU1U0+sVqGlrXxuYQvk8O4WC09v8tit0vhPsBSDQhqDop89IUAHRZezJKaojGFJYKGrYE5nC5XfQ3d4AempUAAegB+KowgpYnJQABEBE5wIy3wAjAAGKoyPm9Kr8YjTAmrKAGAhMcQQdFiYTcKaFKAAKigwqWdD6BSgYM1KzQYQVSokqvVmvRn0gSGAUwATEsDUaCoIZebLUdrSq1RrlBBRlq0JGuSJlVJOUtRdgE0A).
 
 &nbsp;
 
