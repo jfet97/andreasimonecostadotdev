@@ -436,8 +436,8 @@ type RecFs<K, V, R> = {
 };
 
 function match<
-  K extends Kinds,
-  V extends GetValue<K>
+    K extends Kinds,
+    V extends GetValue<K>
 >(record: { kind: K; v: V }) {
     return <R>(fs: RecFs<K, V, R>): R => fs[record.kind](record.v); 
 }
@@ -474,9 +474,9 @@ type RecFs<K, V, R> = {
 };
 
 function match<
-  U extends Extract<UnionRecord, { kind: K, v: V }>,
-  K extends Kinds = U["kind"],
-  V extends GetValue<K> = GetValue<K>,
+    U extends Extract<UnionRecord, { kind: K, v: V }>,
+    K extends Kinds = U["kind"],
+    V extends GetValue<K> = GetValue<K>,
 >(record: U) {
     return <R>(fs: RecFs<K, V, R>): R => fs[record.kind](record.v); 
 }
