@@ -192,7 +192,7 @@ Inside `processRecord`, the kind of `recv` is used to index the corresponding fu
 
 ## Another problem
 
-Let's go back to the initial definition of records, which now only contain data. Suppose we now want to invoke a specific function on each value `v`. Each function might have its own return value, potentially different from the others. The goal is to define a matching function that, given a `UnionRecord`, calls the corresponding callback on its `v` property and returns the returned value with the correct type.
+Let's go back to the initial definition of records, which now only contains data. Suppose we now want to invoke a specific function on each value `v`. Each function might have its own return value, potentially different from the others. The goal is to define a matching function that, given a `UnionRecord`, calls the corresponding callback on its `v` property and returns the returned value with the correct type.
 
 ```ts
 type NumberRecord = { kind: "n", v: number };
