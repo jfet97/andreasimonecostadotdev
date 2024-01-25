@@ -76,7 +76,7 @@ type RecordType<K extends keyof TypeMap> = {
 };
 ```
 
-The type function `RecordType<K>` perfectly encodes the correspondence between the `kind`, the types, and the two related properties. It is defined in terms of `TypeMap`, which serves as an upper bound for the type parameter `K` and is used to correlate the `v` field with the parameter of the `f` function: they both have the type `TypeMap[K]`.
+The type function `RecordType<K>` perfectly encodes the correspondence between the `kind`, the types, and the two related properties. It is defined in terms of `TypeMap`, which keys serve as an upper bound for the type parameter `K`, and is used to correlate the `v` field with the parameter of the `f` function: they both have the type `TypeMap[K]`.
 
 `RecordType` is nothing more than the skeleton of the union `UnionRecord` defined in the previous snippet, a union that now we can express in the following way:
 
