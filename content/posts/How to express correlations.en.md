@@ -370,7 +370,7 @@ type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
 }[K];
 ```
 
-It's worth noting that it's not always feasible to straightforwardly apply this latter approach, especially when the union's components have different structures. We are forced to abuse the typemap, and things quickly go south.
+It's worth noting that it's not always feasible to straightforwardly apply this latter approach, especially when the union's components have different structures. We are forced to abuse the type map, and things quickly go south.
 
 ### An alternative
 
