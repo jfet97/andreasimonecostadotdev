@@ -134,7 +134,7 @@ Perché? Da dove saltano fuori quelle intersezioni? Cerchiamo di capire meglio c
 
 Abbiamo detto che TypeScript non supporta l'analisi del control flow per rifinire un tipo parametrico, e `K` è proprio questo! TypeScript sa che `service` può essere ristretta, ad esempio, al solo caso `"auth'`, perciò ci permette di creare uno `switch`/`case` come quello presente in `createPayload`, ma non rifinisce di conseguenza anche il type parameter `K`. TypeScript non sa che `{ username: "johndoe", password: "eodnhoj" }` è assegnabile a `Payloads[K]` in quella specifica circostanza poiché non tiene conto dell'uguaglianza `K = "auth"`.
 
-TypeScript è essenzialmente fin troppo cauto, e ci richiede di restituire un valore che per ogni possibile `K` è assegnabile a `Payloads[K]`. Tale valore dovrà quindi contenere ogni possibile proprietà disponibile accedendo ad una qualsiasi chiave di un oggetto `Payloads`, perciò il suo tipo non può che essere l'intersezione tra tutti i vari tipi delle chiavi presenti in `Payloads`. Nessun ramo dello `switch`/`case` restituisce un valore di tale tipo, quindi TypeScript protesta in ognuno di essi.
+A causa di questa skill issue TypeScript preferisce essere cauto richiedendoci di restituire un valore che per ogni possibile `K` sia assegnabile a `Payloads[K]`. Tale valore dovrà quindi contenere ogni possibile proprietà disponibile accedendo ad una qualsiasi chiave di un oggetto `Payloads`, perciò il suo tipo non può che essere l'intersezione tra tutti i vari tipi delle chiavi presenti in `Payloads`. Nessun ramo dello `switch`/`case` restituisce un valore di tale tipo, quindi TypeScript protesta in ognuno di essi.
 
 ## La soluzione
 
