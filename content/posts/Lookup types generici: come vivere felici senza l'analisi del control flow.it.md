@@ -37,6 +37,7 @@ TypeScript è in grado di comprendere che se la condizione del costrutto `if` è
 TypeScript non supporta il narrowing di un type parameter `T` in base, ad esempio, al valore contenuto in una variabile avente quel tipo. In altre parole l'analisi del control flow va quasi completamente a farsi benedire. Non dal papa, da Hejlsberg in persona. Questo perché è facilissimo ricadere in una situazione nella quale tale narrowing sarebbe scorretto, o _unsound_, come dicono gli inglesi.
 
 Ecco che incontriamo dei problemi in situazioni come la seguente:
+
 ```ts
 interface Payloads {
   auth: {
@@ -81,7 +82,8 @@ function createPayload<K extends keyof Payloads>(service: K): Payloads[K] {
 
 La funzione `createPayload` evidentemente copre ogni caso restituendo di volta in volta il payload corretto, eppure TypeScript (`v. 5.5.3`) non è d'accordo e ci segnala due diverse tipologie di errore.
 
-La prima riguarda il tipo di ritorno della funzione: "_Function lacks ending return statement and return type does not include 'undefined'._". In altre parole TypeScript non considera esaustivo lo `switch`/`case` e si aspetta quindi che venga gestito nel codice anche il `default` case, sebbene non potrà mai accadere che ll parametro `service` risulti diverso dai valori `"auth"`, `"cart"` e `"room"`.\
+La prima riguarda il tipo di ritorno della funzione: "_Function lacks ending return statement and return type does not include 'undefined'._". In altre parole TypeScript non considera esaustivo lo `switch`/`case` e si aspetta quindi che venga gestito nel codice anche il `default` case, sebbene non potrà mai accadere che ll parametro `service` risulti diverso dai valori `"auth"`, `"cart"` e `"room"`.
+
 Possiamo facilmente risolvere l'errore nel seguente modo:
 
 ```ts
@@ -108,6 +110,7 @@ function createPayload<K extends keyof Payloads>(service: K): Payloads[K] {
   }
 }
 ```
+
 [Playground](https://www.typescriptlang.org/play/?target=99&jsx=0&ts=5.5.3#code/JYOwLgpgTgZghgYwgAgApwJ4BsD2cAmAzsgN4BQyycArmABYBcpFly1h0IcAthE4WCigA5gG4WlAA5xChAO44o+foJHjKAX3XIEcKGCblWyYJG6FDJ5cgFCQY5AEdqccKYxMQ1bgCNoyDQBtAF1tKSEkT28-KDCqSUksYAh8AGEcakkcEAB+FTsxFi0WKBwcbkMJK3y1Kq5eGvs46X0IBGBpcAtSNg4oer4bVXsAkO1ijTIyGGoQBDBgbJ0oCDhIdGw8fAAeAGlkCAAPSBAiZABrCAwcGDRMXAJCAD4ACj6AN2BI5F2ASiYNg8iIFdsFmJR5KYEHRkG9oJ8kL9waxdBxkAAiGj0dEMKqUFZgaj9HrsTg8QbogBWODopxwEHRABpkNJZAolEx0RAcPgQHQcJT0QE4qiUOjdPocXjkASiSAeqYIOYmCFmZIIoMAAzCqqijGlcpS4z4iCE4lGY2UYDWdEARgATABmJnSygDTnnKF0CAgF2WqR6SDtTpgbqBEi9MkNDHU2n4elCjTBRnS4rGfAQeDULAGaX0UpyZAgCCFgCiUFKUBe6NmGZgoBSNnhXwZv3GZEmQA)
 
 Il secondo tipo di errore invece risulta molto più prolisso e oscuro, e intacca ogni ramo dello `switch`. TypeScript ci dice che ogni valore restituito "_is not assignable to type 'Payloads[K]'_", in particolare ci dice che non è assegnabile al tipo:
