@@ -137,7 +137,7 @@ TypeScript è essenzialmente fin troppo cauto, e ci richiede di restituire un va
 
 Come possiamo creare un valore di tipo `Payloads[K]` in modo pulito? Siamo costretti a restituire sempre un mappazzone con millemila proprietà? Per fortuna no!
 
-Ragioniamo sul significato di tale tipo: esso deriva dall'accedere ad un oggetto di tipo `Payloads` con una chiave generica `K`, chiave che deve essere assegnabile a `keyof Payloads`. Abbiamo già questa chiave, è proprio il parametro `service`! Ci manca giusto l'oggetto `Payloads`:
+Ragioniamo sul significato di tale tipo: esso deriva dall'accedere ad un oggetto di tipo `Payloads` con una chiave generica `K`, chiave che deve essere assegnabile a `keyof Payloads`. Abbiamo una chiave di tipo `K`? Si, è proprio il parametro `service`! Ci manca giusto l'oggetto `Payloads`:
 
 ```ts
 function createPayload<K extends keyof Payloads>(service: K): Payloads[K] {
