@@ -170,7 +170,7 @@ Ecco che TypeScript è pienamente soddisfatto perché stiamo restituendo esattam
 
 ## La soluzione efficiente
 
-La soluzione appena proposta è sicuramente corretta, ma non è la più efficiente. Ogni volta che chiamiamo `createPayload` stiamo creando un oggetto `Payloads` completo, anche se ci serve solamente una piccola parte di esso. Questo diventa un problema se `Payloads` fosse un oggetto molto grande e complesso e la funzione `createPayload` venisse chiamata con una certa frequenza.
+La soluzione appena proposta è sicuramente corretta, ma non è la più efficiente. Ogni volta che chiamiamo `createPayload` stiamo creando un oggetto `Payloads` completo, anche se ci serve solamente una piccola parte di esso. Questo potrebbe diventare un problema se `Payloads` fosse un oggetto molto grande e complesso e la funzione `createPayload` venisse chiamata con una certa frequenza.
 
 Per risolvere questo problema possiamo sfruttare i getters:
 
