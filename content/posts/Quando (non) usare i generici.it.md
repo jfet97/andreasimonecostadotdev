@@ -29,6 +29,7 @@ I generici sono variabili che contengono tipi. Siamo abituati a concepire le var
 I generici ci permettono di chiedere a TypeScript di inferire il tipo di una qualche entità e memorizzare tale tipo in una variabile. Come sia rappresentato internamente il tipo non è di nostro interesse, noi vogliamo solamente averlo a disposizione per riutilizzarlo. Quando ad un generico viene assegnato un tipo si dice che il generico è stato _istanziato_.
 
 L'esempio più semplice che mi viene in mente  per illustrare il concetto sono gli array:
+
 ```ts
 const arr = [1, "ciao", 2]; //  (string | number)[]
 
@@ -36,6 +37,7 @@ const first = arr.pop(); // string | number | undefined
 
 arr.push(false); // errore: 'false' è un boolean
 ```
+
 La classe `Array` in TypeScript dichiara un generico per catturare il tipo del contenuto degli array. Quando creiamo un array, ad esempio con le parentesi quadre, stiamo implicitamente chiedendo a TypeScript di inferire il tipo degli elementi che inseriamo in esso e istanziare il generico dichiarato dalla classe `Array` opportunamente per quello specifico array. Nell'esempio il generico viene istanziato col tipo `string | number` per l'array `arr`. In che modo si fa uso del tipo memorizzato nel generico? TypeScript lo utilizza per tipare al meglio le operazioni sull'array, come `push` e `pop`. La `pop` eseguita su `arr` restituisce infatti `string | number | undefined`, mentre la `push` non accetta argomenti aventi tipo differente da `string | number`.
 
 Se il compilatore non disponesse dei generici dovrebbe assegnare il medesimo tipo ad ogni istanza di `Array`, e probabilmente tale tipo sarebbe qualcosa di equivalente ad `unknown[]`. Operazioni di lettura come la `pop` ci costringerebbero di volta in volta ad assertare - sennò poi venite a dirmi che in TypeScript non esistono cast, ma solo type assertion - il tipo del risultato. Operazioni di scrittura come la `push` invece accetterebbero la qualunque, con elevato rischio di inserire negli array valori inaspettati.
@@ -55,6 +57,7 @@ function add(n: number, m: number): number {
   return n + m;
 }
 ```
+
 ```ts
 function add(n: number, m: number): number {
   const _n = n; // <- ???
@@ -62,6 +65,7 @@ function add(n: number, m: number): number {
   return n + m;
 }
 ```
+
 ```ts
 function add(n: number, m: number): number {
   const _n = n; // <- ???
@@ -167,3 +171,17 @@ function map<T, U>(ts: readonly T[], projection: (t: T) => U): U[] {
 ```
 
 Anche in questo esempio dichiariamo due variabili: `T` e `U`. La variabile `T` sarà inizializzata con il tipo degli elementi nell'array `ts` e utilizzata per tipare l'argomento della `projection`. La variabile `U` sarà inizializzata con il tipo di ritorno di questa callback e utilizzata per tipare l'array risultante dalla trasformazione.
+
+### Esempio 4
+
+```ts
+type Pair<T> = { first: T, second: T };
+
+function swap<T>(pair: Pair<T>) {
+  const { first, second } = pair;
+  pair.first = second;
+  pair.second = first;
+}
+```
+
+In questo esempio la variabile `T` viene utilizzata per imporre che i due campi `first` e `second` dell'oggetto `pair` abbiano lo stesso tipo.
