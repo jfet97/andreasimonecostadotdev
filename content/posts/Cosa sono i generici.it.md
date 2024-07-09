@@ -31,7 +31,7 @@ function toPair<X>(x: X): [X, X] {
 
 L'abitudine ci porta a vedere `toPair` come una funzione generica che preso un qualsiasi `x` avente un qualche tipo `X` lo duplica, producendo la coppia `[x, x]` di tipo `[X, X]`. Questo modo di vedere le cose però nasconde, dal mio punto di vista, la vera natura dei generici.
 
-Possiamo infatti essere un pochino più precisi: la funzione `toPair` prende in ingresso una _type variable_ `X` e restituisce una funzione la quale, a sua volta, prende un qualsiasi `x` di tipo `X` e lo duplica, producendo la coppia `[x, x]` di tipo `[X, X]`.
+Possiamo infatti essere un pochino più precisi: la funzione `toPair` dichiara una _type variable_ `X` in input, prendendo effettivamente un tipo come input, e restituisce una funzione la quale, a sua volta, prende un qualsiasi `x` di tipo `X` e lo duplica, producendo la coppia `[x, x]` di tipo `[X, X]`.
 
 Da un punto di vista __formale__ `toPair` è una funzione leggermente bizzarra poiché prende in input __un tipo__ ma restituisce __un termine__, ovvero un valore effettivamente esistente a runtime (la funzione che duplica `x`). Come possiamo invocare `toPair`? Con le parentesi angolate `<>`:
 

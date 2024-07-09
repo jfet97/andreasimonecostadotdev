@@ -29,7 +29,7 @@ function toPair<X>(x: X): [X, X] {
 
 We may be used to seeing `toPair` as a generic function that, given any `x` of some type `X`, duplicates it, producing the pair `[x, x]` of type `[X, X]`. However, this way of looking at things hides, from my point of view, the true nature of type parameters.
 
-We can be a little more precise: the `toPair` function takes a type variable `X` as input and returns a function that, in turn, takes any `x` of type `X` and duplicates it, producing the pair `[x, x]` of type `[X, X]`.
+We can be a little more precise: the `toPair` function declares an input type variable `X`, effectively taking a type as input, and returns a function that, in turn, takes any `x` of type `X` and duplicates it, producing the pair `[x, x]` of type `[X, X]`.
 
 From a __formal__ point of view, `toPair` is a slightly bizarre function because it takes __a type__ as input but returns __a term__, that is, a value that actually exists at runtime (the function that duplicates `x`). How can we invoke `toPair`? With angle brackets `<>`:
 
