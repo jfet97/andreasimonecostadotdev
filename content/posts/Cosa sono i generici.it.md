@@ -43,6 +43,8 @@ const toPairString = toPair<string>
 // toPairString: (x: string) => [string, string]
 ```
 
+[TS Playground](https://www.typescriptlang.org/play/?target=99&jsx=0&install-plugin=playground-ts-scanner#code/GYVwdgxgLglg9mABFOAFAhjATgHgBoB8AFAB4BcieAlBQNp4A0lAuogN4BQi3iWAplBBYktEkxLMA3BwC+HDhAQBnKMjSYsAORABbAEZ8siALxqM2HGF0GsBDgHp7PRAD0A-PMVgVZjQGUoLBgwAHMTXwsVINC7R2d3IA)
+
 La prima volta invochiamo `toPair` con il tipo `number` e quindi ci verrà restituita una funzione che prende una variabile `x` di tipo `number` e restituisce una coppia di numeri. In questo caso la _type variable_ `X` sarà pari a `number`. La seconda volta invochiamo `toPair` con il tipo `string` e quindi ci verrà restituita una funzione che prende una variabile `x` di tipo `string` e restituisce una coppia di stringhe. In questo caso la _type variable_ `X` sarà pari a `string`.
 
 Osserviamo quindi che la _type variable_ `X` si sta comportando esattamente come una variabile: nel primo caso `X` avrà come valore il tipo `number`, nel secondo caso `X` avrà come valore il tipo `string`. Per quanto ciò possa suonare poco intuitivo, non vi è realmente nulla di speciale: il compilatore, che ha delle rappresentazioni interne per i tipi `number` e `string`, possiede anche la capacità di rappresentare, con apposite strutture dati, le _type variable_, oltre che associare ad esse sia tipi concreti, come nell'esempio sopra, sia altre _type variable_ in determinate circostanze.

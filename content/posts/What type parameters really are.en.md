@@ -41,6 +41,8 @@ const toPairString = toPair<string>
 // toPairString: (x: string) => [string, string]
 ```
 
+[TS Playground](https://www.typescriptlang.org/play/?target=99&jsx=0&install-plugin=playground-ts-scanner#code/GYVwdgxgLglg9mABFOAFAhjATgHgBoB8AFAB4BcieAlBQNp4A0lAuogN4BQi3iWAplBBYktEkxLMA3BwC+HDhAQBnKMjSYsAORABbAEZ8siALxqM2HGF0GsBDgHp7PRAD0A-PMVgVZjQGUoLBgwAHMTXwsVINC7R2d3IA)
+
 The first time we invoke `toPair` with the type `number`, we get a function that takes a variable `x` of type `number` and returns a pair of numbers. In this case, the type variable `X` will be equal to `number`. The second time we invoke `toPair` with the type `string`, we get a function that takes a variable `x` of type `string` and returns a pair of strings. In this case, the type variable `X` will be equal to `string`.
 
 We can see that the type variable `X` behaves exactly like a variable: in the first case, `X` will have the value `number`, and in the second case, `X` will have the value `string`. As unintuitive as this may sound, there is nothing special about it. The compiler, which has internal representations for the `number` and `string` types, also has the ability to represent type variables with appropriate data structures. It can associate these variables with concrete types, as in the example above, and with other type variables in certain circumstances.
