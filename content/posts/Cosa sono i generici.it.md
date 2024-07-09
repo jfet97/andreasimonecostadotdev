@@ -62,7 +62,7 @@ const toPairString = toPair
 
 Notiamo quindi che il codice JavaScript generato non contiene alcuna traccia della _type variable_ `X` e che le funzioni `toPairNumber` e `toPairString` sono in realtà la stessa funzione `toPair` con un nome diverso. Considerare `toPair` una funzione da tipi a termini (valori) è solo una astrazione, la medesima utilizzata da [System F](https://en.wikipedia.org/wiki/System_F) per descrivere il comportamento di funzioni polimorfe, sebbene dietro le quinte, in JavaScript, essa sia solo una banale funzione da termini a termini.
 
-In altri linguaggi di programmazione le cose potrebbero non stare così: il diverso valore della _type variable_ `X` potrebbe comportare la generazione di codice diverso. Ad esempio alcuni linguaggi come Rust richiedono di conoscere a priori la dimensione dello _stack frame_ delle funzioni, perciò input di tipo diverso potrebbero dare luogo alla generazione e all'invocazione di funzioni diverse.
+In altri linguaggi di programmazione le cose potrebbero non stare così: ad esempio in Rust input di tipo diverso potrebbero dare luogo alla generazione e all'invocazione di funzioni diverse poiché la dimensione del [record di attivazione](https://en.wikipedia.org/wiki/Call_stack) di ogni funzione deve essere nota a priori.
 
 ## Si, ma l'inferenza?
 
