@@ -82,4 +82,4 @@ Unfortunately, inference somewhat obscures the nature of `toPair` and the necess
 
 ## When to use type parameters
 
-Every time you need to keep track, in the type system, of a type that is not known in advance. Type variables are variables, and TypeScript uses them to store types, but if we don't use them later, then there is no point in having them instantiated. I believe that knowing when __not__ to use generics is the best way to learn how to use them effectively.
+Every time you need to keep track, in the type system, of a type that is not known in advance. Type variables are variables, and TypeScript uses them to store types, but if we don't use them later, then there is no point in having them instantiated. I believe that knowing when __not__ to use generics is the best way to learn how to use them effectively. More on this in a future article.
