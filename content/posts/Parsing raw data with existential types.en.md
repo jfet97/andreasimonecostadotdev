@@ -61,7 +61,7 @@ function parseRawArray<T>(xs: unknown[]): Array<T> {
 }
 ```
 
-A problem of the above function is that there exists only one inhabitant of the `∀T.Array<T>` type, which is the empty tuple. We cannot craft an alternative value of type `Array<T>` for every possible `T` out there starting from an array of unknowns. Another problem is that the client of `parseRawArray` shouldn't be able set the type `T` of the array's elements. Without making further assumptions they don't know the actual type of the raw data. The compiler doesn't know it either because it's something that can only be known at runtime, so we need to find a way to abstract over it.
+A problem of the above function is that there exists only one inhabitant of the `∀T.Array<T>` type, which is the empty tuple. We cannot craft an alternative value of type `Array<T>` for every possible `T` out there starting from an array of unknowns. Another problem is that the client of `parseRawArray` shouldn't be able to set the type `T` of the array's elements. Without making further assumptions they don't know the actual type of the raw data. The compiler doesn't know it either because it's something that can only be known at runtime, so we need to find a way to abstract over it.
 
 We can use existential types to solve this problem:
 
