@@ -53,7 +53,7 @@ The function `doLogPushPop` takes an `ArrayE` and set the continuation to pop an
 
 ## Parsing raw data
 
-Let's say we got some raw data from somewhere and we want to parse it. In particular, we want to parse an array of unknown entities and __we want to be sure they are all of the same type__:
+Let's say we got some raw data from somewhere and we want to parse it. In particular, we want to parse an array of unknown entities and __we want to be sure they all are of the same type__:
 
 ```typescript
 function parseRawArray<T>(xs: unknown[]): Array<T> {
