@@ -1,8 +1,8 @@
 +++
 author = "Andrea Simone Costa"
-title = "Parsing raw structure with existential types"
+title = "Parsing raw data with existential types"
 date = "2024-07-17"
-description = "How to parse raw structure with TypeScript using existential types as result type"
+description = "How to parse raw data with TypeScript using existential types as result type"
 categories = ["typescript"]
 series = ["TypeScript"]
 published = true
@@ -24,7 +24,7 @@ To existentialize a type variable means to abstract over it.
 >
 > -- <cite>[wiki.haskell.org](https://wiki.haskell.org/Existential_type)</cite>
 
-Existential types allow you to hide the implementation details of a structure, [leading to abstract data types](https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf). We can also use them to convert a more specific type into a less specific one. Here I'm gonna use them for something slightly different: to type parsed raw structure.
+Existential types allow you to hide the implementation details of a structure, [leading to abstract data types](https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf). We can also use them to convert a more specific type into a less specific one. Here I'm gonna use them for something slightly different: to type raw structure after having parsed it.
 
 Unfortunately TypeScript doesn't support existential types out of the box, but we can encode them using universally quantified types. Let's existentialize the `T` type variable of the `Array<T>` type:
 
@@ -51,9 +51,9 @@ function doLogPushPop(arrayE: ArrayE) {
 
 The function `doLogPushPop` takes an `ArrayE` and set the continuation to pop an element from the array, unshift it back and then log the array. The client of the `ArrayE` doesn't know the type of the array's elements, but can still operate on it.
 
-## Parsing raw structure
+## Parsing raw data
 
-Let's say we got some raw structure from somewhere and we want to parse it. In particular, we want to parse an array of unknown entities and __we want to be sure they are all of the same type__:
+Let's say we got some raw data from somewhere and we want to parse it. In particular, we want to parse an array of unknown entities and __we want to be sure they are all of the same type__:
 
 ```typescript
 function parseRawArray<T>(xs: unknown[]): Array<T> {
