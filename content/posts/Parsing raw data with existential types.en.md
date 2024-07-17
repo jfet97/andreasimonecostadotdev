@@ -34,7 +34,7 @@ type ArrayE = <R>(cont: <T>(ts: Array<T>) => R) => R
 
 You should read the above mess as `∃T. Array<T>`. Note how the type variable `T` is hidden on the right-hand side of the definition. The meaning of such encoding is the following: something of type `∃T. Array<T>` is equivalent to an higher-order function that takes a continuation `cont` as argument, passes to it an array of `T` and returns the result of the continuation. The continuation represents the `Array<T>`'s client, which cannot assume anything about the internal content of the array, but can still operate on it and return whichever result it wants.
 
-To give you something of type `ArrayE` means to give you an array containing only values of type `T`, which you do not know. You can still operate on the array, but you can't know the type of its elements. If the abstracted type were the implementation type of a structure, you could operate on the structure without knowing its internal details.
+To give you something of type `ArrayE` means to give you an array containing only values of parametric type `T`, which you do not know. You can still operate on the array, but you can't know the type of its elements. If the abstracted type were the implementation type of a structure, you could operate on the structure without knowing its internal details.
 
 Let's see a simple example of `ArrayE` in action:
 
