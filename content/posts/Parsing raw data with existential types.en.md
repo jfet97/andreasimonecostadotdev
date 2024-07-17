@@ -10,6 +10,8 @@ tags = [
     "existential types",
     "parsing",
 ]
+featuredImage = "/images/existentials/copertina_1.png"
+images = ["/images/existentials/copertina_1.png"]
 +++
 
 _Disclaimer: parsing and validation of raw data is already well taken care of by libraries like [Zod](https://zod.dev/), [effect/schema](https://github.com/Effect-TS/effect/tree/main/packages/schema) and many others. The goal of this article is simply to provide another perspective on existential types._
