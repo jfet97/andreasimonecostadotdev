@@ -2,7 +2,7 @@
 author = "Andrea Simone Costa"
 title = "Parsing raw data with existential types"
 date = "2024-07-17"
-description = "How to parse raw data with TypeScript using existential types as result type"
+description = "How to parse raw data with TypeScript using existential types as result type."
 categories = ["typescript"]
 series = ["TypeScript"]
 published = true
