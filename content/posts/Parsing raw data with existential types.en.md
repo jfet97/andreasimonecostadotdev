@@ -40,7 +40,7 @@ Unfortunately TypeScript doesn't support existential types out of the box, but w
 type ArrayE = <R>(cont: <T>(ts: Array<T>) => R) => R
 ```
 
-The meaning of the encoding is the following: something of type `∃T.Array<T>` is equivalent to an higher-order function that takes a continuation `cont` as argument, passes to it an array of `T` and returns the result of the continuation. The continuation represents the `Array<T>`'s client, which cannot assume anything about the internal content of the array, but can still operate on it and return whichever result it wants.
+The meaning of the encoding is the following: something of type `∃T.Array<T>` is equivalent to an higher-order function that takes a continuation `cont` as argument, passes to it an array of `T` and returns the result of the continuation. The continuation represents the `Array<T>`'s client, which cannot assume anything about the internal content of the array, but can still operate on it and return whichever result `R` it wants, as long as it doesn't depend on `T`.
 
 Let's see a simple example of `ArrayE` in action:
 
