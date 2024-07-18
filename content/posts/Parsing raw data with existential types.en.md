@@ -26,19 +26,19 @@ To existentialize a type variable means to abstract over it.
 
 Existential types allow you to hide the implementation details of a structure, [leading to abstract data types](https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf). We can also use them to convert a more specific type into a less specific one. Here I'm gonna use them for something slightly different: to type raw structure with parametric nature after parsing, i.e. to get a parametrically typed entity from an untyped source.
 
-Unfortunately TypeScript doesn't support existential types out of the box, but we can encode them using universally quantified types. Let's existentialize the `T` type variable of the `Array<T>` type:
-
-```typescript
-type ArrayE = <R>(cont: <T>(ts: Array<T>) => R) => R
-```
-
-You should read the above mess as:
+Let's try to understand what it would mean to existentialize the `T` type variable of the `Array<T>` type:
 
 ```typescript
 type ArrayE = ∃T.Array<T>
 ```
 
 Note how the type variable `T` is hidden on the right-hand side of the definition. To give you something of type `∃T.Array<T>` means to give you an array containing only values of parametric type `T`, which you do not know. You can still operate on the array, but you can't know the type of its elements. If the abstracted type were the implementation type of a structure you could operate on the structure without knowing its internal details.
+
+Unfortunately TypeScript doesn't support existential types out of the box, but we can encode them using universally quantified types:
+
+```typescript
+type ArrayE = <R>(cont: <T>(ts: Array<T>) => R) => R
+```
 
 The meaning of the encoding is the following: something of type `∃T.Array<T>` is equivalent to an higher-order function that takes a continuation `cont` as argument, passes to it an array of `T` and returns the result of the continuation. The continuation represents the `Array<T>`'s client, which cannot assume anything about the internal content of the array, but can still operate on it and return whichever result it wants.
 
