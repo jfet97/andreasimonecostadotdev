@@ -24,7 +24,7 @@ To existentialize a type variable means to abstract over it.
 >
 > -- <cite>[wiki.haskell.org](https://wiki.haskell.org/Existential_type)</cite>
 
-Existential types allow you to hide the implementation details of a structure, [leading to abstract data types](https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf). We can also use them to convert a more specific type into a less specific one. Here I'm gonna use them for something slightly different: to type raw structure with parametric nature after parsing.
+Existential types allow you to hide the implementation details of a structure, [leading to abstract data types](https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf). We can also use them to convert a more specific type into a less specific one. Here I'm gonna use them for something slightly different: to type raw structure with parametric nature after parsing, i.e. to get a parametrically typed entity from an untyped source.
 
 Unfortunately TypeScript doesn't support existential types out of the box, but we can encode them using universally quantified types. Let's existentialize the `T` type variable of the `Array<T>` type:
 
