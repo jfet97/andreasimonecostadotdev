@@ -49,11 +49,11 @@ function doLogUnshiftPop(arrayE: ArrayE) {
 }
 ```
 
-The function `doLogUnshiftPop` takes an `ArrayE` and set the continuation to pop an element from the array, unshift it back and then log the array. The client of the `ArrayE` doesn't know the type of the array's elements, but can still operate on it.
+The function `doLogUnshiftPop` takes an `ArrayE` and set the continuation to pop an element from the array, unshift it back and then log the array. The client of the `ArrayE` doesn't know the type of the array's elements, but can still operate on it with some limitations. They cannot push elements of a whatever type into the array because the array has type `Array<T>`, not `Array<unknown>`.
 
 ## Parsing raw data
 
-Let's say we got some raw data from somewhere and we want to parse it. In particular, we want to parse an array of unknown entities and __we want to be sure they all are of the same type__:
+Let's say we got some raw data from somewhere and we want to parse it. In particular, we want to parse an array of unknown entities and we want to be sure they all are of the same type:
 
 ```typescript
 function parseRawArray<T>(xs: unknown[]): Array<T> {
