@@ -14,7 +14,7 @@ featuredImage = "/images/existentials/copertina_1.png"
 images = ["/images/existentials/copertina_1.png"]
 +++
 
-_Disclaimer: parsing and validation of raw data is already well taken care of by libraries like [Zod](https://zod.dev/), [effect/schema](https://github.com/Effect-TS/effect/tree/main/packages/schema) and many others. The goal of this article is simply to provide another perspective on existential types._
+_Disclaimer: parsing and validation of raw data is already well taken care of by libraries like [Zod](https://zod.dev/), [effect/schema](https://github.com/Effect-TS/effect/tree/main/packages/schema) and many others. The goal of this article is simply to provide another perspective on existential types. The idea for this article came from [here](https://www.cs.ox.ac.uk/projects/gip/school/tc.hs), where the technique I'm going to present is used to type a function from untyped to typed lambda calculus._
 
 ## Brief intro on existential types
 
@@ -24,7 +24,7 @@ To existentialize a type variable means to abstract over it.
 >
 > -- <cite>[wiki.haskell.org](https://wiki.haskell.org/Existential_type)</cite>
 
-Existential types allow you to hide the implementation details of a structure, [leading to abstract data types](https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf). We can also use them to convert a more specific type into a less specific one. Here I'm gonna use them for something slightly different: to type raw structure with parametric nature after parsing, i.e. to get a parametrically typed entity from an untyped source. The idea for this article came from [here](https://www.cs.ox.ac.uk/projects/gip/school/tc.hs), where this technique is used to type a function from untyped to typed lambda calculus.
+Existential types allow you to hide the implementation details of a structure, [leading to abstract data types](https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf). We can also use them to convert a more specific type into a less specific one. Here I'm gonna use them for something slightly different: to type raw structure with parametric nature after parsing, i.e. to get a parametrically typed entity from an untyped source.
 
 Let's try to understand what it would mean to existentialize the `T` type variable of the `Array<T>` type:
 
