@@ -34,7 +34,7 @@ type ArrayE = ∃T.Array<T>
 
 Note how the type variable `T` is hidden on the right-hand side of the definition. To give you something of type `∃T.Array<T>` means to give you an array containing only values of parametric type `T`, which you do not know. You can still operate on the array, but you can't know the type of its elements. If the abstracted type were the implementation type of a structure you could operate on the structure without knowing its internal details.
 
-Unfortunately TypeScript doesn't support existential types out of the box, but we can encode them using universally quantified types:
+Unfortunately TypeScript doesn't support existential types out of the box, but we can **encode** them using universally quantified types:
 
 ```typescript
 type ArrayE = <R>(cont: <T>(ts: Array<T>) => R) => R
