@@ -84,7 +84,7 @@ function parseRawArrayE(xs: unknown[]): ArrayE /* ∃T.Array<T> */ {
 }
 ```
 
-We solved the problem by returning an `ArrayE` instead of an `Array<T>`, because now the type variable `T` is not free for the client anymore, but bound by the existential quantifier. If the parsing is successful, we can say the array contains elements all of the same type `T`, for some `T` that exists but is unknown. Actually `∃T.Array<T>` doesn't exclude the possibility of `T` being an union type or a supertype, even if it's not the case here, but it's a good trade-off between expressiveness and simplicity.
+We solved the problem by returning an `ArrayE` instead of an `Array<T>`, because now the type variable `T` is not free for the client anymore, but bound by the existential quantifier. If the parsing is successful, we can say the array contains elements all of the same type `T`, for some `T` that exists but is unknown. Actually `∃T.Array<T>` doesn't exclude the possibility of `T` being an union type or a supertype, even if it's not the case here, but it's a good trade-off for this simple example.
 
 The client of `parseRawArrayE` can operate on the array under the constraint that all its elements have the same parametric type. While managing an `Array<unknown>` would have been more error-prone, because that type lets the client assume the array could contain elements of whatever types it wants, the existential type provides a safer way to handle the parsed data and preserve its integrity.
 
