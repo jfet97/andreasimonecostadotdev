@@ -492,6 +492,19 @@ As always, [a playground to play with](https://www.typescriptlang.org/play?jsx=0
 
 &nbsp;
 
+To be fair, the above definition of `match` is equivalent, for our purposes, to the following one:
+
+```ts
+function match<
+  K extends Kinds,
+  V extends GetValue<K>,
+>(record: UnionRecord & { kind: K, v: V }) {
+    return <R>(fs: RecFs<K, V, R>): R => fs[record.kind](record.v); 
+}
+```
+
+[Playground](https://www.typescriptlang.org/play/?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ6goEzX7fCpsVm9cZTDmVbp9AZDUYLHkLZaoLKaNa1FTbVwaPYcaFCWGkVkvGXAOCoGhQYYPZakrFQS7XUq3e4LA6MBH4qBmuoywrIpotaWy5GcA7CKBEkkAemDUDgWls8ggolwNAMUDdZtUWteUBoSIz6b4aDxS0NACooAAmHlp83Lc0GOQZPNQLTIwwIZYHMuvJBIju+fz5e3ZhICJ3LJDgqAARkRUAADAcicU6QzGctSIIoLZKvF+BsDt6sGb-VBQ-3+KIF0zl6v12ka5lCjuk1oD0fqwpT-Tzyu15VcgEFfh79g+4BkevADiGYY0DgwBrlYVg4AA7hAhA4ggeAxmeS6pq8uxQAAsvSjLIqg9j4DgzawksU7IgArKOTA6JOLDsNqeh4QRREkWRLZQJRNF0VgVC2DgTCTmOxYAMxEgcQA).
+
 ## Conclusion
 
 Expressing correlations has never been this challenging. No need to thank me, but if you really insist feel free to insult me [on Xitter](https://twitter.com/jfet97).
