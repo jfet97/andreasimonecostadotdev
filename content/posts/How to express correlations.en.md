@@ -419,9 +419,9 @@ function match<K extends keyof TypeMap, FS extends FuncRecord>(
 
 [Here](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.4.0-dev.20240115#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRAHoStRpGeP4koqgtRhk5DNrhX0ZcgIKnNsFgyQAVEIBZWzBVUlEoaagAbQBpKFoocMjuglmmN3wmAF1dxgBRAA9ZWyxgAB5VqNqOVw1GRcEAPjERUX7oADVbKzgILVLosIKcIHQtJQICAcAAzKBDSCjcYkCjQuEIkZjF4TKYzWYABSWNCg8wOam2jAJHB8iIgyMJu02nD2QigADIoAB5BBUK50hkE3YcLYaJhQVJMFkvUSCBa7YqmKAAMTgNCwtVxMzmROWaJh8IFY3JAApjowjWBGcy9gBKYg4tUUGg4ADuNHexVhaouaygCFswCwAAtgVBQcBwfhIfqMZaOMqpOGwRCVT7ai8TXjUNgfL9-oCsvhgS82HjYQ01AtiVCDSqk5zY-DVerauTE-KOVATSbaVirWSbbt7UQcZhgHBUDQ6ZcO2SXva+rbGOPJ9OQrOpPKcZNpjmJ1OoBXZjmsJwAHTbXYm08Xzi296fUrlOBaWzyCCiXA0AxQU8VrUZkqbtgN4BJUBHHESQAKigAAmMttUrE1KwMZp5Eg+pz0MBATVtRCZiQRgTSI3x-HyZcoDA-gHW7JAoAAfigABGKBGAABltWVigDINgxNUhBCgWxIWqRIiw4f8tC4sooAAPQY0ReJDAShJEtJ0LuP9sArGTygUpTAxUwThMhTp8i0qS9PkhigA) you can find playground with the whole code.
 
-### An alternative to the alternative
+## Is the pattern really needed?
 
-To be fair, experimenting with TypeScript and type parameters, I was able to get a somewhat less safe solution that doesn't employ the pattern:
+To be fair, experimenting with TypeScript and type parameters, I was able to get an alternative but still quite contrived solution that doesn't employ the pattern:
 
 ```ts
 type NumberRecord = { kind: "n", v: number };
@@ -443,9 +443,11 @@ function match<
 }
 ```
 
+[Playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ6goEzX7fCpsVm9cZTDmVbp9AZDUYLUQLZaoLKaVwaPbCPRQPmHMisl4y4BwVA0KDDB7LUlYqCXa6lW73BYHRgI-FQY11GWFZFNFrS2XIzgHJVEkmiAD0AagcC0tnkEFEuBoBigzuNqlIGqgNCRqZTfDQeKWTCwVFsOHYyZNyxNBjkGWzUC0yMMCGWBx5r18SKQjD8eXsNozCQE9uWSHBUAAjIioAAGA5E4p0hmM5akQRQWyVeL8DYHD1YY0+qBBnv8USzpkLpcrtIVzKFTfxrS7-flhRH+knxfLyq5AK1Ag37A7pX7rwvYkse85Js2uxQAAsvSjLIqg9j4Dg9awks47IgArEOTA6GOLBFs2PgwcAcEIXQyENlAaGYdheYFkwY7DgATAAzESBxAA).
+
 Here, we have expanded the structure of a `record` in the type `{ kind: K; v: V }`, where `K` is the type parameter used to infer the `kind`, and as such, it must be assignable to `"n" | "s" | "b"`. Meanwhile, `V` is the type parameter used to infer the type of the value `v` corresponding to the kind `K`. The type of the structure containing the functions enforces the presence of a function for each `kind`. However, it enforces the correct type of the `v` argument and infers the return type `R` only in the callback corresponding to the `kind` `K`.
 
-I describe this solution as less safe because, despite the upper bounds on the type parameters, we lack certainty that the `record` passed to `match` is indeed a `UnionRecord`:
+This solution is a bit less safe because, despite the upper bounds on the type parameters, we lack certainty that the `record` passed to `match` is indeed a `UnionRecord`:
 
 ```ts
 // allowed
@@ -455,42 +457,7 @@ match({
 });
 ```
 
-[Here is a playground](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ6goEzX7fCpsVm9cZTDmVbp9AZDUYLUQLZaoLKaVwaPbCPRQPmHMisl4y4BwVA0KDDB7LUlYqCXa6lW73BYHRgI-FQY11GWFZFNFrS2XIzgHJVEkmiAD0AagcC0tnkEFEuBoBigzuNqlIGqgNCRqZTfDQeKWTCwVFsOHYyZNyxNBjkGWzUC0yMMCGWBx5r18SKQjD8eXsNozCQE9uWSHBUAAjIioAAGA5E4p0hmM5akQRQWyVeL8DYHD1YY0+qBBnv8USzpkLpcrtIVzKFTfxrS7-flhRH+knxfLyq5AK1Ag37A7pX7rwvYkse85Js2uxQAAsvSjLIqg9j4Dg9awks47IgArEOTA6GOLBFs2PgwcAcEIXQyENlAaGYdheYFkwY7DgATAAzESBxAA).
-
-### A safer alternative to the alternative of the alternative
-
-At this point I'm just trolling, and no, I have no intention of explaining why this stuff works. I'm afraid I might not even know. Or maybe I do. Who knows.
-
-```ts
-type NumberRecord = { kind: "n", v: number };
-type StringRecord = { kind: "s", v: string };
-type BooleanRecord = { kind: "b", v: boolean };
-type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
-
-type Kinds = UnionRecord["kind"];
-type GetValue<K extends Kinds> = (UnionRecord & { kind: K })["v"];
-type RecFs<K, V, R> = {
-    [KK in Kinds]: KK extends K ? (v: V) => R : (...args: any) => any
-};
-
-function match<
-    U extends Extract<UnionRecord, { kind: K, v: V }>,
-    K extends Kinds = U["kind"],
-    V extends GetValue<K> = GetValue<K>,
->(record: U) {
-    return <R>(fs: RecFs<K, V, R>): R => fs[record.kind](record.v); 
-}
-
-// not allowed anymore
-match({
-    kind: Math.random() > 0.5 ? "s" : "n",
-    v: Math.random() > 0.5 ? "ciao" : 123
-})
-```
-
-As always, [a playground to play with](https://www.typescriptlang.org/play?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ5QULjKYzX5QACiU1QtipwzWtQIHFcGj2HGhQgWbFZgM5IJ+lRIoQaTVa8pevQ5wO53T6AyGo0eXR6-UGI1KctEC2WqCymlCsNIrJejuAcFQNCgwwey1JWKgl2upVu9wWB0YCPxUCDdUdhWRTRaDqdyM4B2EUCJJIA9PmoHAtLZ5BBRLgaAYoEmg6o3a8oDQkS3m3w0Hilr6AFRQABM2teweWwYMcgyXagWmRhgQywOQ5eSCRK98-ny0fbCQEceWSHBUAAjIioAAGA5E4p0hmM5akQRQWyVeL8DYHdNYIPZqCF7f8UQbyZe9H2fNIJ0yQoPzrLQfz-ccFEA+lgIfJ9KlyAJRXwaDsG-HM-14HcCyLGgcGAJ8rCsHAAHcIEIHEEDwCsgLvRtXl2KAAFl6UZZEBToHB51hJYz2RABWQ8mB0U8WHYd09C4ni+PsfBBIXKARPEySsCoWwcCYU8j37ABmIkDiAA).
-
-To be fair, the above definition of `match` is equivalent, for our purposes, to the following one:
+To fix this problem, is sufficient to intersect the `record` parameter with `UnionRecord`:
 
 ```ts
 function match<
@@ -501,7 +468,7 @@ function match<
 }
 ```
 
-[Playground](https://www.typescriptlang.org/play/?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ6goEzX7fCpsVm9cZTDmVbp9AZDUYLHkLZaoLKaNa1FTbVwaPYcaFCWGkVkvGXAOCoGhQYYPZakrFQS7XUq3e4LA6MBH4qBmuoywrIpotaWy5GcA7CKBEkkAemDUDgWls8ggolwNAMUDdZtUWteUBoSIz6b4aDxS0NACooAAmHlp83Lc0GOQZPNQLTIwwIZYHMuvJBIju+fz5e3ZhICJ3LJDgqAARkRUAADAcicU6QzGctSIIoLZKvF+BsDt6sGb-VBQ-3+KIF0zl6v12ka5lCjuk1oD0fqwpT-Tzyu15VcgEFfh79g+4BkevADiGYY0DgwBrlYVg4AA7hAhA4ggeAxmeS6pq8uxQAAsvSjLIqg9j4DgzawksU7IgArKOTA6JOLDsNqeh4QRREkWRLZQJRNF0VgVC2DgTCTmOxYAMxEgcQA).
+As always, [a playground to play with](https://www.typescriptlang.org/play/?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ6goEzX7fCpsVm9cZTDmVbp9AZDUYLHkLZaoLKaNa1FTbVwaPYcaFCWGkVkvGXAOCoGhQYYPZakrFQS7XUq3e4LA6MBH4qBmuoywrIpotaWy5GcA7CKBEkkAemDUDgWls8ggolwNAMUDdZtUWteUBoSIz6b4aDxS0NACooAAmHlp83Lc0GOQZPNQLTIwwIZYHMuvJBIju+fz5e3ZhICJ3LJDgqAARkRUAADAcicU6QzGctSIIoLZKvF+BsDt6sGb-VBQ-3+KIF0zl6v12ka5lCjuk1oD0fqwpT-Tzyu15VcgEFfh79g+4BkevADiGYY0DgwBrlYVg4AA7hAhA4ggeAxmeS6pq8uxQAAsvSjLIqg9j4DgzawksU7IgArKOTA6JOLDsNqeh4QRREkWRLZQJRNF0VgVC2DgTCTmOxYAMxEgcQA).
 
 &nbsp;
 
