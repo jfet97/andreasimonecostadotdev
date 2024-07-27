@@ -476,6 +476,6 @@ As always, [a playground to play with](https://www.typescriptlang.org/play/?jsx=
 
 ## Conclusion
 
-It's not always possible to avoid the pattern discussed in this article just by hammering type parameters in the right places. If it were that simple, they wouldn't have gone to the trouble of implementing it. However, it's always worth trying to find alternative solutions that are more idiomatic and less complex. The pattern is a powerful tool, but it's not always the best one. I hope, however, that this example has been thorough enough to cover almost all the details of the pattern.
+It's not always possible to avoid the pattern discussed in this article just by hammering type parameters in the right places. If it were that simple, they wouldn't have gone to the trouble of implementing it. However, it's always worth trying to find alternative solutions that are more idiomatic and less complex. The pattern is a powerful tool, but it's not always the best one. I hope, however, that this example has been thorough enough to cover almost all the details of it.
 
 Expressing correlations has never been this challenging. No need to thank me, but if you really insist feel free to insult me [on Xitter](https://twitter.com/jfet97).
