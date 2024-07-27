@@ -423,7 +423,7 @@ function match<K extends keyof TypeMap, FS extends FuncRecord>(
 
 ## Is the pattern really needed?
 
-To be fair, experimenting with TypeScript and type parameters, I was able to get an alternative but still quite contrived solution that doesn't employ the pattern:
+To be fair, experimenting with TypeScript and type parameters, I was able to get an alternative, but still quite contrived solution, that doesn't seem to employ the pattern:
 
 ```ts
 type NumberRecord = { kind: "n", v: number };
