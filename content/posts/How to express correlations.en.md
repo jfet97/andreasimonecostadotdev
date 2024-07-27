@@ -434,18 +434,18 @@ type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
 type Kinds = UnionRecord["kind"];
 type GetValue<K extends Kinds> = (UnionRecord & { kind: K })["v"];
 type RecFs<K, V, R> = {
-    [KK in Kinds]: KK extends K ? (v: V) => R : (...args: any) => any
+    [KK in Kinds]: KK extends K ? (v: V) => R : any
 };
 
 function match<
     K extends Kinds,
     V extends GetValue<K>
 >(record: { kind: K; v: V }) {
-    return <R>(fs: RecFs<K, V, R>): R => fs[record.kind](record.v); 
+    return <R>(fs: RecFs<K, V, R>) => fs[record.kind](record.v); 
 }
 ```
 
-[Playground](https://www.typescriptlang.org/play/?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ6goEzX7fCpsVm9cZTDmVbp9AZDUYLUQLZaoLKaVwaPbCPRQPmHMisl4y4BwVA0KDDB7LUlYqCXa6lW73BYHRgI-FQY11GWFZFNFrS2XIzgHJVEkmiAD0AagcC0tnkEFEuBoBigzuNqlIGqgNCRqZTfDQeKWeoAVFAAEw815QE3LE0GOQZbOl5GGBDLA7F15IJGt3z+fI2jMJAT25ZIcFQACMiKgAAYDkTitHYzKtAB9PUkOkMxnLUiCKC2SrxfgbA4erDGn2B4OvAB6YKjUTnEEXlRX9KZG63O7SVcyhUP8a0p6DJZXjeMbAHG94LoOT5rq+26VLkAS1AQP7YCeYgAZe16iKuL5JiWuxQAAsvSjLIqg9j4DgDawks47IgArEOTA6GOLDsMmPhEcAJFkXQlGNlANH0YxWBULYOBMGOw4FgAzESBxAA).
+[Playground](https://www.typescriptlang.org/play/?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRj2ECiESiUQAMzgNCwwBqUAQtmAWAAFsNnqCgTNft8KmwKb1xlNqZVun0BkNRgtRAtlqgsppXBo9sI9FBGYcyBSXvzgHBUDQoMMHssMVpGJdrqVbvcFrCiEs1XV+YUAHRNFp8gWmzgHUWo9GiAD0TqgcC0tnkEFEuBoBigJrVqlI0qgNEYy3DYb4aH1S0VACooAAmemvKDqyGZgxyDJxjOmwwIZYHNOvJARiu+fz5A48GMCA2QpDgqAARkRUAADAdUcVff7+VoAPqKkiE4kk5akQRQWyVeL8DYHK1YNV252u14APTBPqig4gI8q46JpOns-naVzmUKK8DWg3LvTu-3fuAAaPw5bp8nF7nlS5AEtQEPe2DrmIz47nuogTueIbprsUAALJEiSpqoPY+A4MWsJLF2poAKytkwOidiw7Chj4qHAOhmF0DhJZQPhREkVgVC2DgTCdm2yYAMyogcQA).
 
 Here, we have expanded the structure of a `record` in the type `{ kind: K; v: V }`, where `K` is the type parameter used to infer the `kind`, and as such, it must be assignable to `"n" | "s" | "b"`. Meanwhile, `V` is the type parameter used to infer the type of the value `v` corresponding to the kind `K`. The type of the structure containing the functions enforces the presence of a function for each `kind`. However, it enforces the correct type of the `v` argument and infers the return type `R` only for the callback corresponding to the selected `kind` `K`.
 
@@ -466,11 +466,11 @@ function match<
   K extends Kinds,
   V extends GetValue<K>,
 >(record: UnionRecord & { kind: K, v: V }) {
-    return <R>(fs: RecFs<K, V, R>): R => fs[record.kind](record.v); 
+    return <R>(fs: RecFs<K, V, R>) => fs[record.kind](record.v); 
 }
 ```
 
-As always, [a playground to play with](https://www.typescriptlang.org/play/?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRjLAB0qNsqHkWkY9hAsKISxxohEolEADM4DQsMAalAELZgFgABbDZ6goEzX7fCpsVm9cZTDmVbp9AZDUYLHkLZaoLKaNa1FTbVwaPYcaFCWGkVkvGXAOCoGhQYYPZakrFQS7XUq3e4LA6MBH4qBmuoywrIpotaWy5GcA7CKBEkmiAD0IagcC0tnkEFEuBoBigbrNqi1rygNCRmYzfDQeKWhoAVFAAEw89Pm5bmgxyDL5qBaZGGBDLA7l15IJGd3z+fL2nMJARO5ZIcFQACMiKgAAYDkTivHEzKtAB9Q0kOkMxnLUiCKC2SrxfgbA7erBm-2h8OvAB6YLjUSXEFXlQ39KZO73B7StcyhVPyZaJeYbpneD4JsASbPiuo5vlun77pUuQBAq+AAdgF5iCBt73qIm4fmmry7FAACy9KMsiqD2PgOAtrCSzTsiACsY5MDoU4sOw2p6KR5GUdRtGtlADHMaxWBULYOBMFO44lgAzESBxAA).
+As always, [a playground to play with](https://www.typescriptlang.org/play/?jsx=0&ts=5.3.3&install-plugin=playground-ts-scanner#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFgyQBpDS1VcMiCpwBtJjd8JgBdExCoAHEIYAA1Wys4CAAeUqgIAA9gCDpK8tmAPlUACmqopMIAMjUmxjHBAEoGzlb2ySUAMS1Rjl6OdCWXUSgXqDrSsdooefwtFr2xpNprNvlAAPxQZY+XoHYhLdBQRj2ECiESiUQAMzgNCwwBqUAQtmAWAAFsNnqCgTNft8KmwKb1xlNqZVun0BkNRgt6Qtlqgspo1rUVNtXBo9hxoUJYaQKS9+cA4KgaFBhg9lhitIxLtdSrd7gtYUQlpq6vzCgA6JotPkCi2cA7CKCo9GiAD0bqgcC0tnkEFEuBoBig5s1qllrygNEYy2jUb4aCNSxVACooAAmemRrWQnMGOQZJNQLQWwwIZYHLOvJAxmu+fz5A48BMCY2QpDgqAARkRUAADAdUcVA8H+VoAPoqkiE4kk5akQRQWyVeL8DYHW1YTWO92e14APTBAaio4gE8q06JpPni+XaQLmUKG9DWh3Hsjh+PQeAIbP447l6zjeS6VLkATCvgz7YNuYjvgeR6iDO14Rq8uxQAAskSJIWqg9j4Dg5awksfYWgArJ2TA6L2LDsHKegYVhOF4QRFZQMRZEUVgVC2DgTC9l26YAMyogcQA).
 
 &nbsp;
 
