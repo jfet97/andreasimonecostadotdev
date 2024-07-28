@@ -410,7 +410,7 @@ type TypeMap = {
 };
 ```
 
-Let's keep the verbose `ValueRecord` to show a problem that arises in its definition, and how to solve it. We are forced to manually define the types of the `kind` and `v` fields, always based on the type map, because these two fields are the ones directly accessed by the match function. The type `{ kind: P, v: TypeMap[P]["v"] } & Omit<TypeMap[P], "kind" | "v">` is conceptually identical to `TypeMap[P]`, but TypeScript gets lost within `match` if we use the latter. Note that in this specific example, the intersection with `Omit<TypeMap[P], "kind" | "v">` could be omitted since records don't have any other properties besides `kind` and `v`.
+Let's keep the verbose `ValueRecord` to show a problem that arises in its definition, and how to solve it. We are forced to manually define the types of the `kind` and `v` fields, always based on the type map, because these two fields are the ones directly accessed by the match function. The type `{ kind: P, v: TypeMap[P]["v"] } & Omit<TypeMap[P], "kind" | "v">` is conceptually identical to `TypeMap[P]`, but TypeScript gets lost within `match` if we use the latter. Note that in this specific example, the intersection with `Omit<TypeMap[P], "kind" | "v">` could be omitted since records don't have any other properties besides `kind` and `v`:
 
 ``` ts
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
