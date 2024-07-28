@@ -267,7 +267,7 @@ function match<R extends UnionRecord, FS extends FuncRecord>(record: R, fs: FS):
 }
 ```
 
-### Final attempt: the pattern
+### A wrong final attempt
 
 It's necessary to resort once again to the pattern discussed in this article. The solution is a generalization of the [extracting callbacks case](#extracting-the-callbacks), where now each callback has its own return type. Let's first analyze an initial attempt, which, however, will turn out to be wrong:
 
@@ -303,11 +303,14 @@ function match<K extends keyof TypeMap, FS extends FuncRecord>(
 
 Unfortunately, however, we encounter an error: the type of `fs[recv.kind]` has been inferred as `never`, and `string | number | boolean` is not assignable to parameter of type `never`. What a drag. What's the problem now?
 
-### Final final attempt
+We have two main issues:
 
-The problem is in the type of `fs`, that is the type parameter `FS`. We declared that type parameter to infer the return type of the matching callbacks, so that the `match` function can be more flexible. It is true that the upper bound of `FS`, namely `FuncRecord`, specifies the input types as a direct dependency of the type map, but it seems like this connection gets lost with `FS`, a generic subtype of it. This loss could be related to variance, as variance rules allow passing callbacks whose input type is a supertype compared to what is declared by `FuncRecord`. Also, it happens again that accessing with a specific index in `fs` breaks all ties with the type parameters: the inferred return type is once again `unknown`.
+1. we declared the type parameter `FS` to infer the return type of the matching callbacks, so that the `match` function can be more flexible. It is true that the upper bound of `FS`, namely `FuncRecord`, specifies the input types as a direct dependency of the type map, but it seems like this connection gets lost with `FS`, which is a generic subtype of it. This loss could be related to variance, as variance rules allow passing callbacks whose input type is a supertype compared to what is declared by `FuncRecord`.
+2. we broke again all the ties with the type parameters, so the inferred return type is once again `unknown`.
 
-The solution I propose to overcome these issues is based on a [recently merger PR](https://github.com/microsoft/TypeScript/pull/55811) and will work from version `5.4` of the language. However, I'm open to suggestions and alternative ideas.
+### The right final attempt
+
+The solution I propose to overcome these issues is based on a [recently merger PR](https://github.com/microsoft/TypeScript/pull/55811) and will work from version `5.4` of the language:
 
 ```ts
 type TypeMap = {
@@ -323,23 +326,36 @@ type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
     };
 }[K];
 
-type FuncRecord = {
-    [P in keyof TypeMap]: (v: TypeMap[P]) => unknown;
-};
-
-function match<K extends keyof TypeMap, FS extends FuncRecord>(
+function match<K extends keyof TypeMap, FS extends Record<keyof TypeMap, any>>(
     recv: ValueRecord<K>,
-    fs: { [K in keyof FS & keyof FuncRecord]: FS[K] & ((v: TypeMap[K]) => ReturnType<FS[K]>) }
-): ReturnType<FS[K]> {
+    fs: { [K in keyof FS & keyof TypeMap]: (v: TypeMap[K]) => FS[K] }
+) {
     return fs[recv.kind](recv.v);
 }
 ```
 
-We need both the ability to infer the current type of the matching callbacks and to maintain the relationship with the type map in the inferred types. We use a reverse mapped type to get both things done. The upper bound of `FS` ensures that `fs` will have __all__ the keys specified in `FuncRecord`, while the intersection in the reverse mapped type with `keyof FuncRecord` ensures that `fs` will have __only__ the keys specified in `FuncRecord`.
+We need the ability to infer the returned types from the matching callbacks, but we cannot use a type parameter that directly matches them for the reasons explained above. We have to be sure to keep the relationship with the type map.
 
-The key we specify in the reverse mapped type is kinda special: we need that `FS[K]` to make sure there's a candidate for each key `K` from which the reverse mapped type can figure out the value of `FS[K]`. Then, by intersecting it with `(v: TypeMap[K]) => ReturnType<FS[K]>`, we ensure the connection with the type map for the input type, without really imposing anything on the return type of the matching callbacks. Moreover, we need to make sure TypeScript knows that for each key `K`, the corresponding callback in `fs` actually returns `ReturnType<FS[K]>`, since that is the return type of the `match` function.
+We can use a __reverse mapped type__ to get things done. We keep the type parameter `FS` for this very purpose: to be the target of the inversion. The upper bound of `FS` ensures that `fs` will have __all__ the keys specified in the type map, while the intersection in the reverse mapped type with `keyof TypeMap` ensures that `fs` will have __only__ the keys specified in the type map.
 
-[Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.4.0-dev.20240115&ssl=20&ssc=73&pln=20&pc=90#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCkrwUABipAR6ugbG4alQMXEEzq4eXsEoyVAAFPmDRWAlAJToYU1OBMIA7gQKFdjuTXrAHMK95EjAegAW5pY2dg59AZM+dA0Aype29o6Nza2GRiGjjDR9BN1JodPofuYQnwoO4WFguhZ4v4BvUXgAyW4onbfYwjVFVRJQDGjcYFbzFJJzNBhXTAUg0AiFEz4pIhOYybAzEi0+mM+DMp4EsKdQF0hkwpiRQF6XIAOnS9kSo2lctyMw2igMBDYUGlsI6jDwxDGxoIFGoNCpYV6ACooAAmaF4OGjOFsTg8K1QJiy9gccijGZOgQkUaCASiCRSLlkKi0eZjShQAD8UAAjFASAAGGayRRHE6nUaYZwZEgAIgI5ceEwALPbyo89UxcwB6VtQAB6yewBbOxdL9grTGrUAm5b0HCQwnLjd1+lhbY73d7x37JYVmSg5coo4m7g0TGgMibC5b2HbXeTQA).
+The keys' type we specify in the reverse mapped type is kinda special: we need to use `FS[K]` somewhere to make sure there's a candidate for each key `K` from which the reverse mapped type can figure out the actual type of `FS[K]`. We use that as return type for the matching callbacks because we need to infer those ones exactly, while we set the input type to `TypeMap[K]` as expected.
+
+[Link to the playground](https://www.typescriptlang.org/play/?target=99&jsx=0&ts=5.4.5#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIx4ANoAClBcUGYAuiQ4-PxOXEYkMQrp+ABuJEGIKLFJefjyslHJCtjupAR6wBzCBFDkSMB6ABbmljZ2Ds6uHl7BKHRQAGIAyoO29o66BsYm-uMlPtNSICEhABSRUDT6RWoaWquGpmYhfPjuLFhQtfEdm57zUABkowEJqUwCkoIcLtsyskAJToMLzWpJKAybCwtL4M7AUg0DrPKJnPQFAB0mXsSUOBOJBWhChR2AMBDYp30z3C6LwxDBnIIFGoNFhaDCHQAVFAAEyPPAvQ4vNicHgCsJMInsDjkQ7QyUCEiHQQCUQSKTQkg8qi0OFgyhQAD8UAAjFASAAGaGyRQMplnJgAfQ6GC6PV6h0wziyJAARARw9MLgAWMXI6YE56ugD0qf4AD1rfT2p6ID7HP7un1g6H7BGmNGoBdw3oOEhhOHE8y9CnsOmszmPcBmT6rcXA2XSdkoOHKNWLu4NExoDIkyymGmM-hs0A).
+
+We could simplify further this snippet by completely removing the verbose definition of `ValueRecord`:
+
+```ts
+function match<K extends keyof TypeMap, FS extends Record<keyof TypeMap, any>>(
+    recv: { kind: K; v: TypeMap[K] },
+    fs: { [K in keyof FS & keyof TypeMap]: (v: TypeMap[K]) => FS[K] }
+) {
+    return fs[recv.kind](recv.v);
+}
+```
+
+[Playground](https://www.typescriptlang.org/play/?target=99&jsx=0&ts=5.4.5#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNgBmpAgGNgHYQSjkkwNQAsAPAGkoEAB7AIBACZMoAawghhS2PGRg6UAGIAyhbWtg5QAEoQasI0dsYubh5wkN6+UiAAfBkAFIx4NFEAbiSYzlx2JKZyUMWeKSgA2qYAulAyfPhKLFhQTVBczq7u-kEAZIOJdYgozSTZtcnTYE3NAJToGSMrbdjrOPwFwKQ0Ol0NBWqFAHRO5c3ZF9eFqwoyitEEbFAXXehYeYQ5sQyFRaOs0JsdAAqKAAJg6eG62W6bE4PHBmyYV3YHHI2VWCIEc0EAlEEikqxIBAo1BoGyg2UoUAA-FAAIxQEgABlWsne2i+BSYAH0dBg9AZDNlSrd7CQAEQEeW+WoAFlhbV8PyYvIA9Lr+AA9ZnYD6CiAixzi-RGaVlOVQeVMZU1BVqDhIYTyzXfKJdPUG-DG00C4C+kVM62Su2yiqOygu2pKJBiJjQdq+tT+7D6o3MoA).
+
+No one can force us to obfuscate the code after all!
 
 &nbsp;
 
@@ -348,14 +364,14 @@ The key we specify in the reverse mapped type is kinda special: we need that `FS
 It is usually more idiomatic to first define the components of a (discriminated) union and then create the union using the `|` operator, rather than encapsulating everything in a complex and obscure type function, as done with `ValueRecord`:
 
 ```ts
-// before:
+// idiomatic:
 type NumberRecord = { kind: "n"; v: number };
 type StringRecord = { kind: "s"; v: string };
 type BooleanRecord = { kind: "b"; v: boolean };
 type UnionRecord = NumberRecord | StringRecord | BooleanRecord;
 
 
-// now:
+// suggested by the pattern:
 type TypeMap = {
     n: number,
     s: string,
