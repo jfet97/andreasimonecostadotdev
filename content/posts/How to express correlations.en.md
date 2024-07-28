@@ -410,7 +410,7 @@ type TypeMap = {
 };
 ```
 
-The definition of `ValueRecord` gets a bit complicated. We are forced to manually define the types of the `kind` and `v` fields, always based on the type map, because these two fields are the ones directly accessed by the match function. The type `{ kind: P, v: TypeMap[P]["v"] } & Omit<TypeMap[P], "kind" | "v">` is conceptually identical to `TypeMap[P]`, but TypeScript gets lost within `match` if we use the latter. Note that in this specific example, the intersection with `Omit<TypeMap[P], "kind" | "v">` could be omitted since records don't have any other properties besides `kind` and `v`.
+Let's keep the verbose `ValueRecord` to show a problem that arises in its definition, and how to solve it. We are forced to manually define the types of the `kind` and `v` fields, always based on the type map, because these two fields are the ones directly accessed by the match function. The type `{ kind: P, v: TypeMap[P]["v"] } & Omit<TypeMap[P], "kind" | "v">` is conceptually identical to `TypeMap[P]`, but TypeScript gets lost within `match` if we use the latter. Note that in this specific example, the intersection with `Omit<TypeMap[P], "kind" | "v">` could be omitted since records don't have any other properties besides `kind` and `v`.
 
 ``` ts
 type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
@@ -418,22 +418,18 @@ type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
 }[K];
 ```
 
-After that, we just need to align the parameter type both in `FuncRecord` and in the `match` function:
+After that, we just need to align the parameter type both in the `match` function:
 
 ```ts
-type FuncRecord = {
-    [P in keyof TypeMap]: (x: TypeMap[P]["v"]) => unknown;
-};
-
-function match<K extends keyof TypeMap, FS extends FuncRecord>(
-    recv: ValueRecord<K>,
-    fs: { [K in keyof FS & keyof FuncRecord]: FS[K] & ((v: TypeMap[K]["v"]) => ReturnType<FS[K]>) }
-): ReturnType<FS[K]> {
+function match<K extends keyof TypeMap, FS extends Record<keyof TypeMap, any>>(
+  recv: ValueRecord<K>,
+  fs: { [K in keyof FS & keyof TypeMap]: (v: TypeMap[K]["v"]) => FS[K] }
+) {
     return fs[recv.kind](recv.v);
 }
 ```
 
-[Here](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.4.0-dev.20240115#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRAHoStRpGeP4koqgtRhk5DNrhX0ZcgIKnNsFgyQAVEIBZWzBVUlEoaagAbQBpKFoocMjuglmmN3wmAF1dxgBRAA9ZWyxgAB5VqNqOVw1GRcEAPjERUX7oADVbKzgILVLosIKcIHQtJQICAcAAzKBDSCjcYkCjQuEIkZjF4TKYzWYABSWNCg8wOam2jAJHB8iIgyMJu02nD2QigADIoAB5BBUK50hkE3YcLYaJhQVJMFkvUSCBa7YqmKAAMTgNCwtVxMzmROWaJh8IFY3JAApjowjWBGcy9gBKYg4tUUGg4ADuNHexVhaouaygCFswCwAAtgVBQcBwfhIfqMZaOMqpOGwRCVT7ai8TXjUNgfL9-oCsvhgS82HjYQ01AtiVCDSqk5zY-DVerauTE-KOVATSbaVirWSbbt7UQcZhgHBUDQ6ZcO2SXva+rbGOPJ9OQrOpPKcZNpjmJ1OoBXZjmsJwAHTbXYm08Xzi296fUrlOBaWzyCCiXA0AxQU8VrUZkqbtgN4BJUBHHESQAKigAAmMttUrE1KwMZp5Eg+pz0MBATVtRCZiQRgTSI3x-HyZcoDA-gHW7JAoAAfigABGKBGAABltWVigDINgxNUhBCgWxIWqRIiw4f8tC4sooAAPQY0ReJDAShJEtJ0LuP9sArGTygUpTAxUwThMhTp8i0qS9PkhigA) you can find playground with the whole code.
+[Here](https://www.typescriptlang.org/play/?target=99&jsx=0&ts=5.4.5#code/C4TwDgpgBAcgrgWwEYQE4CUIGMD2qAmUAvFAN5QDWAlgHb4BcUARDUwDRQBujNiKqUAL4BuAFChIUAMrBUtAOaZcBYmUq0GzAM7sujLbIVCxE6ACEcOADYQAhjSV5CJctTqMmSXdyhJLN+2NxcGgAVRoqHAdsJ1V4ZDRHFQAfaUMaRRiUqAtrO2jlfDFRAHoStRpGeP4koqgtRhk5DNrhX0ZcgIKnNsFgyQAVEIBZWzBVUlEoaagAbQBpKFoocMjuglmmN3wmAF1dxgBRAA9ZWyxgAB5VqNqOVw1GRcEAPjERUX7oADVbKzgILVLosIKcIHQtJQICAcAAzKBDSCjcYkCjQuEIkZjF4TKYzWYABSWNCg8wOam2jAJHB8iIgyMJu02nD2QigADIoAB5BBUK50hkE3YcLYaJhQVJMFkvUSCBa7YqwuA0C5rKAIWzALAAC2BUFBwHB+EhaJh8IFYw4ADEpPqwRCoEDTRiLWAOPYQC8XgAKPGobA+X7-QFZfDAl5sPGwhpqBbEqFmqA2jkJl1YsDk7209Py5l7ACUxBxNvlQlEhcmMyg-uAcFQJOjs39WE4ADptrtvc225x8+9PqVynAtLZ5BBRLgaAZq9ho7iq5UoN7F7wEqhC0QcSSAFRQABMkarMe9MYMzXkG5xWlbhgQ3vzh5mSEY3ufvn8+XzPD4aCLS6QUAAPxQAAjFAjAAAz5rKxSTtO-paAA+iSJAalq2reg87jMKwNKMAALHuQgcM20bQWUVYAHqAROUTwRASGQqhmo6ph6jYUwOh4cwWBULYODioIJGzlo5HlDM1G0VOwAzkhAHMehbGUswXjcbCfxaNAQkzlgZGDlRgFAA) you can find playground with the whole code.
 
 &nbsp;
 
