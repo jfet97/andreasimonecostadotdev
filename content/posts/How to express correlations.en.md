@@ -297,9 +297,9 @@ function match<K extends keyof TypeMap, FS extends FuncRecord>(
 }
 ```
 
-`ValueRecord` is defined in the same wordy way as before, whereas `FuncRecord` is nothing more than a mapped type based on the keys of the type map. Inside the match function, the kind of `recv` is again used to index the corresponding function within `fs`, and this function is then invoked on the `v` value of `recv`. The type returned by `match` is expressed in terms of `FS`, as it was in the previuous attempts.
-
 [Link to the playground](https://www.typescriptlang.org/play?target=99&jsx=0&ts=5.3.3#code/C4TwDgpgBAKuEFkCGYoF4oG8BQU9QDsAuQgVwFsAjCAJwBpd8BnEp4GgSwIHMH8pKJSgHthAGwhIC2AL4BubNlCQoANSRjSEAEoQAxsJoATADwBpKBAAewCASNMoAawghhAM1jxkqDC7eecJA+AHzoWIwA2gAKUFxQZgC6JDj8TlxGJNEK-ABuJEGIKDGJOVDyspFJCkrwUABipAR6ugbG4alQMXEEzq4eXsEoyVAAFPmDRWAlAJToYU1OBMIA7gQKFdjuTXrAHMK95EjAegAW5pY2dg59AZM+dA0Aype29o6Nza2GRiGjjDR9BN1JodPofuYQnwoO4WM9sDMSLpgKQaARCiZ6k8qokwp1ASi0TCmJFAXpcgA6dL2RKjMmU3IzDaKAwENhQMmwjqMPDEMZ8ggUag0OZoMK9ABUUAATNC8HDRnC2JweKKwkwKewOORRjM5QISKNBAJRBIpIiyFRaPMxpQoAB+KAARigJAADDNZIojidTqNMM4MiQAEQEYOPCYAFml5UenKYnoA9ImoAA9e3YH1nf2B+whpjhqATYN6DhIYTB2Mc-SwpMp9OZ47ZgPUzJQYOUQsTdwaJjQGRxmsJ7DJtP2oA).
+
+`ValueRecord` is defined in the same wordy way as before, whereas `FuncRecord` is nothing more than a mapped type based on the keys of the type map. Inside the match function, the kind of `recv` is again used to index the corresponding function within `fs`, and this function is then invoked on the `v` value of `recv`. The type returned by `match` is expressed in terms of `FS`, as it was in the previuous attempts.
 
 Unfortunately, however, we encounter an error: the type of `fs[recv.kind]` has been inferred as `never`, and `string | number | boolean` is not assignable to parameter of type `never`. What a drag. What's the problem now?
 
