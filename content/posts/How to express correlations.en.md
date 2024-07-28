@@ -418,7 +418,7 @@ type ValueRecord<K extends keyof TypeMap = keyof TypeMap> = {
 }[K];
 ```
 
-After that, we just need to align the parameter type both in the `match` function:
+After that, we just need to align the parameter type in the `match` function:
 
 ```ts
 function match<K extends keyof TypeMap, FS extends Record<keyof TypeMap, any>>(
