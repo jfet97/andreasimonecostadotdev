@@ -414,7 +414,7 @@ createMachine({
 
 [Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAysCGwIGED2A7AZgSwOYB4AVAPigF4oBvAWACgopt1tht4AbAfgC4oBrCCFSYohANx0GAZwRIpPKpIZQA2gGlG6foOGiAurziIUGHAULq9pAGSL6yhhgUAlCAGNUAJwAm+GZ6ZcABptIRESCXsGAF9ImMjYujpvd3Z4T2hMAFd0N1YMKDcM4wBZeDcACyYIImIACg8sPENZEybzYgBKXnEk2kaZKAypckLipDLK6rqaeyYWNnZeACJ4ZaClGWMpXlmHAHp9qGBPEGPUKFwIYCHsbyhdVeWlBnhdl+UMd6iHKEPj07nQoVeDoK5QJ5AqSoAC21yqYKgEHYUggHwcADkAKIADUIKzWGx+MSJDmipOUACNvr9NAsOCt0BAZBBvOt0Q90DTaVBsXiVpT2cSoOSOVs5NzaUyWd5JTyvnYeb9CFiYPiIdKkGyKUrRcKSRy9WSKXrop1IkphnR-gA9ThAA).
 
-The inferred `T` type is a little bit ugly but it's correct: `{ a: unknown, b: { nested: unknown } }`. Why are there those `unknown`? When any of the sub-fields of the `'states'` field does not contain a `StateConfig`, there will be no candidate for `T[K]` and so TypeScript will resort to `unknown` for that sub-field.
+The inferred `T` type is a little bit ugly but it's correct: `{ a: unknown, b: { nested: unknown } }`. Why are there those `unknown`? When any of the sub-fields of an arbitrary nested `'states'` field does not contain a `StateConfig`, there will be no candidate for `T[K]` and so TypeScript will resort to `unknown` for that sub-field.
 
 Which constraints are we enforcing on the source type? At any level, the `'initial'` field must be a key of the object present in the `'states'` field at the same level. Furthermore, we can jump from one state to another only if both are defined at the same level.
 
