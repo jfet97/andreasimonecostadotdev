@@ -171,7 +171,7 @@ The source code says:
 
 > We're inferring from some source type `S` to a homomorphic mapped type `{ [P in keyof T]: X }`, where `T` is a type variable. Use `inferTypeForHomomorphicMappedType` to infer a suitable source type and then make a secondary inference from that type to `T`.
 
-The reason behind the double inference pass is related to the priority of some inferences, but I have to admit this is a bit obscure to me. Feel free to take a look at the source code if you're interested in this and let me know what you find out! The main point, however, is that TypeScript is able to reverse them, as long as there is no `as` clause. Pun not intended.
+The reason behind the double inference pass is related to the priority of some inferences, but I have to admit this is a bit obscure to me. Feel free to take a look at the source code if you're interested in this and let me know what you find out! The main point, however, is that TypeScript should able to reverse them, as long as there is no `as` clause. Pun not intended.
 
 ### Mapped type with a type parameter as constraint
 
