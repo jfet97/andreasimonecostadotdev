@@ -383,7 +383,7 @@ type StateConfig<T> = {
   };
 };
 
-declare function createMachine<T>(config: StateConfig<T>): unknown;
+declare function createMachine<T>(config: StateConfig<T>): T;
 
 createMachine({
   initial: "a",
@@ -412,7 +412,7 @@ createMachine({
 });
 ```
 
-[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAysCGwIGED2A7AZgSwOYB4AVAPigF4oBvAWACgopt1tht4AbAfgC4oBrCCFSYohANx0GAZwRIpPKpIZQA2gGlG6foOGiAurziIUGHAULq9pAGSL6yhhgUAlCAGNUAJwAm+GZ6ZcABptIRESCXsGAF9ImMjYujpvd3Z4T2hMAFd0N1YMKDcM4wBZeDcACyYIImIACg8sPENZEybzYgBKXhy+dFQAd3RIuiKIUvKq9Ag6mnsmFjZ2XgAieBWgpRljKV45hwB6A6hgTxAT1ChcCGAoAO8oXTWVpQZ4PdflDA+ohygjk5nC6FCrwdDXKDPYFSVAAWxuU1wUAg7CkEE+DgAcgBRAAahFW602vxixIc0TJygARj8-ppFhxVtMZBBvBsMY90LS6VAcfjVlT2SSoBSOds5Ny6cykN5JTzvnYeX9CNiYATIdLWUKlaSObrhaLfob9dFOmIgA).
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAysCGwIGED2A7AZgSwOYB4AVAPigF4oBvAWACgopt1tht4AbAfgC4oBrCCFSYohANx0GAZwRIpPKpIZQA2gGlG6foOGiAurziIUGHAULq9pAGSL6yhhgUAlCAGNUAJwAm+GZ6ZcABptIRESCXsGAF9ImMjYujpvd3Z4T2hMAFd0N1YMKDcM4wBZeDcACyYIImIACg8sPENZEybzYgBKXnEk2kaZKAypckLipDLK6rqaeyYWNnZeACJ4ZaClGWMpXlmHAHp9qGBPEGPUKFwIYCHsbyhdVeWlBnhdl+UMd6iHKEPj07nQoVeDoK5QJ5AqSoAC21yqYKgEHYUggHwcADkAKIADUIKzWGx+MSJDmipOUACNvr9NAsOCt0BAZBBvOt0Q90DTaVBsXiVpT2cSoOSOVs5NzaUyWd5JTyvnYeb9CFiYPiIdKkGyKUrRcKSRy9WSKXrop1IkphnR-gA9ThAA).
 
 The inferred `T` type is a little bit ugly but it's correct: `{ a: unknown, b: { nested: unknown } }`. Why are there those `unknown`? When any of the sub-fields of the `'states'` field does not contain a `StateConfig`, there will be no candidate for `T[K]` and so TypeScript will resort to `unknown` for that sub-field.
 
@@ -422,7 +422,7 @@ Which constraints are we enforcing on the source type? At any level, the `'initi
 
 ## Further limitations
 
-It follows a list of limitations that you should be aware of when using reverse mapped types that I'm not discussing them in detail here:
+It follows a list of limitations that you should be aware of when using reverse mapped types that I'm not discussing in detail here:
 
 * [https://github.com/microsoft/TypeScript/issues/48798](https://github.com/microsoft/TypeScript/issues/48798)
 * [https://github.com/microsoft/TypeScript/issues/51612](https://github.com/microsoft/TypeScript/issues/51612)
