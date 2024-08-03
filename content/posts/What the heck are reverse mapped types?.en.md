@@ -5,7 +5,7 @@ date = "2024-08-02"
 description = "Let's try to understand what the TypeScript guys mean when they talk about reverse mapped types"
 categories = ["typescript"]
 series = ["TypeScript"]
-published = false
+published = true
 tags = [
     "mapped type",
     "reverse"
@@ -417,3 +417,23 @@ createMachine({
 The inferred `T` type is a little bit ugly but it's correct: `{ a: unknown, b: { nested: unknown } }`. Why are there those `unknown`? When any of the sub-fields of the `'states'` field does not contain a `StateConfig`, there will be no candidate for `T[K]` and so TypeScript will resort to `unknown` for that sub-field.
 
 Which constraints are we enforcing on the source type? At any level, the `'initial'` field must be a key of the object present in the `'states'` field at the same level. Furthermore, we can jump from one state to another only if both are defined at the same level.
+
+&nbsp;
+
+## Further limitations
+
+It follows a list of limitations that you should be aware of when using reverse mapped types that I'm not discussing them in detail here:
+
+* [https://github.com/microsoft/TypeScript/issues/48798](https://github.com/microsoft/TypeScript/issues/48798)
+* [https://github.com/microsoft/TypeScript/issues/51612](https://github.com/microsoft/TypeScript/issues/51612)
+* [https://github.com/microsoft/TypeScript/issues/56910](https://github.com/microsoft/TypeScript/issues/56910)
+
+&nbsp;
+
+## Conclusion
+
+The very first time I've heard about reverse mapped types was on Twitter a couple of years ago, thanks to the already mentioned Mateusz, whom I thank for the countless insights he gave me on the topic. TypeScript has the bad habit of having a lot of super useful and super interesting but undocumented advanced features and this is one of them. It's not a coincidence that my primary reference for writing this article has been the compiler's source code itself.
+
+The only other resource on the topic that I can suggest is a talk by Mateusz at TypeScript Congress 2023, titled [Infer multiple things at once with reverse mapped types](https://gitnation.com/contents/infer-multiple-things-at-once-with-reverse-mapped-types).
+
+I hope that this article has been useful to you and that you have learned something new. If you have any questions or comments, feel free to reach out to me on [Twitter](https://twitter.com/jfet97).
