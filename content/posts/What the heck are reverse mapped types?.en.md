@@ -321,5 +321,47 @@ In this way you get both inference and EPC check!
 
 ## Arrays and tuples
 
-// TODO
-// createReverseMappedType tratta in modo particolare array e tuple
+We said that reverse mapping gets applied to the type of each property of an object type independently from the others. What if we have an array or a tuple? A comment inside the `createReverseMappedType` internal function says that:
+
+> For arrays and tuples we infer new arrays and tuples where the reverse mapping has been applied to the element type(s).
+
+One example to rule them all:
+
+```ts
+// just remove the 'on' prefix from the event names
+type PossibleEventType<K> = K extends `on${infer Type}` ? Type : never;
+
+type TypeListener<T extends ReadonlyArray<string>> = {
+  [I in keyof T]: {
+    type: T[I];
+    listener: (ev: T[I]) => void;
+  };
+};
+
+declare function bindAll<
+  T extends HTMLElement,
+  Types extends ReadonlyArray<PossibleEventType<keyof T>>
+>(target: T, listeners: TypeListener<Types>): void;
+
+// {} as a fake HTMLInputElement
+bindAll({} as HTMLInputElement, [
+  {
+    type: "blur",
+    listener: (ev) => {
+            // ^? ev: "blur"
+    }
+  },
+  {
+    type: "click",
+    listener: (ev) => {
+            // ^? ev: "click"
+    }
+  },
+]);
+```
+
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBACg9gZwQSwEYBsIFEBuEB2wAKuBADwDSAfFALxQVQQAewBAJglAAZz4AkAb2T4AZhABOUEpAC+3KAH5ppKAC4o+CHgkBuALAAoI6EgrIAGWQI2WiWSJNWHLgCUIAQ3Z90IAIISEh4gZDYSIgDmVDT0gkZQUADaAJJQIlAA1hAgcKLSALoacYYJCaYQGkQp+QYlpejWtpIaABTaldUAlHQ0OHDI7LUJsrUjRkbsEADG6B4S0KIArvhTwMh8UKgi7H7o6GTx0k62nFAAEkQAshZYmAC2BMAANIcyEFwsJ26e3vi+AUEQvAkGhMLhHm8yFkcnkiNEjFQWsA5hEIMBKk8oA0bARJAhKqQrDi7A5SAgqJ0NH0BrUjAB6OlQQSyKBTOAPKCiETAOBMPCEOBGLb4HZ7FrMqAeLgXa7JfBgRbAW4QB6ETGJQ7FUpQcoaABEGEWEj1LzqCWxTQkrW03VoNC12sdCQZUAAeopDsNDrJTQkHWVSPqZsgphkTZ6sY1cVaoG0cLb7RGnc7Ge6I7Jvab8p1dEA).
+
+Here we see that TypeScript is able to properly infer `Types` as the tuple type `["blur", "click"]` by reverting the type of the input array with respect to the `TypeListener` mapped type. Whatever `Types` gets inferred as, TypeScript will apply the `TypeListener` mapped type to it to determine the type of the formal parameter `listeners`, and that provides it with the context sensitive information it needs to infer the type of the `ev` parameters in the callbacks.
+
+The inferred `Types` must satisfy its constraint too, i.e. it must be an array or a tuple of strings containing some event names belonging to the input `HTMLElement`, without the `'on'` prefix.
