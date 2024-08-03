@@ -242,7 +242,7 @@ type MappedType<P extends PropertyKey, X> = {
     [K in P]: X
 }
 
-declare function useMT<P extends PropertyKey, X>(mt: MappedType<P, X>): P
+declare function useMT<P extends PropertyKey, X>(mt: MappedType<P, X>): [P, X]
 
 useMT({
   a: ["a", "a-prop"],
@@ -250,9 +250,9 @@ useMT({
 })
 ```
 
-[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4&ssl=10&ssc=3&pln=1&pc=1#code/C4TwDgpgBAsghmSATAKuCAeAClCAPYCAOyQGcosAnAe0ktAGkIQAaKADQD4oBeKAbwCwAKChioAbQZQAlkQoBdAFwcRAXxEikEAMYAbOJWgAzAK5EdwGdXmnSEGCmy4CxMhRp1GzNlwAUALbAKvCIEKjo2L6cAJQqWJrCdg4ofkKiUHAqEgBEcDlseQC0YJ45CiwiYgBGKsZwevbqMUA).
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsghmSATAKuCAeAClCAPYCAOyQGcosAnAe0ktAGkIQAaKADQD4oBeKAbwCwAKChioAbQZQAlkQoBdAFwcRAXxEikEAMYAbOJWgAzAK5EdwGdXmnSEGCmy4CxMhRp1GzNlwAUALbAKvCIEKjo2L6cAJQqEli+CprCOjakwFBG5Hx2Dih+QqJQcPEARHBlbBUAtGCeZQosImIARirGcHr26jEpYtkiAPRDUAB6APxAA).
 
-We have that `P` gets inferred as `'a' | 'b'` as before, wherease `X` gets inferred as `[string, string] | boolean`.
+We have that `P` gets inferred as `'a' | 'b'` as before, wherease `X` gets inferred as `boolean | string[]`.
   
 ### Union as constraint
 
