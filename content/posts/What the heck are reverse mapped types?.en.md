@@ -365,3 +365,55 @@ bindAll({} as HTMLInputElement, [
 Here we see that TypeScript is able to properly infer `Types` as the tuple type `["blur", "click"]` by reverting the type of the input array with respect to the `TypeListener` mapped type. Whatever `Types` gets inferred as, TypeScript will apply the `TypeListener` mapped type to it to determine the type of the formal parameter `listeners`, and that provides it with the context sensitive information it needs to infer the type of the `ev` parameters in the callbacks.
 
 The inferred `Types` must satisfy its constraint too, i.e. it must be an array or a tuple of strings containing some event names belonging to the input `HTMLElement`, without the `'on'` prefix.
+
+&nbsp;
+
+## Enforcing recursive constraints on the source type
+
+We saw that reverse mapped types can be used to enforce some constraints on the source type. The following example, borrowed from [Mateusz Burzyński](https://x.com/AndaristRake), builds on this concept and shows that recursion may be allowed:
+
+```ts
+type StateConfig<T> = {
+  initial?: keyof T;
+  states?: {
+    // here is the mapped type
+    [K in keyof T]: StateConfig<T[K]> & {
+      on?: Record<string, keyof T>;
+    };
+  };
+};
+
+declare function createMachine<T>(config: StateConfig<T>): unknown;
+
+createMachine({
+  initial: "a",
+  states: {
+    // try to get rid of "a"
+    a: {
+      on: {
+        // try to change "a" to something else
+        NEXT: "a",
+      },
+    },
+    b: {
+      initial: "nested",
+      on: {
+        NEXT: "b",
+      },
+      states: {
+        nested: {
+          on: {
+            TEST: "nested",
+          },
+        },
+      },
+    },
+  },
+});
+```
+
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAysCGwIGED2A7AZgSwOYB4AVAPigF4oBvAWACgopt1tht4AbAfgC4oBrCCFSYohANx0GAZwRIpPKpIZQA2gGlG6foOGiAurziIUGHAULq9pAGSL6yhhgUAlCAGNUAJwAm+GZ6ZcABptIRESCXsGAF9ImMjYujpvd3Z4T2hMAFd0N1YMKDcM4wBZeDcACyYIImIACg8sPENZEybzYgBKXhy+dFQAd3RIuiKIUvKq9Ag6mnsmFjZ2XgAieBWgpRljKV45hwB6A6hgTxAT1ChcCGAoAO8oXTWVpQZ4PdflDA+ohygjk5nC6FCrwdDXKDPYFSVAAWxuU1wUAg7CkEE+DgAcgBRAAahFW602vxixIc0TJygARj8-ppFhxVtMZBBvBsMY90LS6VAcfjVlT2SSoBSOds5Ny6cykN5JTzvnYeX9CNiYATIdLWUKlaSObrhaLfob9dFOmIgA).
+
+The inferred `T` type is a little bit ugly but it's correct: `{ a: unknown, b: { nested: unknown } }`. Why are there those `unknown`? When any of the sub-fields of the `'states'` field does not contain a `StateConfig`, there will be no candidate for `T[K]` and so TypeScript will resort to `unknown` for that sub-field.
+
+Which constraints are we enforcing on the source type? At any level, the `'initial'` field must be a key of the object present in the `'states'` field at the same level. Furthermore, we can jump from one state to another only if both are defined at the same level.
