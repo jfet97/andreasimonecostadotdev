@@ -2,7 +2,7 @@
 author = "Andrea Simone Costa"
 title = "What the heck are reverse mapped types?"
 date = "2024-08-02"
-description = "Let's try to understand what the TypeScript guys mean when they talk about reverse mapped types"
+description = "Let's try to understand what the TypeScript guys mean when they talk about reverse mapped types."
 categories = ["typescript"]
 series = ["TypeScript"]
 published = true
