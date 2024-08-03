@@ -190,7 +190,7 @@ foo({
 })
 ```
 
-[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsghmSATAKuCAeAClCAPYCAOyQGcosAnAe0ktAGkIQA+KAXigG8BYAKCiCoAbQZQAlkQoBdAFxQiAVwC2AIwiV+AX378kEAMYAbOJWgAzRUQPBx1KYtIQYKbLgLEyFGnUbMWABTKwPLwiBCo6NgsAJTyWLp8js4oAbwCUHDyACwATAA0-IKq8gCMuQDM2doxQA).
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsghmSATAKuCAeAClCAPYCAOyQGcosAnAe0ktAGkIQA+KAXigG8BYAKCiCoAbQZQAlkQoBdAFxQiAVwC2AIwiV+AX378kEAMYAbOJWgAzRUQPBx1KYtIQYKbLgLEyFGnUbMWABTKwPLwiBCo6NgsAJTyWLp8BvakwFBm5JyOzigBvAJQcPIALABMADT8gqryAIylAMzF2jGJghn8APSdUAB6APxAA).
 
 We have that `P` gets successfully inferred as `'a' | 'b'`. How? The source code answers this question:
 
