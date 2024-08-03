@@ -16,7 +16,7 @@ images = ["/images/reverse_mapped/copertina.jpeg"]
 
 ## Introduction
 
-Reverse mapped types are a powerful yet little-known feature of TypeScript that allow us to set interesting constraints on the values of a type. The purpose of this article is to serve as a comprehensive guide to reverse mapped types, explaining what they are and how they can be used.
+Reverse mapped types are a powerful yet little-known feature of TypeScript that allow us to set interesting constraints on the values of a type. The purpose of this article is to serve as a comprehensive guide to reverse mapped types, explaining what they are and how they can be used. Various references to the compiler source code will be made in order to provide a deeper understanding of the topic.
 
 Let's take a simple generic function like the following:
 
@@ -153,12 +153,100 @@ Let's dig into the `inferToMappedType` internal function now. From the code we s
 3. a mapped type with an union constraint, as long as the union contains a constraint similar to `1` or `2`
 4. a mapped type with an intersection constraint, as long as the intersection contains a constraint similar to `1` or `2`
 
-While the union constraint could be seen as a way to force the presence of some properties, the intersection one could be seen as a way to prevent the presence of extra properties.
+We will explore how the union constraint ensures the presence of certain properties, while the intersection constraint prevents the presence of additional properties.
+
+Let's dig into each of these cases.
+
+### Homomorphic mapped types
+
+I wrote about homomorphic mapped types in a [previous article](../../posts/what-the-heck-is-a-homomorphic-mapped-type/), so take a look if you're unfamiliar with them. The point is that TypeScript is able to reverse them, as long as there is no `as` clause. Pun not intended.
+
+The source code says:
+
+> We're inferring from some source type `S` to a homomorphic mapped type `{ [P in keyof T]: X }`, where `T` is a type variable. Use `inferTypeForHomomorphicMappedType` to infer a suitable source type and then make a secondary inference from that type to `T`.
+
+The reason behind the double inference pass is related to the priority of some inferences, but I have to admit this is a bit obscure to me. Feel free to take a look at the source code if you're interested in this and let me know what you find out!
+
+### Mapped type with a type parameter as constraint
+
+This is a very interesting case. Suppose we have the following mapped type:
 
 ```ts
+type MappedType<P extends PropertyKey> = {
+    [K in P]: number
+}
+
+declare function useMT<P extends PropertyKey>(mt: MappedType<P>): P
+
+foo({
+  a: 42,
+  b: 1234
+})
 ```
 
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsghmSATAKuCAeAClCAPYCAOyQGcosAnAe0ktAGkIQA+KAXigG8BYAKCiCoAbQZQAlkQoBdAFxQiAVwC2AIwiV+AX378kEAMYAbOJWgAzRUQPBx1KYtIQYKbLgLEyFGnUbMWABTKwPLwiBCo6NgsAJTyWLp8js4oAbwCUHDyACwATAA0-IKq8gCMuQDM2doxQA).
 
+We have that `P` gets successfully inferred as `'a' | 'b'`. How? The source code answers this question:
+
+> We're inferring from some source type `S` to a mapped type `{ [P in K]: X }`, where `K` is a type parameter. First infer from `keyof S` to `K`.
+
+That's exactly what TypeScript did: it inferred from `keyof { a: number, b: number }`, that is `'a' | 'b'`, to `P`.
+
+But TypeScript's capabilities don't stop here. Suppose we have the following mapped type that resembles the `Pick` one:
+
+```ts
+// a custom version of the built-in Pick type
+type MyPick<T, P extends keyof T> = {
+  [K in P]: { value: T[K] };
+}
+
+// a function that takes a MyPick<T, P> and returns a Pick<T, SP>
+// where SP is a subset of P
+declare function unpick<
+  T,
+  P extends keyof T,
+  SP extends P,
+>(t: MyPick<T, P>, keys: SP[]): Pick<T, SP>;
+
+unpick({
+  a: { value: 42 },
+  b: { value: false },
+}, ["a"]);
+```
+
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsiAKBLAxgawDwBUA0V5QgA9gIA7AEwGcpUIQB7AMykwD4oBeKAbwFgAoKFADaAaSiJSeALoAuHlABuAQwA2AVwjzMY6VAC+AbgH6BA8hGSrlAJ2iN1pZMET0pjsCgwChOH3gJiMioaOiYWbH8AZXwiEgpqeEj+VgAKYHk4JDQsXHhWXFoQSnkY4WkASnlsjBwoGNZjfgFkN0pgKDtqLg8vVL5BKGV5biU1TXkAFgAmA2ShACMRsY0tKEY1Smh9ZJ2RACJlfcqm-y6mgHoLqAA9AH4gA).
+
+We have that `T` gets inferred as `{ a: number, b: boolean }` and `P` as `'a' | 'b'`. As before, `P` is inferred from `keyof { a: number, b: boolean }`, that is `'a' | 'b'`. But what about `T`? Let's again refer to the source code:
+
+> If `K` (the one in `{ [P in K]: X }`) is constrained to a type `C`, also infer to `C`. Thus, for a mapped type `{ [P in K]: X }`, where `K` extends `keyof T`, we make the same inferences as for a homomorphic mapped type `{ [P in keyof T]: X }`.
+
+We see indeed that `inferToMappedType` is called recursively in this case:
+
+```ts
+const extendedConstraint = getConstraintOfType(constraintType);
+if (extendedConstraint && inferToMappedType(source, target, extendedConstraint)) {
+    return true;
+}
+```
+
+If no inferences can be made to `K`'s constraint, TypeScript will infer from a union of the property types in the source to the template type `X`. The following example shows this:
+
+```ts
+type MappedType<P extends PropertyKey, X> = {
+    [K in P]: X
+}
+
+declare function useMT<P extends PropertyKey, X>(mt: MappedType<P, X>): P
+
+useMT({
+  a: ["a", "a-prop"],
+  b: false
+})
+```
+
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4&ssl=10&ssc=3&pln=1&pc=1#code/C4TwDgpgBAsghmSATAKuCAeAClCAPYCAOyQGcosAnAe0ktAGkIQAaKADQD4oBeKAbwCwAKChioAbQZQAlkQoBdAFwcRAXxEikEAMYAbOJWgAzAK5EdwGdXmnSEGCmy4CxMhRp1GzNlwAUALbAKvCIEKjo2L6cAJQqWJrCdg4ofkKiUHAqEgBEcDlseQC0YJ45CiwiYgBGKsZwevbqMUA).
+
+We have that `P` gets inferred as `'a' | 'b'` as before, wherease `X` gets inferred as `[string, string] | boolean`.
   
 
 
