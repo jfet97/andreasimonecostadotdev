@@ -432,8 +432,8 @@ It follows a list of limitations that you should be aware of when using reverse 
 
 ## Conclusion
 
-The very first time I've heard about reverse mapped types was on Twitter a couple of years ago, thanks to the already mentioned Mateusz, whom I thank for the countless insights he gave me on the topic. TypeScript has the bad habit of having a lot of super useful and super interesting but undocumented advanced features and this is one of them. It's not a coincidence that my primary reference for writing this article has been the compiler's source code itself.
+The very first time I've heard about reverse mapped types was on Xitter a couple of years ago, thanks to the already mentioned Mateusz, whom I thank for the countless insights he gave me on the topic. TypeScript has the bad habit of having a lot of super useful and super interesting but undocumented advanced features and this is one of them. It's not a coincidence that my primary reference for writing this article has been the compiler's source code itself.
 
 The only other resource on the topic that I can suggest is a talk by Mateusz at TypeScript Congress 2023, titled [Infer multiple things at once with reverse mapped types](https://gitnation.com/contents/infer-multiple-things-at-once-with-reverse-mapped-types).
 
-I hope that this article has been useful to you and that you have learned something new. If you have any questions or comments, feel free to reach out to me on [Twitter](https://twitter.com/jfet97).
+I hope that this article has been useful to you and that you have learned something new. If you have any questions or comments, feel free to reach out to me on [Xitter](https://twitter.com/jfet97).
