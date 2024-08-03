@@ -73,6 +73,8 @@ To do something like this, the compiler was able to answer the following questio
 
 TypeScript is able to do this inversion for us in some cases, and in this article we will explore the potential, and the limits, of this feature.
 
+&nbsp;
+
 ## How does it work?
 
 The outline of the situation is as follows:
@@ -100,6 +102,8 @@ In broad terms, what happens is the following:
 4. TypeScript now applies the mapped type `MappedType` to whatever `T` has become at this point, to determine the type of the formal parameter `mt`.
 
 5. TypeScript checks if the type of the argument `x` is assignable to the type of the formal parameter `mt`, erroring if that is not the case.
+
+&nbsp;
 
 ## The source's constraints
 
@@ -131,6 +135,8 @@ useCS({
 
 In the example above we use `T[K]` both as type for the property `'v'` and as type for the parameter of the function `'f'`. TypeScript is able to infer that `T` is `{ num: number, str: string }` from the partially inferable argument passed to `useCS` by using the type of the property `'v'` only. At the end of the whole process, some context sensitive information is provided back from `ContextSensitive<{ num: number, str: string }>` to the source: the type of the parameters of the functions `'f'`.
 
+&nbsp;
+
 ## The mapped type's constraints
 
 What about the constraints that the mapped type must satisfy? As for now, the `inferFromObjectTypes` internal function set an interesting constraint:
@@ -150,8 +156,8 @@ Let's dig into the `inferToMappedType` internal function now. From the code we s
 
 1. homomorphic mapped types like `{ [P in keyof T]: X }`
 2. mapped types like `{ [P in K]: X }`, where `K` is a type parameter
-3. a mapped type with an union constraint, as long as the union contains a constraint similar to `1` or `2`
-4. a mapped type with an intersection constraint, as long as the intersection contains a constraint similar to `1` or `2`
+3. a mapped type with an union constraint, especially if the union contains a constraint similar to `1` or `2`
+4. a mapped type with an intersection constraint, especially if the intersection contains a constraint similar to `1` or `2`
 
 We will explore how the union constraint ensures the presence of certain properties, while the intersection constraint prevents the presence of additional properties.
 
@@ -248,7 +254,72 @@ useMT({
 
 We have that `P` gets inferred as `'a' | 'b'` as before, wherease `X` gets inferred as `[string, string] | boolean`.
   
+### Union as constraint
 
+Let's consider the following mapped type:
+
+```ts
+type MappedType<T> = {
+  [K in keyof T | "mustBePresent"]: {
+    // cannot put just T[K] here, because K cannot be used to index T
+    // i.e. there is no guarantee here that "mustBePresent" is a key of T
+    value: K extends "mustBePresent" ? unknown : K extends keyof T ? T[K] : never;
+  };
+};
+
+declare function unmap<T>(t: MappedType<T>): T;
+
+const res = unmap({
+  a: { value: "andrea" },
+  b: { value: "simone" },
+  c: { value: "costa" },
+  mustBePresent: { value: 123 },
+});
+```
+
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsghmSATAKuCAeFA+KBeKAbwFgAoKKAbQGkoBLAOygGsIQB7AMyhSgB8oAIgC2AVwDOwAEIQACgCcI4iA2CCAugC4iZChQD0+qAGM4DBu2BQwoqwCsJVlDXVQAFhEUAaKACMIphLQtKbmln7QQUhQwOz0DEgQAB48unqG9AB0EJkxHor04lAWUADmonDyZsAQ0PnQwG5wViKOMgpKKmqFUHAsbFBcqeR6AG5wADaiENq0yTUJRa2S7YrKqoJQAPxQogzMFgDuTLNQ8ypIRawc3Lw7ztSu2gwQo54A3GkAvp+kP2RkRLGCaVaCcPbGYB0dhMPbCBBYbAACmA2ngiAgqHQiIAlNoUL8yMYYZIoGt8LsGPCwEiSCM4NpCFBxlMZkIzEhFHBNl8vGlfIzmZNptpBOI6MIYRAeXyRsZBSyRUJiZJuVBeWkxCs5GsugrhWyAIwAJgAzOrZV8cYSRmtfhkAHpbIA).
+
+We have that `T` gets inferred as `{ a: string, c: string, c: string, mustBePresent: number }`. In few words, TypeScript loops through the union's entries, finds the `keyof T` and reverses the whole source type as we saw before.
+
+This example shows us that reverse mapped types could be useful not only because of their reversing capabilities, but also because they can enforce some properties in the source type. Had we omitted the `'mustBePresent'` field, TypeScript would have inferred `T` as `{ a: string, b: string, c: string }`, but when `MappedType` is applied to it to get the type of the formal parameter `t`, the resulting type would have been `{ a: { value: string }, c: { value: string }, x: { value: string }, mustBePresent: { value: unknown } }`. This would have caused an error, because the source type would not have been assignable to the formal parameter type.
+
+### Intersection as constraint
+
+From the version `5.4` of the compiler, TypeScript is able to reverse mapped types [with an intersection constraint](https://github.com/microsoft/TypeScript/pull/55811). This is a very interesting feature, because it allows us to prevents the presence of additional properties while inferring a type. In other words, this provides us with the ability to enable EPC (Excess Property Checking) on type parameters inference sites.
+
+Let's consider the following example:
+
+```ts
+interface Foo {
+  bar: number;
+  baz: string;
+  record: Record<any, any>;
+}
+
+type MappedType<T> = {
+  // the intersection constraint on K is keyof T & keyof Foo
+  [K in keyof T & keyof Foo]: T[K]
+}
+
+declare function useFoo<T extends Foo>(foo: MappedType<T> ): T
+
+useFoo({ 
+  bar: 1,
+  baz: 'a',
+  record: { a: 1, b: 2 },
+  extra: 123, // <-- EPC error
+})
+```
+
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/JYOwLgpgTgZghgYwgAgGIHt3IN4FgBQyyARnFAFzIgCuAtsdANwFGkBelAzmFKAObNCyKBATooAE0oAlUeIkAeOCACeAGmTKVAPkEBfAgTAqADigCycE2YkAVUxAW3tyALw4WyAPRfkYABYooJBQnKJgwOggyGIg3FBwwchRyADSyMCcyADWECroMMi2yABkOXkFaJieANrpoOX5hcVluU1V6AC6lLZ1nQQG+AQSogA2ZCgw1CAIESnUYRjoTsgQAB6QIBJZS9oAFDCYlJbWEHYOTi4AlD2G+LHcwhBZ7gsQS3vYyJ6kFMgAjGofnAOMgAORwMFAoQiMSSShfOCUQEkSgAJmQemhRHWPCRALRAGYND5kAoALTk5AAUQACgBhVZQKDiAZXO5EEScQSkgB6AH4gA).
+
+TypeScript loops through the intersection's entries, finds the `keyof T` and reverses the whole source type as we saw before. The intersection constraint ensures that the source type has only the properties that are present in `Foo`, and this is why the presence of the `extra` property causes an excess property error. It's worth noting that the `'extra'` property is stripped away from the inferred `T` because it wouldn't survive the action of the mapped type anyway.
+
+In this way you get both inference and EPC check!
+
+&nbsp;
+
+## Arrays and tuples
 
 // TODO
 // createReverseMappedType tratta in modo particolare array e tuple
