@@ -422,7 +422,7 @@ Which constraints are we enforcing on the source type? At any level, the `'initi
 
 ## Further limitations
 
-It follows a list of limitations that you should be aware of when using reverse mapped types that I'm not discussing in detail here:
+It follows a list of limitations, by no means complete, that you should be aware of when using reverse mapped types, which I'm not discussing in detail here:
 
 * [https://github.com/microsoft/TypeScript/issues/48798](https://github.com/microsoft/TypeScript/issues/48798)
 * [https://github.com/microsoft/TypeScript/issues/51612](https://github.com/microsoft/TypeScript/issues/51612)
