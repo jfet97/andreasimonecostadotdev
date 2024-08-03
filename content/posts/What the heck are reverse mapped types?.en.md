@@ -105,9 +105,9 @@ In broad terms, what happens is the following:
 
 &nbsp;
 
-## The source's constraints
+## The source's requirements
 
-Which are the constraints that the source type must satisfy in order to be reverse mappable? A couple of comments in the TypeScript source code give us the answer:
+Which are the requirements that the source type must satisfy in order to be reverse mappable? A couple of comments in the TypeScript source code give us the answer:
 
 > We consider a source type reverse mappable if it has a string index signature or if it has one or more properties and is of a __partially inferable type__.
 >
@@ -137,9 +137,9 @@ In the example above we use `T[K]` both as type for the property `'v'` and as ty
 
 &nbsp;
 
-## The mapped type's constraints
+## The mapped type's requirements
 
-What about the constraints that the mapped type must satisfy? As for now, the `inferFromObjectTypes` internal function set an interesting constraint:
+What about the requirements that the mapped type must satisfy? As for now, the `inferFromObjectTypes` internal function set an interesting one:
 
 ```ts
 if (getObjectFlags(target) & ObjectFlags.Mapped && !(target as MappedType).declaration.nameType) {
@@ -155,9 +155,9 @@ The point is that there should not be any `nameType`, and that means no `as` cla
 Let's dig into the `inferToMappedType` internal function now. From the code we see that TypeScript is able to reverse four kinds of mapped types:
 
 1. homomorphic mapped types like `{ [P in keyof T]: X }`
-2. mapped types like `{ [P in K]: X }`, where `K` is a type parameter
-3. a mapped type with an union constraint, especially if the union contains a constraint similar to `1` or `2`
-4. a mapped type with an intersection constraint, especially if the intersection contains a constraint similar to `1` or `2`
+2. mapped types like `{ [P in K]: X }`, where the __constraint__ `K` is a type parameter
+3. mapped types like `{ [P in A | B]: X }` where the constraint is an union, useful when the union contains a constraint similar to the one in `1` or `2`
+4. mapped types like `{ [P in A ˆ B]: X }` where the costraint is an intersection, useful when the intersection contains a constraint similar to the one in `1` or `2`
 
 We will explore how the union constraint ensures the presence of certain properties, while the intersection constraint prevents the presence of additional properties.
 
@@ -165,13 +165,13 @@ Let's dig into each of these cases.
 
 ### Homomorphic mapped types
 
-I wrote about homomorphic mapped types in a [previous article](../../posts/what-the-heck-is-a-homomorphic-mapped-type/), so take a look if you're unfamiliar with them. The point is that TypeScript is able to reverse them, as long as there is no `as` clause. Pun not intended.
+I wrote about homomorphic mapped types in a [previous article](../../posts/what-the-heck-is-a-homomorphic-mapped-type/), so take a look if you're unfamiliar with them.
 
 The source code says:
 
 > We're inferring from some source type `S` to a homomorphic mapped type `{ [P in keyof T]: X }`, where `T` is a type variable. Use `inferTypeForHomomorphicMappedType` to infer a suitable source type and then make a secondary inference from that type to `T`.
 
-The reason behind the double inference pass is related to the priority of some inferences, but I have to admit this is a bit obscure to me. Feel free to take a look at the source code if you're interested in this and let me know what you find out!
+The reason behind the double inference pass is related to the priority of some inferences, but I have to admit this is a bit obscure to me. Feel free to take a look at the source code if you're interested in this and let me know what you find out! The main point, however, is that TypeScript is able to reverse them, as long as there is no `as` clause. Pun not intended.
 
 ### Mapped type with a type parameter as constraint
 
