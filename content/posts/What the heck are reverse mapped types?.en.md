@@ -222,7 +222,7 @@ unpick({
 
 [Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsiAKBLAxgawDwBUA0V5QgA9gIA7AEwGcpUIQB7AMykwD4oBeKAbwFgAoKFADaAaSiJSeALoAuHlABuAQwA2AVwjzMY6VAC+AbgH6BA8hGSrlAJ2iN1pZMET0pjsCgwChOH3gJiMioaOiYWbH8AZXwiEgpqeEj+VgAKYHk4JDQsXHhWXFoQSnkY4WkASnlsjBwoGNZjfgFkN0pgKDtqLg8vVL5BKGV5biU1TXkAFgAmA2ShACMRsY0tKEY1Smh9ZJ2RACJlfcqm-y6mgHoLqAA9AH4gA).
 
-We have that `T` gets inferred as `{ a: number, b: boolean }` and `P` as `'a' | 'b'`. As before, `P` is inferred from `keyof { a: number, b: boolean }`, that is `'a' | 'b'`. But what about `T`? Let's again refer to the source code:
+We have that `T` gets inferred as `{ a: number, b: boolean }` and `P` gets inferred as `'a' | 'b'`. As before, `P` is inferred from `keyof { a: number, b: boolean }`, that is `'a' | 'b'`. But what about `T`? Let's again refer to the source code:
 
 > If `K` (the one in `{ [P in K]: X }`) is constrained to a type `C`, also infer to `C`. Thus, for a mapped type `{ [P in K]: X }`, where `K` extends `keyof T`, we make the same inferences as for a homomorphic mapped type `{ [P in keyof T]: X }`.
 
