@@ -328,7 +328,7 @@ We said that reverse mapping gets applied to the type of each property of an obj
 One example to rule them all:
 
 ```ts
-// just remove the 'on' prefix from the event names
+// just removes the 'on' prefix from the event names
 type PossibleEventType<K> = K extends `on${infer Type}` ? Type : never;
 
 type TypeListener<T extends ReadonlyArray<string>> = {
