@@ -77,7 +77,7 @@ TypeScript is able to do this inversion for us in some cases, and in this articl
 
 ## How does it work?
 
-The outline of the situation is as follows:
+The outline of the situation is more or less the following:
 
 ```ts
 type MappedType<T> = {
@@ -85,7 +85,7 @@ type MappedType<T> = {
 }
 
 
-declare function foo<T>(mt: MappedType<T>): ...
+declare function foo<T extends C>(mt: MappedType<T>): ...
 foo(x) // T inferred from x
 ```
 
@@ -97,7 +97,7 @@ In broad terms, what happens is the following:
 
 2. TypeScript does its best to invert the action of mapped type `MappedType` starting from the source type to determine what `T` is. In particular, each key of `T` will be inferred separately, independently from the others, by exploiting the __template__ `F<T[K]>`. It's like having defined a variable length list of type parameters, one for each key of `T`. If the inference of a single key fails, the resulting type for that key will be `unknown`, while the other keys will not be affected by the failure. Be aware of the fact that, as for now, [TypeScript does not resort to the constraint type before falling back to `unknown`](https://github.com/microsoft/TypeScript/issues/56241) in such cases.
 
-3. TypeScript checks that the just inferred type `T` is indeed assignable to its upper bound. If that is not the case, `T` will become the upper bound itself, discarding whatever was inferred before. This is the default behaviour of the `getInferredType` internal function and it applies to any function call, but it could lead to some unexpected results in this situation.
+3. TypeScript checks that the just inferred type `T` is indeed assignable to its constraint `C`. If that is not the case, `T` will become the constraint itself, discarding whatever was inferred before. This is the default behaviour of the `getInferredType` internal function and it applies to any function call, but it could lead to some unexpected results in this situation.
 
 4. TypeScript now applies the mapped type `MappedType` to whatever `T` has become at this point, to determine the type of the formal parameter `mt`.
 
