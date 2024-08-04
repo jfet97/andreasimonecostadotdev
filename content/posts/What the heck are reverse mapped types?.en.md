@@ -157,7 +157,7 @@ Let's dig into the `inferToMappedType` internal function now. From the code we s
 1. homomorphic mapped types like `{ [P in keyof T]: X }`
 2. mapped types like `{ [P in K]: X }`, where the __constraint__ `K` is a type parameter
 3. mapped types like `{ [P in A | B]: X }` where the constraint is an union, useful when the union contains a constraint similar to the one in `1` or `2`
-4. mapped types like `{ [P in A ˆ B]: X }` where the costraint is an intersection, useful when the intersection contains a constraint similar to the one in `1` or `2`
+4. mapped types like `{ [P in A & B]: X }` where the costraint is an intersection, useful when the intersection contains a constraint similar to the one in `1` or `2`
 
 We will explore how the union constraint ensures the presence of certain properties, while the intersection constraint prevents the presence of additional properties.
 
@@ -171,7 +171,7 @@ The source code says:
 
 > We're inferring from some source type `S` to a homomorphic mapped type `{ [P in keyof T]: X }`, where `T` is a type variable. Use `inferTypeForHomomorphicMappedType` to infer a suitable source type and then make a secondary inference from that type to `T`.
 
-The reason behind the double inference pass is related to the priority of some inferences, but I have to admit this is a bit obscure to me. Feel free to take a look at the source code if you're interested in this and let me know what you find out! The main point, however, is that TypeScript should able to reverse them, as long as there is no `as` clause. Pun not intended.
+The reason behind the double inference pass is related to the priority of some inferences, but I have to admit this is a bit obscure to me. Feel free to take a look at the source code if you're interested in this and let me know what you find out! The main point, however, is that TypeScript should be able to reverse them, as long as there is no `as` clause. Pun not intended.
 
 ### Mapped type with a type parameter as constraint
 
