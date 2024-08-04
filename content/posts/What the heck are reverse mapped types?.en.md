@@ -16,7 +16,7 @@ images = ["/images/reverse_mapped/copertina.jpeg"]
 
 ## Introduction
 
-Reverse mapped types are a powerful yet little-known feature of TypeScript that allow us to set interesting constraints on the values of a type. They are specifically a mechanism for inferring a function's type parameters from values; there's no equivalent at a pure type level. The purpose of this article is to serve as a comprehensive guide to reverse mapped types, explaining what they are and how they can be used. Various references to the compiler source code will be made in order to provide a deeper understanding of the topic. 
+Reverse mapped types are a powerful yet little-known feature of TypeScript that allow us to set interesting constraints on the values of a type. They are mainly a mechanism for inferring a function's type parameters from values; however, the same inference steps can be performed at the type level using the `infer` keyword. The purpose of this article is to serve as a comprehensive guide to reverse mapped types, explaining what they are and how they can be used. Various references to the compiler source code will be made in order to provide a deeper understanding of the topic.
 
 Let's take a simple generic function like the following:
 
@@ -70,6 +70,8 @@ Of course we expect `{ a: string, b: number }`, and that's exactly what we got. 
 Why?
 
 To do something like this, the compiler was able to answer the following question: for which type `T` do we have that `Foo<T>` is `{ a: { value: string }, b: { value: number } }`? We can mentally reverse the action of the mapped type: `a: { value: string }` implies that `T[K]` must be `string` when `K` is `'a'`, similarly `b: { value: number }` implies that `T[K]` must be `number` when `K` is `'b'`. The fact that TypeScript is able to achieve this too is simply amazing!
+
+As I mentioned before [this works at the type level too](https://www.typescriptlang.org/play/?ts=5.5.4#code/C4TwDgpgBAYg9nAPAFQHxQLxQN4CgoFQDaA0lAJYB2UA1hCHAGZTIC6AXDlAG4CGANgFcInZKVZQAvrmm5QkKACUI3CACcAzhHhI0mFlAgAPYBEoATDbASIqjdVACq6APxOonSivW454aKYawPrKqpraNthQvJxRfEIiUEFqVADmUgA0UABGsTwCwp6CALbZDpJSqLgA9NWEAHouQA), but the focus of this article is on the function's type parameters inference.
 
 TypeScript is able to do this inversion for us in some cases, and in this article we will explore the potential, and the limits, of this feature.
 
