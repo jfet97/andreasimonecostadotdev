@@ -16,7 +16,7 @@ images = ["/images/reverse_mapped/copertina.jpeg"]
 
 ## Introduction
 
-Reverse mapped types are a powerful yet little-known feature of TypeScript that allow us to set interesting constraints on the values of a type. The purpose of this article is to serve as a comprehensive guide to reverse mapped types, explaining what they are and how they can be used. Various references to the compiler source code will be made in order to provide a deeper understanding of the topic.
+Reverse mapped types are a powerful yet little-known feature of TypeScript that allow us to set interesting constraints on the values of a type. They are specifically a mechanism for inferring a function's type parameters from values; there's no equivalent at a pure type level. The purpose of this article is to serve as a comprehensive guide to reverse mapped types, explaining what they are and how they can be used. Various references to the compiler source code will be made in order to provide a deeper understanding of the topic. 
 
 Let's take a simple generic function like the following:
 
