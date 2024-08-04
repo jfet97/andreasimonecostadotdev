@@ -436,4 +436,6 @@ The very first time I've heard about reverse mapped types was on Xitter a couple
 
 The only other resource on the topic that I can suggest is a talk by Mateusz at TypeScript Congress 2023, titled [Infer multiple things at once with reverse mapped types](https://gitnation.com/contents/infer-multiple-things-at-once-with-reverse-mapped-types).
 
+I want to thank [David Blass](https://x.com/ssalbdivad) too, who took the time to review the article and gave me some very useful feedback to clarify some points.
+
 I hope that this article has been useful to you and that you have learned something new. If you have any questions or comments, feel free to reach out to me on [Xitter](https://twitter.com/jfet97).
