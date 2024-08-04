@@ -71,9 +71,7 @@ Why?
 
 To do something like this, the compiler was able to answer the following question: for which type `T` do we have that `Foo<T>` is `{ a: { value: string }, b: { value: number } }`? We can mentally reverse the action of the mapped type: `a: { value: string }` implies that `T[K]` must be `string` when `K` is `'a'`, similarly `b: { value: number }` implies that `T[K]` must be `number` when `K` is `'b'`. The fact that TypeScript is able to achieve this too is simply amazing!
 
-As I mentioned before [this works at the type level too](https://www.typescriptlang.org/play/?ts=5.5.4#code/C4TwDgpgBAYg9nAPAFQHxQLxQN4CgoFQDaA0lAJYB2UA1hCHAGZTIC6AXDlAG4CGANgFcInZKVZQAvrmm5QkKACUI3CACcAzhHhI0mFlAgAPYBEoATDbASIqjdVACq6APxOonSivW454aKYawPrKqpraNthQvJxRfEIiUEFqVADmUgA0UABGsTwCwp6CALbZDpJSqLgA9NWEAHouQA), but the focus of this article is on the function's type parameters inference.
-
-TypeScript is able to do this inversion for us in some cases, and in this article we will explore the potential, and the limits, of this feature.
+As I mentioned before [this works at the type level too](https://www.typescriptlang.org/play/?ts=5.5.4#code/C4TwDgpgBAYg9nAPAFQHxQLxQN4CgoFQDaA0lAJYB2UA1hCHAGZTIC6AXDlAG4CGANgFcInZKVZQAvrmm5QkKACUI3CACcAzhHhI0mFlAgAPYBEoATDbASIqjdVACq6APxOonSivW454aKYawPrKqpraNthQvJxRfEIiUEFqVADmUgA0UABGsTwCwp6CALbZDpJSqLgA9NWEAHouQA), but the focus of this article is on the function's type parameters inference. TypeScript is able to do this inversion for us in some cases, and in this article we will explore the potential, and the limits, of this feature.
 
 &nbsp;
 
