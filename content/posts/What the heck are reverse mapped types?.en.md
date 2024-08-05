@@ -95,7 +95,7 @@ declare function foo<T extends C>(mt: MappedType<T>): ...
 foo(x) // T inferred from x
 ```
 
-where the __template__ `F<T[K]>` means that `T[K]` is used in some way there. This is very important because it's gonna be used as inference site for the types of the keys while the compiler is trying to invert the action of the mapped type. In the template you can also use `K` to enforce particular constraints or to [get context sensitive information](https://www.typescriptlang.org/play/?jsx=0&exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsgKgHjgPigXigbwLACgpQDaAClAJYB2UA1hCAPYBmUcAugFxQAUFAhgLYROxAJTpUAN3pkAJngC+Abjx5GAVwoBjYGXpVgEAM7B4SZF2CdTKMTnxQAThGBqH+5bnkrcB4-C52BLw8AhC28gA0eAQA9DFQAHoA-NFQAEYhguFR9nGJKZ4iQA), but this alone is not enough to infer the types of the keys.
+where the __template__ `F<T[K]>` means that `T[K]` is used in some way there. This is very important because it's gonna be used as inference site for the types of the keys while the compiler is trying to invert the action of the mapped type. In the template you can also use `K` alone to enforce particular constraints or to [get context sensitive information](https://www.typescriptlang.org/play/?jsx=0&exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsgKgHjgPigXigbwLACgpQDaAClAJYB2UA1hCAPYBmUcAugFxQAUFAhgLYROxAJTpUAN3pkAJngC+Abjx5GAVwoBjYGXpVgEAM7B4SZF2CdTKMTnxQAThGBqH+5bnkrcB4-C52BLw8AhC28gA0eAQA9DFQAHoA-NFQAEYhguFR9nGJKZ4iQA), but this is not enough to infer the types of the keys.
 
 In broad terms, what happens is the following:
 
