@@ -95,13 +95,13 @@ declare function foo<T extends C>(mt: MappedType<T>): ...
 foo(x) // T inferred from x
 ```
 
-where `F<T[K]>` means that `T[K]` is used in some way there. This is very important because it's gonna be used as inference site for the types of the keys while the compiler is trying to invert the action of the mapped type.
+where the __template__ `F<T[K]>` means that `T[K]` is used in some way there. This is very important because it's gonna be used as inference site for the types of the keys while the compiler is trying to invert the action of the mapped type. In the template you can also use `K` to enforce particular constraints or to [get context sensitive information](https://www.typescriptlang.org/play/?jsx=0&exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsgKgHjgPigXigbwLACgpQDaAClAJYB2UA1hCAPYBmUcAugFxQAUFAhgLYROxAJTpUAN3pkAJngC+Abjx5GAVwoBjYGXpVgEAM7B4SZF2CdTKMTnxQAThGBqH+5bnkrcB4-C52BLw8AhC28gA0eAQA9DFQAHoA-NFQAEYhguFR9nGJKZ4iQA), but this alone is not enough to infer the types of the keys.
 
 In broad terms, what happens is the following:
 
 1. If not already known, TypeScript infers the type of the argument `x` passed to the function `foo`. This type is internally named as __source__.
 
-2. TypeScript does its best to invert the action of mapped type `MappedType` starting from the source type to determine what `T` is. In particular, each key of `T` will be inferred separately, independently from the others, by exploiting the __template__ `F<T[K]>`. It's like having defined a variable length list of type parameters, one for each key of `T`. If the inference of a single key fails, the resulting type for that key will be `unknown`, while the other keys will not be affected by the failure. Be aware of the fact that, as for now, [TypeScript does not resort to the constraint type before falling back to `unknown`](https://github.com/microsoft/TypeScript/issues/56241) in such cases.
+2. TypeScript does its best to invert the action of mapped type `MappedType` starting from the source type to determine what `T` is. In particular, each key of `T` will be inferred separately, independently from the others, by exploiting the template `F<T[K]>`. It's like having defined a variable length list of type parameters, one for each key of `T`. If the inference of a single key fails, the resulting type for that key will be `unknown`, while the other keys will not be affected by the failure. Be aware of the fact that, as for now, [TypeScript does not resort to the constraint type before falling back to `unknown`](https://github.com/microsoft/TypeScript/issues/56241) in such cases.
 
 3. TypeScript checks that the just inferred type `T` is indeed assignable to its constraint `C`. If that is not the case, `T` will become the constraint itself, discarding whatever was inferred before. This is the default behaviour of the `getInferredType` internal function and it applies to any function call, but it could lead to some unexpected results in this situation.
 
