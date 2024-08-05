@@ -42,27 +42,33 @@ foo(['a', 'b', 'c']); // T = string
 
 But what if we had a mapped type in place of `ReadonlyArray<T>`? Would TypeScript still be able to infer the type `T`? This is what we are referring to when we talk about inverting a mapped type.
 
-Let's kick things off with a simple example. Suppose we have the following mapped type:
+### An introductory example
 
-```typescript
-type Foo<T> = {
-    [K in keyof T]: { value: T[K] }
+Let's kick things off with a simple example. Suppose we have the following type definitions:
+
+```ts
+type Box<T> = { 
+    value: T
+}
+
+type Unboxify<T extends Record<string, Box<any>>> = {
+    [K in keyof T]: T[K]["value"];
 }
 ```
 
-Let's write a function that takes a `Foo<T>` and unwraps the `value` properties:
+Let's write a function that takes a `Record<string, Box<any>>` and unwraps the `value` properties:
 
 ```typescript
-function unwrap<T>(foo: Foo<T>): T {
-    const result = {} as T
-    for (const key in foo) {
-        result[key] = foo[key].value
+function unwrap<T extends Record<string, Box<any>>>(record: T): Unboxify<T> {
+    const result = {} as Unboxify<T>
+    for (const key in record) {
+        result[key] = record[key].value
     }
     return result
 }
 ```
 
-What return type should we expect from the following call?
+What return type would we expect from the following function call?
 
 ```typescript
 unwrap({
@@ -71,11 +77,38 @@ unwrap({
 })
 ```
 
-Of course we expect `{ a: string, b: number }`, and that's exactly what we got. [TypeScript is able to infer the type `T` from the argument passed to the function](https://www.typescriptlang.org/play/?ts=5.5.4#code/C4TwDgpgBAYg9nAPAFQHxQLxQN4CgoFQDaA0lAJYB2UA1hCHAGZTIC6AXDlAG4CGANgFcInZKVZQAvrmm5GgygGNg5ONQUB3AE68wKVAApGCTvCRoAlKJz5CitQGdgULRAeD+zrNklReDllsCYy0oA3tKJ1p6CmpjOAsbQmSXNw9gIjoQCSx4zPpWADo+IQggqXLXYEEtald3TxlcXAio+swoTR0wAzxk3k5sHgFhTgAiAAtyKGAJiFcxqQAacoAjQeHSzgAWACYKyQtmgnrcAHozqAA9AH4gA), but that's not a given at all!
+We would expect `{ a: string, b: number }`, of course!
+
+Reverse mapped types give us a different perspective on this kind of problems. We can simplify this situation by inverting the relationship between the return type and the parameter type: instead of manually deriving the return type from the parametric `record` type, we can work backward from the `record` parameter, letting the return type be the goal of the inference process.
+
+```typescript
+type Box<T> = { 
+    value: T
+}
+
+type BoxedRecord<T> = {
+    [K in keyof T]: Box<T[K]>
+}
+
+function unwrap<T>(record: BoxedRecord<T>): T {
+    const result = {} as T
+    for (const key in foo) {
+        result[key] = foo[key].value
+    }
+    return result
+}
+
+unwrap({
+    a: { value: "hi there" },
+    b: { value: 42 }
+})
+```
+
+The returned type is `{ a: string, b: number }` again because [TypeScript is able to infer the type `T` from the argument passed to the function](https://www.typescriptlang.org/play/?#code/C4TwDgpgBAQg9gDwDwBUB8UC8UDeUBQURUAbgIYA2ArhAFxQr4C+++oksiEAJgEoQBjOACduqDNhyFiAbQDSUAJYA7KAGsIIOADMGAXXrxkKeXrTNW2qsoHBFcVdYDuwsmHEAKYYJHdDXPh9RcQBKehRcaSIhZQBnYChvWKoKBMkmKDJYhiiobREoDxj49U0lVW8hURDI4jrEiGTUmQ0QPSwGqu4WzT0AOnJqCFyWOu9gKmEKxpTgC3xnVzAPKTqyejxBmnoAIgALRShgPYhvHagmABpcgCMN0kptqAAWACYL5hCgA), but that's not a given at all!
 
 Why?
 
-To do something like this, the compiler was able to answer the following question: for which type `T` do we have that `Foo<T>` is `{ a: { value: string }, b: { value: number } }`? We can mentally reverse the action of the mapped type: `a: { value: string }` implies that `T[K]` must be `string` when `K` is `'a'`, similarly `b: { value: number }` implies that `T[K]` must be `number` when `K` is `'b'`. The fact that TypeScript is able to achieve this too is simply amazing!
+To do something like this, the compiler was able to answer the following question: for which type `T` do we have that `BoxedRecord<T>` is `{ a: { value: string }, b: { value: number } }`? We can mentally reverse the action of the mapped type: `a: { value: string }` implies that `T[K]` must be `string` when `K` is `'a'`, similarly `b: { value: number }` implies that `T[K]` must be `number` when `K` is `'b'`. The fact that TypeScript is able to achieve this too is simply amazing!
 
 As I mentioned before [this works at the type level too](https://www.typescriptlang.org/play/?ts=5.5.4#code/C4TwDgpgBAYg9nAPAFQHxQLxQN4CgoFQDaA0lAJYB2UA1hCHAGZTIC6AXDlAG4CGANgFcInZKVZQAvrmm5QkKACUI3CACcAzhHhI0mFlAgAPYBEoATDbASIqjdVACq6APxOonSivW454aKYawPrKqpraNthQvJxRfEIiUEFqVADmUgA0UABGsTwCwp6CALbZDpJSqLgA9NWEAHouQA), but the focus of this article is on the function's type parameters inference. TypeScript is able to do this inversion for us in some cases, and in this article we will explore the potential, and the limits, of this feature.
 
