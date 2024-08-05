@@ -432,6 +432,7 @@ It follows a list of limitations, by no means complete, that you should be aware
 
 * [https://github.com/microsoft/TypeScript/issues/48798](https://github.com/microsoft/TypeScript/issues/48798)
 * [https://github.com/microsoft/TypeScript/issues/51612](https://github.com/microsoft/TypeScript/issues/51612)
+* [https://github.com/microsoft/TypeScript/pull/54029](https://github.com/microsoft/TypeScript/pull/54029)
 * [https://github.com/microsoft/TypeScript/issues/56910](https://github.com/microsoft/TypeScript/issues/56910)
 
 &nbsp;
