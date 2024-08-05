@@ -90,6 +90,7 @@ type BoxedRecord<T> = {
     [K in keyof T]: Box<T[K]>
 }
 
+// N=note that a mapped type is in input position
 function unwrap<T>(record: BoxedRecord<T>): T {
     const result = {} as T
     for (const key in foo) {
