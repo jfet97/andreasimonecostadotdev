@@ -1,5 +1,6 @@
 {{ if not .Site.Params.hideFooter | default false }}
   <footer class="footer">
+    <a rel="me" href="https://fosstodon.org/@andreasimonecosta" style="visibility: hidden;">Mastodon</a>
     <section class="container">
       {{ with .Site.Params.footerContent | safeHTML }}
         <p>{{ . }}</p>
