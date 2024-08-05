@@ -139,7 +139,7 @@ useCS({
 
 [Playground](https://www.typescriptlang.org/play/?ts=5.5.4&ssl=13&ssc=3&pln=1&pc=1#code/C4TwDgpgBAwg9gO2BAHsAyhBBnAlsXANwgB4AVAPigF4oBvAKCmagG0BpKXBKAawhBwAZlDIBdAFz0ohKWQ5iANFCFSAFAH05CgJQ0qhOLgAmUAL4MLDYxADGAGwCGAJ2hCArglsFEUd9ggYdHIKNVtsKXgkVAwsPAJiEJ0pQxMGdP9A9DVGZgR3AFspOhkpABYAJmVVKDUEPWoqHgAqKABGAAZzRSYWPv6+gHpBqAA9AH5e7GBnYtKoACIAC1woYCWIVwXq9WwGqmwAOldIR2A1AGY9CwHbu6GRicsdIA).
 
-In the example above we use `T[K]` both as type for the property `'v'` and as type for the parameter of the function `'f'`. TypeScript is able to infer that `T` is `{ num: number, str: string }` from the partially inferable argument passed to `useCS` by using the type of the property `'v'` only. At the end of the whole process, some context sensitive information is provided back from `ContextSensitive<{ num: number, str: string }>` to the source: the type of the parameters of the functions `'f'`.
+In the example above we use `T[K]` both as type for the property `'v'` and as type for the parameter of the function `'f'`. TypeScript is able to infer that `T` is `{ num: number, str: string }` from the partially inferable argument passed to `useCS` by using the type of the property `'v'` only. When the fifth of the previous points comes into play, some context sensitive information is provided back from `ContextSensitive<{ num: number, str: string }>` to the source: the type of the parameters of the functions `'f'`.
 
 &nbsp;
 
