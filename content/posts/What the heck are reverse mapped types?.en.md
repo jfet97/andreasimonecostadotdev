@@ -105,7 +105,7 @@ unwrap({
 })
 ```
 
-The returned type is `{ a: string, b: number }` again because [TypeScript is able to infer the type `T` from the argument passed to the function](https://www.typescriptlang.org/play/?#code/C4TwDgpgBAQg9gDwDwBUB8UC8UDeUBQURUAbgIYA2ArhAFxQr4C+++oksiEAJgEoQBjOACduqDNhyFiAbQDSUAJYA7KAGsIIOADMGAXXrxkKeXrTNW2qsoHBFcVdYDuwsmHEAKYYJHdDXPh9RcQBKehRcaSIhZQBnYChvWKoKBMkmKDJYhiiobREoDxj49U0lVW8hURDI4jrEiGTUmQ0QPSwGqu4WzT0AOnJqCFyWOu9gKmEKxpTgC3xnVzAPKTqyejxBmnoAIgALRShgPYhvHagmABpcgCMN0kptqAAWACYL5hCgA), but that's not a given at all!
+The returned type is `{ a: string, b: number }` again because [TypeScript is able to infer the type `T` from the argument passed to the function](https://www.typescriptlang.org/play/?#code/C4TwDgpgBAQg9gDwDwBUB8UC8UDeUBQURUAbgIYA2ArhAFxQr4C+++oksiEAJgEoQBjOACduqDNhyFiAbQDSUAJYA7KAGsIIOADMGAXXrxkKeXrTNW2qsoHBFcVdYDuwsmHEAKYYJHdDXPh9RcQBKehRcaSIhZQBnYChvWKoKBMkmKDJYhiiobREoDxj49U0lVW8hURDI4jrEiGTUmQ0QPSwGqu4WzT0AOnJqCFyWOu9gKmEKxpTgC3xihKSO51cwDyk6sno8QZp6ACIAC0UoYCOIbwOoJgAaXIAjHdJKfagAFgAmG+YQ1iIkvgAPRAqAAPQA-NIgA), but that's not a given at all!
 
 Why?
 
