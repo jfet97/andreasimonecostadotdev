@@ -356,7 +356,7 @@ useFoo({
 
 TypeScript loops through the intersection's entries, finds the `keyof T` and reverses the whole source type as we saw before. The intersection constraint ensures that the source type has only the properties that are present in `Foo`, and this is why the presence of the `'extra'` property causes an excess property error. It's worth noting that the `'extra'` property is stripped away from the inferred `T` because it wouldn't survive the action of the mapped type anyway.
 
-In this way you get both inference and EPC check!
+In this way you get both inference and EPC!
 
 &nbsp;
 
