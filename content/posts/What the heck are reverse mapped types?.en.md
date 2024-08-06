@@ -93,8 +93,8 @@ type BoxedRecord<T> = {
 // note that the above mapped type is used in input position here
 function unwrap<T>(record: BoxedRecord<T>): T {
     const result = {} as T
-    for (const key in foo) {
-        result[key] = foo[key].value
+    for (const key in record) {
+        result[key] = record[key].value
     }
     return result
 }
