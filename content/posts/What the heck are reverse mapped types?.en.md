@@ -219,11 +219,11 @@ The reason behind the double inference pass is related to the priority of some i
 This is a very interesting case. Suppose we have the following mapped type:
 
 ```ts
-type MappedType<P extends PropertyKey> = {
-    [K in P]: number
+type MappedType<K extends PropertyKey> = {
+    [P in K]: number
 }
 
-declare function useMT<P extends PropertyKey>(mt: MappedType<P>): P
+declare function useMT<K extends PropertyKey>(mt: MappedType<K>): K
 
 foo({
   a: 42,
@@ -231,29 +231,29 @@ foo({
 })
 ```
 
-[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsghmSATAKuCAeAClCAPYCAOyQGcosAnAe0ktAGkIQA+KAXigG8BYAKCiCoAbQZQAlkQoBdAFxQiAVwC2AIwiV+AX378kEAMYAbOJWgAzRUQPBx1KYtIQYKbLgLEyFGnUbMWABTKwPLwiBCo6NgsAJTyWLp8BvakwFBm5JyOzigBvAJQcPIALABMADT8gqryAIylAMzF2jGJghn8APSdUAB6APxAA).
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsghmSATAKuCAeA0lCAPYCAOyQGcoAFAJwHtIrQsIQA+KAXigG8BYAKCiCoAbQpQAlkShYAugC4oRAK4BbAEYQq-AL79+SCAGMANnCrQAZkqKHg4mlKWkIMFNlwFiZSrXqNmLAAUKsAK8IgQqOjYLACUClh6fIYOpMBQ5uScTi4ogbwCUHAKACwATAA0-IJqCgCMZQDMJTqxSYKZ-AD0XVAAegD8QA).
 
-We have that `P` gets successfully inferred as `'a' | 'b'`. How? The source code answers this question:
+We have that `K` gets successfully inferred as `'a' | 'b'`. How? The source code answers this question:
 
 > We're inferring from some source type `S` to a mapped type `{ [P in K]: X }`, where `K` is a type parameter. First infer from `keyof S` to `K`.
 
-That's exactly what TypeScript did: it inferred from `keyof { a: number, b: number }`, that is `'a' | 'b'`, to `P`.
+That's exactly what TypeScript did: it inferred from `keyof { a: number, b: number }`, that is `'a' | 'b'`, to `K`.
 
 But TypeScript's capabilities don't stop here. Suppose we have the following mapped type that resembles the `Pick` one:
 
 ```ts
 // a custom version of the built-in Pick type
-type MyPick<T, P extends keyof T> = {
-  [K in P]: { value: T[K] };
+type MyPick<T, K extends keyof T> = {
+  [P in K]: { value: T[P] };
 }
 
-// a function that takes a MyPick<T, P> and returns a Pick<T, SP>
-// where SP is a subset of P
+// a function that takes a MyPick<T, K> and returns a Pick<T, SK>
+// where SK is a subset of K
 declare function unpick<
   T,
-  P extends keyof T,
-  SP extends P,
->(t: MyPick<T, P>, keys: SP[]): Pick<T, SP>;
+  K extends keyof T,
+  SK extends K,
+>(t: MyPick<T, K>, keys: SK[]): Pick<T, SK>;
 
 unpick({
   a: { value: 42 },
@@ -261,9 +261,9 @@ unpick({
 }, ["a"]);
 ```
 
-[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsiAKBLAxgawDwBUA0V5QgA9gIA7AEwGcpUIQB7AMykwD4oBeKAbwFgAoKFADaAaSiJSeALoAuHlABuAQwA2AVwjzMY6VAC+AbgH6BA8hGSrlAJ2iN1pZMET0pjsCgwChOH3gJiMioaOiYWbH8AZXwiEgpqeEj+VgAKYHk4JDQsXHhWXFoQSnkY4WkASnlsjBwoGNZjfgFkN0pgKDtqLg8vVL5BKGV5biU1TXkAFgAmA2ShACMRsY0tKEY1Smh9ZJ2RACJlfcqm-y6mgHoLqAA9AH4gA).
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsiAKBLAxgawDwBUA0UDSUEAHsBAHYAmAzlKhCAPYBmUmAfFALxQDeAsACgoUANrwoiMvgC6ALl5QAbgEMANgFcI8zGOlQAvgG5B+wYIoRkq5QCdoTdWWTBEDKY7AoMg4Th-5CEnJqWnpmVmx-AGUCYlJKGjxIgTYACmB5OCQ0LFw8Nlw6ECp5GJFpAEp5bIwcKBi2YwFBZDcqYCg7Gm4PL1T+IShleR4lNU15ABYAJgNk4QAjEbGNLSgmNSpofWSd0QAiZX3Kpv8upoB6C6gAPQB+IA).
 
-We have that `T` gets inferred as `{ a: number, b: boolean }` and `P` gets inferred as `'a' | 'b'`. As before, `P` is inferred from `keyof { a: number, b: boolean }`, that is `'a' | 'b'`. But what about `T`? Let's again refer to the source code:
+We have that `T` gets inferred as `{ a: number, b: boolean }` and `K` gets inferred as `'a' | 'b'`. As before, `K` is inferred from `keyof { a: number, b: boolean }`, that is `'a' | 'b'`. But what about `T`? Let's again refer to the source code:
 
 > If `K` (the one in `{ [P in K]: X }`) is constrained to a type `C`, also infer to `C`. Thus, for a mapped type `{ [P in K]: X }`, where `K` extends `keyof T`, we make the same inferences as for a homomorphic mapped type `{ [P in keyof T]: X }`.
 
@@ -279,11 +279,11 @@ if (extendedConstraint && inferToMappedType(source, target, extendedConstraint))
 If no inferences can be made to `K`'s constraint, TypeScript will infer from a union of the property types in the source to the template type `X`. The following example shows this:
 
 ```ts
-type MappedType<P extends PropertyKey, X> = {
-    [K in P]: X
+type MappedType<K extends PropertyKey, X> = {
+    [P in K]: X
 }
 
-declare function useMT<P extends PropertyKey, X>(mt: MappedType<P, X>): [P, X]
+declare function useMT<K extends PropertyKey, X>(mt: MappedType<K, X>): [K, X]
 
 useMT({
   a: ["a", "a-prop"],
@@ -291,9 +291,9 @@ useMT({
 })
 ```
 
-[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsghmSATAKuCAeAClCAPYCAOyQGcosAnAe0ktAGkIQAaKADQD4oBeKAbwCwAKChioAbQZQAlkQoBdAFwcRAXxEikEAMYAbOJWgAzAK5EdwGdXmnSEGCmy4CxMhRp1GzNlwAUALbAKvCIEKjo2L6cAJQqEli+CprCOjakwFBG5Hx2Dih+QqJQcPEARHBlbBUAtGCeZQosImIARirGcHr26jEpYtkiAPRDUAB6APxAA).
+[Playground](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true&ts=5.5.4#code/C4TwDgpgBAsghmSATAKuCAeA0lCAPYCAOyQGcoAFAJwHtIrQsIQAaKADQD4oBeKAbwCwAKChioAbQpQAlkShYAugC4OIgL4iRSCAGMANnCrQAZgFciu4DJryzpCDBTZcBYmUq16jZmy4AKAFtgVXhECFR0bD9OAEpVCSw-RS1hXVtSYChjcj57RxR-IVEoOASAIjhytkqAWjAvcsUWETEAI1UTOH0HDVjUsRyRAHphqAA9AH4gA).
 
-We have that `P` gets inferred as `'a' | 'b'` as before, wherease `X` gets inferred as `boolean | string[]`.
+We have that `K` gets inferred as `'a' | 'b'` as before, wherease `X` gets inferred as `boolean | string[]`.
   
 ### Union as constraint
 
