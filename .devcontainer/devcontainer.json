@@ -29,7 +29,8 @@
 			"extensions": [
 				"bungcip.better-toml",
 				"davidanson.vscode-markdownlint",
-        "github.copilot"
+        "github.copilot",
+        "mhutchie.git-graph"
 			]
 		}
 	},
