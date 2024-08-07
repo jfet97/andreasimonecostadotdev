@@ -134,8 +134,11 @@ languageName = ":uk:"
 [languages.it]
 languageName = ":it:"
 
-[params.goatCounter]
-code = "jfet97"
+# [params.goatCounter]
+# code = "jfet97"
+
+[params.cloudflare]
+token = "701bfb56b4284f369dc381526d7911e8"
 
 [markup]
   [markup.goldmark]
