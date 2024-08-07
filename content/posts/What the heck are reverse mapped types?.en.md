@@ -79,7 +79,7 @@ unwrap({
 
 We would expect `{ a: string, b: number }`, of course!
 
-Reverse mapped types give us a different perspective on this kind of problems. We can simplify this situation by inverting the relationship between the return type and the parameter type: instead of manually deriving the return type from the parametric `record` type, we can work backward from the `record` parameter, letting the return type be the goal of the inference process.
+Reverse mapped types give us a different perspective on this kind of problems. We can simplify this situation by inverting the relationship between the return type and the parameter type: instead of manually deriving the return type from the parametric `record` type, we can work backward from the `record`'s actual parameter type, letting the return type be the goal of the inference process.
 
 ```typescript
 type Box<T> = { 
