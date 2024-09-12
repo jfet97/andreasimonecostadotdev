@@ -128,7 +128,11 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
     "https://utteranc.es",
   ]
   prefetchsrc = ["'self'"]
-  connectsrc = ["'self'"]
+  connectsrc = [
+    "'self'",
+    "https://static.cloudflareinsights.com",
+    "https://www.clarity.ms/"
+  ]
 
 [languages.en]
 languageName = ":uk:"
