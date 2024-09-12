@@ -120,12 +120,12 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   ]
   scriptsrc = [
     "'self'",
+    "https://static.cloudflareinsights.com",
+    "https://www.clarity.ms/",
     "'unsafe-inline'",
     "https://twemoji.maxcdn.com/",
     "https://gc.zgo.at",
     "https://utteranc.es",
-    "https://static.cloudflareinsights.com",
-    "https://www.clarity.ms/"
   ]
   prefetchsrc = ["'self'"]
   connectsrc = ["'self'"]
