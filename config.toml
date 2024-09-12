@@ -131,7 +131,10 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   connectsrc = [
     "'self'",
     "https://static.cloudflareinsights.com",
-    "https://www.clarity.ms/"
+    "https://www.clarity.ms/",
+    "https://k.clarity.ms/collect",
+    "https://cloudflareinsights.com/cdn-cgi/rum",
+
   ]
 
 [languages.en]
