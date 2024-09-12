@@ -111,7 +111,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   ]
   formaction = ["'self'"]
   framesrc = ["'self'", "https://utteranc.es"]
-  imgsrc = ["'self'", "https://twemoji.maxcdn.com/", "https://jfet97.goatcounter.com/count"]
+  imgsrc = ["'self'", "https://twemoji.maxcdn.com/"]
   objectsrc = ["'none'"]
   stylesrc = [
     "'self'",
