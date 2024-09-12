@@ -111,7 +111,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   ]
   formaction = ["'self'"]
   framesrc = ["'self'", "https://utteranc.es"]
-  imgsrc = ["'self'", "https://twemoji.maxcdn.com/"]
+  imgsrc = ["'self'", "https://twemoji.maxcdn.com/", "https://*.clarity.ms/",]
   objectsrc = ["'none'"]
   stylesrc = [
     "'self'",
@@ -121,7 +121,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   scriptsrc = [
     "'self'",
     "https://static.cloudflareinsights.com",
-    "https://www.clarity.ms/",
+    "https://*.clarity.ms/",
     "'unsafe-inline'",
     "https://twemoji.maxcdn.com/",
     "https://gc.zgo.at",
@@ -131,8 +131,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   connectsrc = [
     "'self'",
     "https://static.cloudflareinsights.com",
-    "https://www.clarity.ms/",
-    "https://k.clarity.ms/collect",
+    "https://*.clarity.ms/",
     "https://cloudflareinsights.com/cdn-cgi/rum",
 
   ]
