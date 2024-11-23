@@ -71,9 +71,11 @@ function access<const T extends { property: T['property'] }>(to: T) {
 
 [Playground](https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABAcwKZQDwHkA0iDSiqAHlKmACYDOiA1qgJ5zCJYB8AFHAFyt6298ASkQBvAFCJEAJ3QhpSOAG1aAXXEBfceNCRYCRAEMIEVFSoYICKlEQAVIqXLUxiAA7S4b1NKgNedkoA5B5ePn5BqoganFA89iISUrJQ8khJUogAbgCMvHEAdKHevgw4kplZAEy8aFAccXgARMXhDE1CFVpa4lZgNjJmiAC8RiZmVBwZraW8TQAWMIhQ8z6oTZqd4rJU4gD0e4gAegD8QA)
 
- Quando TypeScript andrà a sostituire la constraint di `T` al posto di `T` per risolvere eagerly `T['property']` si troverà a computare `{ property: T['property'] }['property']`, che è proprio pari a `T['property']`! Per fortuna TypeScript non si accorge di essere tornato al punto di partenza, altrimenti proverebbe nuovamente a computare eagerly `T['property']` e si ritroverebbe in un loop infinito.
+Quando TypeScript andrà a sostituire la constraint di `T` al posto di `T` per risolvere eagerly `T['property']` si troverà a computare `{ property: T['property'] }['property']`, che è proprio pari a `T['property']`! Per fortuna TypeScript non si accorge di essere tornato al punto di partenza, altrimenti proverebbe nuovamente a computare eagerly `T['property']` e si ritroverebbe in un loop infinito.
 
- Un evidente limite di questo barbatrucco risiede nell'impossibilità di impostare agevolmente una constraint diversa da `unknown` per la key `property`. Si potrebbe pensare ad una soluzione come la seguente, dove ogni key viene intersecata alla constraint corrispondente:
+Un evidente limite di questo barbatrucco risiede nell'impossibilità di impostare agevolmente una constraint diversa da `unknown` per la key `property`.
+ 
+Generalizzando, si potrebbe pensare ad una soluzione come la seguente, dove ogni key viene intersecata alla constraint corrispondente:
 
  ```ts
 function foo<T extends { 
