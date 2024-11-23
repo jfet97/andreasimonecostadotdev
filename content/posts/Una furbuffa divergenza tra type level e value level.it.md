@@ -58,7 +58,7 @@ C'è quindi una importante differenza tra ciò che succede nel __type level__ e 
 
 ### Un barbatrucco
 
-Prendendo spunto dall'osservazione di [Simone Pizzamiglio](https://www.linkedin.com/in/simone-pizzamiglio/), si potrebbe tentare di fregare il compilatore usando `{ property: T['property'] }` come constraint per `T` al posto di `{ property:  unknown }`:
+Prendendo spunto dall'osservazione di [Simone Pizzamiglio](https://www.linkedin.com/feed/update/urn:li:activity:7266140760259874816?commentUrn=urn%3Ali%3Acomment%3A%28activity%3A7266140760259874816%2C7266155649187659778%29&dashCommentUrn=urn%3Ali%3Afsd_comment%3A%287266155649187659778%2Curn%3Ali%3Aactivity%3A7266140760259874816%29), si potrebbe tentare di fregare il compilatore usando `{ property: T['property'] }` come constraint per `T` al posto di `{ property:  unknown }`:
 
 ```ts
 function access<const T extends { property: T['property'] }>(to: T) {
