@@ -74,7 +74,7 @@ function access<const T extends { property: T['property'] }>(to: T) {
 Quando TypeScript andrà a sostituire la constraint di `T` al posto di `T` per risolvere eagerly `T['property']` si troverà a computare `{ property: T['property'] }['property']`, che è proprio pari a `T['property']`! Per fortuna TypeScript non si accorge di essere tornato al punto di partenza, altrimenti proverebbe nuovamente a computare eagerly `T['property']` e si ritroverebbe in un loop infinito.
 
 Un evidente limite di questo barbatrucco risiede nell'impossibilità di impostare agevolmente una constraint diversa da `unknown` per la key `property`.
- 
+
 Generalizzando, si potrebbe pensare ad una soluzione come la seguente, dove ogni key viene intersecata alla constraint corrispondente:
 
  ```ts
