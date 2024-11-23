@@ -43,7 +43,7 @@ res
 
 Quale è il tipo dell'accesso `to.property`? Dato che `to` ha tipo parametrico `T` allora è ragionevole aspettarsi che `to.property` abbia tipo `T['property']`. Ed è così sulla carta, solo che questo genere di accessi viene risolto da TypeScript prematuramente (_eagerly_) nel corpo della funzione, ovvero in un contesto in cui il type parameter `T` non è ancora noto. Questa è una scelta interna del compiler perché li mortacci loro.
 
-Come viene risolto eagerly? TypeScript ha un po' le mani legate poiché `T` non è ancora noto, quindi sceglie di usare la constraint di `T` al suo posto. La constraint di `T` è `{ property: unknown }`, quindi TypeScript computa `{ property: unknown }['property']`, che è esattamente `unknown`.
+Come viene risolto eagerly? TypeScript ha un po' le mani legate poiché `T` non è ancora noto, quindi sceglie di usare la constraint di `T` al suo posto. La constraint di `T` è `{ property: unknown }`, quindi TypeScript computa `{ property: unknown }['property']` che è esattamente `unknown`.
 
 Ecco che `to.property` finisce per avere `unknown` come tipo anziché `T['property']`.
 
