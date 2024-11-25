@@ -53,7 +53,7 @@ Nel caso dell'accesso indiretto tramite la `get` niente viene risolto eagerly. L
 
 C'è quindi una importante differenza tra ciò che succede nel __type level__ e ciò che succede nel __value level__ per quanto concerne l'accesso diretto ad una proprietà:
 
-1. Nel __value level__ TypeScript risolve eagerly l'accesso diretto `to.property`, ed essendo il tipo di tale accesso `T['property']` il compiler si vede costretto a risolvere eagerly quest'ultimo, ma solo contestualmente all'espressione `to.property`.
+1. Nel __value level__ TypeScript risolve eagerly il tipo dell'accesso diretto `to.property`, essendo quest'ultimo `T['property']`, ma poiché `T` non è noto il compiler si vede costretto ad approssimarlo, ma solo contestualmente all'espressione `to.property`.
 2. Nel __type level__ `T['property']` di base rimane _deferred_. Nel resto del corpo della funzione TypeScript non risolve eagerly il tipo `T['property']`. Questo è il motivo per il quale la `get` può usarlo come tipo di ritorno e la type assertion `to.property as T['property']` risolve il problema.
 
 ### Un barbatrucco
