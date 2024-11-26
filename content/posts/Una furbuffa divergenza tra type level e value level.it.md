@@ -96,3 +96,7 @@ Purtroppo se una o più key constraint fossero un tipo oggetto anziché un tipo 
 > Note that for a generic `T` and a non-generic `K`, we eagerly resolve `T[K]` if it originates in an expression. This is to preserve backwards compatibility.
 
 — Linee 19035, 19036 e 19037 @ `checker.ts`, commit `d85767abfd83880cea17cea70f9913e9c4496dcc`.
+
+Se vuoi dare un'occhiata a cosa succede dietro le quinte ho registrato questo piccolo video sull'argomento, nel quale vediamo brevemente come si comporta il compiler.
+
+[![video thumbna8il](https://img.youtube.com/vi/gEaRZGKSFeQ/maxresdefault.jpg)](https://youtu.be/gEaRZGKSFeQ)
