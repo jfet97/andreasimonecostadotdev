@@ -111,7 +111,7 @@ url = "https://www.youtube.com/channel/UCKqAbvKIwqK_ZV2WS_6jitA/"
   ]
   formaction = ["'self'"]
   framesrc = ["'self'", "https://utteranc.es"]
-  imgsrc = ["'self'", "https://twemoji.maxcdn.com/", "https://*.clarity.ms/",]
+  imgsrc = ["'self'", "https://twemoji.maxcdn.com/", "https://*.clarity.ms/", "https://img.youtube.com/"]
   objectsrc = ["'none'"]
   stylesrc = [
     "'self'",
